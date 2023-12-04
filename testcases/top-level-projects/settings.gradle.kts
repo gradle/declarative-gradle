@@ -5,6 +5,6 @@ plugins {
     id("declarative-settings-plugin")
 }
 
-build("platforms-dir") {
-    
+build("top-level-projects") {
+    autodetect = true
 }
