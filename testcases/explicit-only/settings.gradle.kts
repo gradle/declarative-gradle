@@ -1,11 +1,15 @@
 pluginManagement {
-    includeBuild("../declarative-settings-plugin")
+    includeBuild("../../workspace-settings")
 }
 plugins {
-    id("declarative-settings-plugin")
+    id("org.gradle.experimental.settings.workspace")
 }
 
-build("explicit-only") {
+configure<org.gradle.experimental.settings.WorkspaceSettings> {
+
+/// NEW DSL
+build {
+    name = "explicit-only"
     directory("core") {
         subproject("core-1")
         subproject("core-2")
@@ -24,4 +28,7 @@ build("explicit-only") {
         subproject("utils-1")
         subproject("utils-2")
     }
+}
+
+////
 }

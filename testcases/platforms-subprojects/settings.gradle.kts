@@ -1,11 +1,16 @@
 pluginManagement {
-    includeBuild("../declarative-settings-plugin")
+    includeBuild("../../workspace-settings")
 }
 plugins {
-    id("declarative-settings-plugin")
+    id("org.gradle.experimental.settings.workspace")
 }
 
-build("platforms-subprojects") {
+configure<org.gradle.experimental.settings.WorkspaceSettings> {
+
+/// NEW DSL
+
+build {
+    name = "platforms-subprojects"
     directory("platforms") {
         subproject("jvm") {
             autodetect = true
@@ -14,4 +19,7 @@ build("platforms-subprojects") {
             autodetect = true
         }
     }
+}
+
+///
 }
