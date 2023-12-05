@@ -25,6 +25,7 @@ abstract public class AbstractProjectContainer implements ProjectContainer {
         this.dir = dir;
         this.pathName = pathName;
         this.parent = parent;
+        getAutodetect().convention(false);
     }
 
     public AbstractProjectContainer(Settings settings, File dir, ProjectContainer parent) {

@@ -9,7 +9,7 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
 
-build {
+projects {
     name = "subprojects-dir"
     directory("subprojects") {
         autodetect = true

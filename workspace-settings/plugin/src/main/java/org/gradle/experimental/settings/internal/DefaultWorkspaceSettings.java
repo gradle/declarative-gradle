@@ -1,20 +1,16 @@
 package org.gradle.experimental.settings.internal;
 
 import org.gradle.api.Action;
-import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.internal.file.FileCollectionFactory;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.experimental.settings.AutoDetectSettings;
-import org.gradle.experimental.settings.ProjectContainer;
 import org.gradle.experimental.settings.RootBuildSpecification;
 import org.gradle.experimental.settings.WorkspaceSettings;
-import org.gradle.internal.Actions;
 
 import javax.inject.Inject;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
     private static final Set<String> IGNORED_DIRECTORIES = Set.of("build", ".gradle", ".idea", ".git", ".svn", ".hg", "CVS");
@@ -30,7 +26,7 @@ abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
     }
 
     @Override
-    public RootBuildSpecification build(Action<? super RootBuildSpecification> action) {
+    public RootBuildSpecification projects(Action<? super RootBuildSpecification> action) {
         if (buildConfigured) {
             throw new UnsupportedOperationException("The build can only be configured once");
         }

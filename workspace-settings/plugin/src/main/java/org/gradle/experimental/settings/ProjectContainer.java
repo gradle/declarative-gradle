@@ -21,4 +21,6 @@ public interface ProjectContainer {
     String getLogicalPath();
 
     String getPathName();
+
+    Property<Boolean> getAutodetect();
 }

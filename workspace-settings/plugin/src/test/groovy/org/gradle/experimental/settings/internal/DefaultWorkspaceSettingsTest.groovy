@@ -20,7 +20,7 @@ class DefaultWorkspaceSettingsTest extends Specification {
 
     def "sets the workspace name"() {
         when:
-        workspace.build() {
+        workspace.projects() {
             name = 'foo'
         }
 
@@ -37,7 +37,7 @@ class DefaultWorkspaceSettingsTest extends Specification {
         def fuzz = Mock(ProjectDescriptor)
 
         when:
-        workspace.build() {
+        workspace.projects() {
             name = "foo"
             subproject("bar")
             subproject("baz") {
@@ -75,7 +75,7 @@ class DefaultWorkspaceSettingsTest extends Specification {
 
     def "cannot configure the build twice"() {
         when:
-        workspace.build() {
+        workspace.projects() {
             name = 'foo'
         }
 
@@ -83,7 +83,7 @@ class DefaultWorkspaceSettingsTest extends Specification {
         1 * settings.getRootProject() >> rootProject
 
         when:
-        workspace.build() {
+        workspace.projects() {
             name = 'foo'
         }
 
@@ -91,7 +91,7 @@ class DefaultWorkspaceSettingsTest extends Specification {
         thrown(UnsupportedOperationException)
 
         when:
-        workspace.build() {
+        workspace.projects() {
             name = 'bar'
         }
 

@@ -28,7 +28,7 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
-                build {
+                projects {
                     name = "foo"
                 }
             }
@@ -53,7 +53,7 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
-                build {
+                projects {
                     name = "foo"
                     subproject("bar")
                     subproject("baz") {
@@ -94,7 +94,7 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
-                build {
+                projects {
                     name = "foo"
                     subproject("bar")
                     subproject("bar")

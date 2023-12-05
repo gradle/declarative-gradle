@@ -9,7 +9,7 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
 
-build {
+projects {
     name = "top-level-projects"
     autodetect = true
 }

@@ -9,7 +9,7 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
 
-build {
+projects {
     name = "platforms-subprojects"
     directory("platforms") {
         subproject("jvm") {
