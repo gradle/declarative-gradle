@@ -8,9 +8,10 @@ plugins {
 configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
-
+build("subprojects-dir") {
+    
+}
 projects {
-    name = "subprojects-dir"
     directory("subprojects") {
         autodetect = true
     }

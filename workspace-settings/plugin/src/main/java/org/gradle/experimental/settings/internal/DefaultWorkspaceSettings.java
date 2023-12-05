@@ -17,7 +17,8 @@ abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
     public static final String PROJECT_MARKER_FILE = "build.gradle.kts";
     private final Settings settings;
     private final DefaultAutoDetectSettings autoDetectSettings;
-    private boolean buildConfigured;
+    private boolean projectsConfigured;
+    private boolean buildConfigured = false;
 
     @Inject
     public DefaultWorkspaceSettings(Settings settings) {
@@ -27,15 +28,25 @@ abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
 
     @Override
     public RootBuildSpecification projects(Action<? super RootBuildSpecification> action) {
+        if (projectsConfigured) {
+            throw new UnsupportedOperationException("The projects can only be configured once");
+        }
+        projectsConfigured = true;
+
+        RootBuildSpecification spec = getObjectFactory().newInstance(DefaultRootBuildSpecification.class, settings);
+        action.execute(spec);
+
+        return spec;
+    }
+
+    @Override
+    public void build(String name, Action<? super Settings> action) {
         if (buildConfigured) {
             throw new UnsupportedOperationException("The build can only be configured once");
         }
         buildConfigured = true;
-
-        RootBuildSpecification spec = getObjectFactory().newInstance(DefaultRootBuildSpecification.class, settings);
-        action.execute(spec);
-        settings.getRootProject().setName(spec.getName().get());
-        return spec;
+        settings.getRootProject().setName(name);
+        action.execute(settings);
     }
 
     /**

@@ -8,9 +8,10 @@ plugins {
 configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
-
+build("spring-boot-like") {
+    
+}
 projects {
-    name = "spring-boot-like"
 
     directory("core") {
         autodetect = true

@@ -8,9 +8,10 @@ plugins {
 configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
-
+build("top-level-projects") {
+    
+}
 projects {
-    name = "top-level-projects"
     autodetect = true
 }
 

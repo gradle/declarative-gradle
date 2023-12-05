@@ -9,8 +9,10 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
 
+build("platforms-subprojects") {
+    
+}
 projects {
-    name = "platforms-subprojects"
     directory("platforms") {
         subproject("jvm") {
             autodetect = true

@@ -8,8 +8,11 @@ plugins {
 configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
+build("explicit-only") {
+    
+}
+
 projects {
-    name = "explicit-only"
     directory("core") {
         subproject("core-1")
         subproject("core-2")

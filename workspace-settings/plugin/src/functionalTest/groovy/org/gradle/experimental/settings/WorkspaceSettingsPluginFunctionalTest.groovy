@@ -28,8 +28,10 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
+                build("foo") {
+                }
                 projects {
-                    name = "foo"
+                    
                 }
             }
             
@@ -53,8 +55,9 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
+                build("foo") {
+                }
                 projects {
-                    name = "foo"
                     subproject("bar")
                     subproject("baz") {
                         // should path be relative to root or parent project?
@@ -94,8 +97,9 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
+                build("foo") {
+                }
                 projects {
-                    name = "foo"
                     subproject("bar")
                     subproject("bar")
                 }
