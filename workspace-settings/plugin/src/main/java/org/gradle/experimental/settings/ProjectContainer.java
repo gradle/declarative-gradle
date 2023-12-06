@@ -13,14 +13,9 @@ public interface ProjectContainer {
 
     ProjectContainer directory(String path, Action<? super ProjectContainer> action);
 
-    @Nullable
-    ProjectContainer getParent();
-
     File getDir();
 
     String getLogicalPath();
-
-    String getPathName();
 
     Property<Boolean> getAutodetect();
 }

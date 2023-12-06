@@ -100,91 +100,68 @@ class DefaultWorkspaceSettingsTest extends Specification {
         thrown(UnsupportedOperationException)
     }
 
-//    def "can autodetect projects in a multi-project build"() {
-//        given:
-//        createBuildFileIn("foo")
-//        createBuildFileIn("foo/bar")
-//        createBuildFileIn("baz/qux")
-//        def foo = Mock(ProjectDescriptor)
-//        def bar = Mock(ProjectDescriptor)
-//        def baz = Mock(ProjectDescriptor)
-//        def qux = Mock(ProjectDescriptor)
-//
-//        when:
-//        workspace.autoDetectIfNotConfigured()
-//
-//        then:
-//        _ * settings.getRootProject() >> rootProject
-//        _ * settings.getRootDir() >> projectDir
-//        1 * settings.include(":foo")
-//        1 * settings.include(":foo:bar")
-//        1 * settings.include(":baz")
-//        1 * settings.include(":baz:qux")
-//
-//        and:
-//        1 * settings.project(":foo") >> foo
-//        1 * settings.project(":foo:bar") >> bar
-//        1 * settings.project(":baz") >> baz
-//        1 * settings.project(":baz:qux") >> qux
-//    }
-//
-//    def "can explicitly include autodetection projects in a multi-project build"() {
-//        given:
-//        createBuildFileIn("foo")
-//        createBuildFileIn("foo/bar")
-//        createBuildFileIn("baz/qux")
-//        def foo = Mock(ProjectDescriptor)
-//        def bar = Mock(ProjectDescriptor)
-//
-//        when:
-//        workspace.autodetect {
-//            it.include("foo/**")
-//        }
-//
-//        then:
-//        workspace.autoDetectIfNotConfigured()
-//
-//        then:
-//        _ * settings.getRootProject() >> rootProject
-//        _ * settings.getRootDir() >> projectDir
-//        1 * settings.include(":foo")
-//        1 * settings.include(":foo:bar")
-//        0 * settings.include(":baz")
-//        0 * settings.include(":baz:qux")
-//
-//        and:
-//        1 * settings.project(":foo") >> foo
-//        1 * settings.project(":foo:bar") >> bar
-//    }
-//
-//    def "can explicitly exclude autodetection projects in a multi-project build"() {
-//        given:
-//        createBuildFileIn("foo")
-//        createBuildFileIn("foo/bar")
-//        createBuildFileIn("baz/qux")
-//        def baz = Mock(ProjectDescriptor)
-//        def qux = Mock(ProjectDescriptor)
-//
-//        when:
-//        workspace.autodetect {
-//            it.exclude("f*")
-//        }
-//
-//        then:
-//        workspace.autoDetectIfNotConfigured()
-//
-//        then:
-//        _ * settings.getRootProject() >> rootProject
-//        _ * settings.getRootDir() >> projectDir
-//        0 * settings.include(":foo")
-//        0 * settings.include(":foo:bar")
-//        1 * settings.include(":baz")
-//        1 * settings.include(":baz:qux")
-//
-//        and:
-//        1 * settings.project(":baz") >> baz
-//        1 * settings.project(":baz:qux") >> qux
-//    }
+    def "can autodetect projects in a multi-project build"() {
+        given:
+        createBuildFileIn("foo")
+        createBuildFileIn("foo/bar")
+        createBuildFileIn("baz/qux")
+        def foo = Mock(ProjectDescriptor)
+        def bar = Mock(ProjectDescriptor)
+        def qux = Mock(ProjectDescriptor)
+
+        when:
+        workspace.projects {
+            subproject("foo") {
+                it.autodetect = true
+            }
+            directory("baz") {
+                it.autodetect = true
+            }
+        }
+
+        then:
+        _ * settings.getRootProject() >> rootProject
+        _ * settings.getRootDir() >> projectDir
+        1 * settings.include(":foo")
+        1 * settings.include(":foo:bar")
+        1 * settings.include(":qux")
+
+        and:
+        1 * settings.project(":foo") >> foo
+        1 * settings.project(":foo:bar") >> bar
+        1 * settings.project(":qux") >> qux
+    }
+
+    def "does not autodetect projects when not configured a multi-project build"() {
+        given:
+        createBuildFileIn("foo")
+        createBuildFileIn("foo/bar")
+        createBuildFileIn("baz/qux")
+        def foo = Mock(ProjectDescriptor)
+        def bar = Mock(ProjectDescriptor)
+        def baz = Mock(ProjectDescriptor)
+
+        when:
+        workspace.projects {
+            subproject("foo") {
+                autodetect = true
+            }
+            subproject("baz")
+        }
+
+        then:
+        _ * settings.getRootProject() >> rootProject
+        _ * settings.getRootDir() >> projectDir
+        1 * settings.include(":foo")
+        1 * settings.include(":foo:bar")
+        1 * settings.include(":baz")
+        0 * settings.include(":baz:qux")
+
+        and:
+        1 * settings.project(":foo") >> foo
+        1 * settings.project(":foo:bar") >> bar
+        1 * settings.project(":baz") >> baz
+    }
 
     private void createBuildFileIn(String path) {
         Path subdir = projectDir.toPath().resolve(path)

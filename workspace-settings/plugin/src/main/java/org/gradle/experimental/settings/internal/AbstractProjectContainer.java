@@ -10,9 +10,12 @@ import org.gradle.internal.Actions;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
+import java.util.Arrays;
 
 abstract public class AbstractProjectContainer implements ProjectContainer {
+    public static final String PROJECT_MARKER_FILE = "build.gradle.kts";
     protected static final String LOGICAL_PATH_SEPARATOR = ":";
+
     protected final Settings settings;
     protected final File dir;
 
@@ -48,6 +51,7 @@ abstract public class AbstractProjectContainer implements ProjectContainer {
         settings.include(spec.getLogicalPath());
         settings.project(spec.getLogicalPath()).setProjectDir(spec.getDir());
         action.execute(spec);
+        autoDetectIfConfigured(spec);
         return spec;
     }
 
@@ -55,18 +59,16 @@ abstract public class AbstractProjectContainer implements ProjectContainer {
     public ProjectContainer directory(String relativePath, Action<? super ProjectContainer> action) {
         DefaultDirectorySpecification spec = getObjectFactory().newInstance(DefaultDirectorySpecification.class, settings, relativePath, this);
         action.execute(spec);
+        autoDetectIfConfigured(spec);
         return spec;
     }
 
-    @Nullable
-    @Override
-    public ProjectContainer getParent() {
-        return parent;
-    }
-
-    @Override
-    public String getPathName() {
-        return pathName;
+    private void autoDetectIfConfigured(ProjectContainer container) {
+        if (container.getAutodetect().get()) {
+            Arrays.stream(container.getDir().listFiles())
+                    .filter(file -> file.isDirectory() && new File(file, PROJECT_MARKER_FILE).exists())
+                    .forEach(dir -> container.subproject(dir.getName()));
+        }
     }
 
     @Inject
