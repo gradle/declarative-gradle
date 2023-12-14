@@ -9,8 +9,9 @@ import java.io.File;
 
 abstract public class DefaultProjectSpecification extends AbstractProjectContainer implements ProjectSpecification {
     @Inject
-    public DefaultProjectSpecification(Settings settings, String relativePath, ProjectContainer parent) {
-        super(settings, new File(parent.getDir(), relativePath), parent);
+    public DefaultProjectSpecification(Settings settings, File dir, String logicalPath, ProjectContainer parent) {
+        super(settings, dir, logicalPath, parent);
+        getAutodetect().convention(((AbstractProjectContainer)parent).getAutodetect());
     }
 
     @Override
@@ -20,9 +21,9 @@ abstract public class DefaultProjectSpecification extends AbstractProjectContain
         } else {
             String parentLogicalPath = parent.getLogicalPath();
             if (parentLogicalPath.equals(LOGICAL_PATH_SEPARATOR)) {
-                return LOGICAL_PATH_SEPARATOR + pathName;
+                return LOGICAL_PATH_SEPARATOR + logicalPathName;
             } else {
-                return parentLogicalPath + LOGICAL_PATH_SEPARATOR + pathName;
+                return parentLogicalPath + LOGICAL_PATH_SEPARATOR + logicalPathName;
             }
         }
     }

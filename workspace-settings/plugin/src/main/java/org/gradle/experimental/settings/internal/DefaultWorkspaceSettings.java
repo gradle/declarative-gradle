@@ -19,14 +19,15 @@ abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
     }
 
     @Override
-    public RootBuildSpecification projects(Action<? super RootBuildSpecification> action) {
+    public RootBuildSpecification layout(Action<? super RootBuildSpecification> action) {
         if (projectsConfigured) {
             throw new UnsupportedOperationException("The projects can only be configured once");
         }
         projectsConfigured = true;
 
-        RootBuildSpecification spec = getObjectFactory().newInstance(DefaultRootBuildSpecification.class, settings);
+        DefaultRootBuildSpecification spec = getObjectFactory().newInstance(DefaultRootBuildSpecification.class, settings);
         action.execute(spec);
+        spec.autoDetectIfConfigured();
 
         return spec;
     }

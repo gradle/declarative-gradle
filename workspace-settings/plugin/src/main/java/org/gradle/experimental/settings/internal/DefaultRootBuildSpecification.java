@@ -9,6 +9,7 @@ abstract public class DefaultRootBuildSpecification extends AbstractProjectConta
     @Inject
     public DefaultRootBuildSpecification(Settings settings) {
         super(settings, settings.getRootDir(), "", null);
+        getAutodetect().convention(true);
     }
 
     @Override

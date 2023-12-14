@@ -40,14 +40,12 @@ class DefaultWorkspaceSettingsTest extends Specification {
         workspace.build("foo") {
 
         }
-        workspace.projects() {
+        workspace.layout() {
             subproject("bar")
             subproject("baz") {
                 subproject("qux")
             }
-            directory("buzz") {
-                subproject("fuzz")
-            }
+            subproject("fuzz", "buzz/fuzz")
         }
 
         then:
@@ -110,13 +108,8 @@ class DefaultWorkspaceSettingsTest extends Specification {
         def qux = Mock(ProjectDescriptor)
 
         when:
-        workspace.projects {
-            subproject("foo") {
-                it.autodetect = true
-            }
-            directory("baz") {
-                it.autodetect = true
-            }
+        workspace.layout {
+            from("baz")
         }
 
         then:
@@ -142,11 +135,10 @@ class DefaultWorkspaceSettingsTest extends Specification {
         def baz = Mock(ProjectDescriptor)
 
         when:
-        workspace.projects {
-            subproject("foo") {
-                autodetect = true
+        workspace.layout {
+            subproject("baz") {
+                autodetect = false
             }
-            subproject("baz")
         }
 
         then:

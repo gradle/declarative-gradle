@@ -3,6 +3,7 @@ package org.gradle.experimental.settings.internal;
 import org.gradle.api.Action;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.Property;
 import org.gradle.experimental.settings.ProjectContainer;
 import org.gradle.experimental.settings.ProjectSpecification;
 import org.gradle.internal.Actions;
@@ -11,6 +12,8 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 abstract public class AbstractProjectContainer implements ProjectContainer {
     public static final String PROJECT_MARKER_FILE = "build.gradle.kts";
@@ -19,16 +22,18 @@ abstract public class AbstractProjectContainer implements ProjectContainer {
     protected final Settings settings;
     protected final File dir;
 
-    protected final String pathName;
+    protected final Set<File> autoDetectDirs = new HashSet<>();
+
+    protected final String logicalPathName;
 
     protected final ProjectContainer parent;
 
-    public AbstractProjectContainer(Settings settings, File dir, String pathName, @Nullable ProjectContainer parent) {
+    public AbstractProjectContainer(Settings settings, File dir, String logicalPathName, @Nullable ProjectContainer parent) {
         this.settings = settings;
         this.dir = dir;
-        this.pathName = pathName;
+        this.logicalPathName = logicalPathName;
         this.parent = parent;
-        getAutodetect().convention(false);
+        this.autoDetectDirs.add(dir);
     }
 
     public AbstractProjectContainer(Settings settings, File dir, ProjectContainer parent) {
@@ -41,36 +46,58 @@ abstract public class AbstractProjectContainer implements ProjectContainer {
     }
 
     @Override
-    public ProjectSpecification subproject(String relativePath) {
-        return subproject(relativePath, Actions.doNothing());
+    public ProjectSpecification subproject(String logicalPath) {
+        return subproject(logicalPath, Actions.doNothing());
     }
 
     @Override
-    public ProjectSpecification subproject(String relativePath, Action<? super ProjectSpecification> action) {
-        ProjectSpecification spec = getObjectFactory().newInstance(DefaultProjectSpecification.class, settings, relativePath, this);
+    public ProjectSpecification subproject(String logicalPath, String relativeDirPath) {
+        return subproject(logicalPath, relativeDirPath, Actions.doNothing());
+    }
+
+    @Override
+    public ProjectSpecification subproject(String logicalPath, Action<? super ProjectSpecification> action) {
+        return subproject(logicalPath, logicalPath, action);
+    }
+
+    @Override
+    public ProjectSpecification subproject(String logicalPath, String relativeDirPath, Action<? super ProjectSpecification> action) {
+        return subproject(logicalPath, new File(getDir(), relativeDirPath), action);
+    }
+
+    private ProjectSpecification subproject(File dir) {
+        return subproject(dir.getName(), dir, Actions.doNothing());
+    }
+
+    public ProjectSpecification subproject(String logicalPath, File dir, Action<? super ProjectSpecification> action) {
+        DefaultProjectSpecification spec = getObjectFactory().newInstance(DefaultProjectSpecification.class,  settings, dir, logicalPath, this);
         settings.include(spec.getLogicalPath());
         settings.project(spec.getLogicalPath()).setProjectDir(spec.getDir());
         action.execute(spec);
-        autoDetectIfConfigured(spec);
+        spec.autoDetectIfConfigured();
         return spec;
     }
 
     @Override
-    public ProjectContainer directory(String relativePath, Action<? super ProjectContainer> action) {
-        DefaultDirectorySpecification spec = getObjectFactory().newInstance(DefaultDirectorySpecification.class, settings, relativePath, this);
-        action.execute(spec);
-        autoDetectIfConfigured(spec);
-        return spec;
+    public void from(String relativePath) {
+        autoDetectDirs.add(new File(dir, relativePath));
     }
 
-    private void autoDetectIfConfigured(ProjectContainer container) {
-        if (container.getAutodetect().get()) {
-            Arrays.stream(container.getDir().listFiles())
-                    .filter(file -> file.isDirectory() && new File(file, PROJECT_MARKER_FILE).exists())
-                    .forEach(dir -> container.subproject(dir.getName()));
+    public void autoDetectIfConfigured() {
+        if (getAutodetect().get()) {
+            autoDetectDirs.forEach(dir -> {
+                    if (dir.exists()) {
+                        Arrays.stream(dir.listFiles())
+                                .filter(file -> file.isDirectory() && new File(file, PROJECT_MARKER_FILE).exists())
+                                .forEach(this::subproject);
+                    }
+                }
+            );
         }
     }
 
     @Inject
     abstract protected ObjectFactory getObjectFactory();
+
+    abstract protected Property<Boolean> getAutodetect();
 }

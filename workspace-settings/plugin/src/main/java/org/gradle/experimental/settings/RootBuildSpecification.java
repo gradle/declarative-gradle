@@ -1,5 +1,7 @@
 package org.gradle.experimental.settings;
 
-public interface RootBuildSpecification extends ProjectContainer {
+import org.gradle.api.provider.Property;
 
+public interface RootBuildSpecification extends ProjectContainer {
+    Property<Boolean> getAutodetect();
 }

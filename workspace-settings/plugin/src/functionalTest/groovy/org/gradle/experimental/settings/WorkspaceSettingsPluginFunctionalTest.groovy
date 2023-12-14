@@ -30,7 +30,7 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
                 build("foo") {
                 }
-                projects {
+                layout {
                     
                 }
             }
@@ -57,18 +57,13 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
                 build("foo") {
                 }
-                projects {
+                layout {
                     subproject("bar")
                     subproject("baz") {
-                        // should path be relative to root or parent project?
                         subproject("qux")
-                        // should logical be :baz:qax?
-                        subproject("../qax")
+                        subproject("qax", "../qax")
                     }
-                    // should logical be :fuzz or :buzz:fuzz?
-                    directory("buzz") {
-                        subproject("fuzz")
-                    }
+                    subproject("fuzz", "buzz/fuzz")
                 }
             }
             
@@ -99,7 +94,7 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
                 build("foo") {
                 }
-                projects {
+                layout {
                     subproject("bar")
                     subproject("bar")
                 }
@@ -120,8 +115,8 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
     def "autodetects a multi-project workspace"() {
         given:
         // directories that should be detected
-        createBuildFileIn("foo")
-        createBuildFileIn("foo/bar")
+        createBuildFileIn("foo/fuzz")
+        createBuildFileIn("foo/fuzz/bar")
         createBuildFileIn("baz/qux")
 
         settingsFile << """
@@ -130,19 +125,15 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
 
             configure<org.gradle.experimental.settings.WorkspaceSettings>() {
-                projects {
-                    subproject("foo") {
-                        autodetect = true
-                    }
-                    directory("baz") {
-                        autodetect = true
-                    }
+                layout {
+                    subproject("foo", "foo/fuzz")
+                    from("baz")
                 }
             }
 
-            require(project(":foo").projectDir == rootProject.projectDir.resolve("foo")) { "Expected project ':foo' to be located at 'foo', but was located at \${project(":foo").projectDir}" }
-            require(project(":foo:bar").projectDir == rootProject.projectDir.resolve("foo/bar")) { "Expected project ':foo:bar' to be located at 'foo/bar', but was located at \${project(":foo:bar").projectDir}" }
-            require(project(":qux").projectDir == rootProject.projectDir.resolve("baz/qux")) { "Expected project ':qux' to be located at 'baz/qux', but was located at \${project(":baz:qux").projectDir}" }
+            require(project(":foo").projectDir == rootProject.projectDir.resolve("foo/fuzz")) { "Expected project ':foo' to be located at 'foo/fuzz', but was located at \${project(":foo").projectDir}" }
+            require(project(":foo:bar").projectDir == rootProject.projectDir.resolve("foo/fuzz/bar")) { "Expected project ':foo:bar' to be located at 'foo/fuzz/bar', but was located at \${project(":foo:bar").projectDir}" }
+            require(project(":qux").projectDir == rootProject.projectDir.resolve("baz/qux")) { "Expected project ':qux' to be located at 'baz/qux', but was located at \${project(":qux").projectDir}" }
         """
         buildFile << """
             require(allprojects.size == 4) { "Expected 4 projects, but found \${allprojects.size}" }
@@ -167,7 +158,8 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
 
             configure<org.gradle.experimental.settings.WorkspaceSettings>() {
-                projects {
+                layout {
+                    autodetect = false
                     subproject("foo") 
                     subproject("baz")
                 }
