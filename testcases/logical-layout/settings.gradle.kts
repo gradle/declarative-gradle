@@ -15,7 +15,9 @@ build {
 
 layout {
     autodetect = false
-    subproject("myorg:app", "app")
+    subproject("myorg") {
+        subproject("app", "../app")
+    }
 }
 
 ///
