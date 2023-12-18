@@ -28,10 +28,8 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
-                build("foo") {
-                }
-                layout {
-                    
+                build {
+                    name = "foo"
                 }
             }
             
@@ -55,7 +53,8 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
-                build("foo") {
+                build {
+                    name = "foo"
                 }
                 layout {
                     subproject("bar")
@@ -92,7 +91,8 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
             }
             
             configure<org.gradle.experimental.settings.WorkspaceSettings> {
-                build("foo") {
+                build {
+                    name = "foo"
                 }
                 layout {
                     subproject("bar")
@@ -112,7 +112,42 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
                 .build()
     }
 
-    def "autodetects a multi-project workspace"() {
+    def "autodetects a multi-project workspace without configuration"() {
+        given:
+        // directories that should be detected
+        createBuildFileIn("foo")
+        createBuildFileIn("bar")
+        createBuildFileIn("baz")
+        createBuildFileIn("baz/qux")
+
+        settingsFile << """
+            plugins {
+                id("org.gradle.experimental.settings.workspace")
+            }
+
+            configure<org.gradle.experimental.settings.WorkspaceSettings>() {
+                // no configuration
+            }
+
+            // Only required because the autodetection when there's no configuration is triggered in settingsEvaluated for the prototype
+            settings.gradle.settingsEvaluated {
+                require(project(":foo").projectDir == rootProject.projectDir.resolve("foo")) { "Expected project ':foo' to be located at 'foo', but was located at \${project(":foo").projectDir}" }
+                require(project(":bar").projectDir == rootProject.projectDir.resolve("bar")) { "Expected project ':bar' to be located at 'bar', but was located at \${project(":bar").projectDir}" }
+                require(project(":baz").projectDir == rootProject.projectDir.resolve("baz")) { "Expected project ':baz' to be located at 'baz', but was located at \${project(":baz").projectDir}" }
+                require(project(":baz:qux").projectDir == rootProject.projectDir.resolve("baz/qux")) { "Expected project ':qux' to be located at 'baz/qux', but was located at \${project(":qux").projectDir}" }
+            }
+        """
+        buildFile << """
+            require(allprojects.size == 5) { "Expected 5 projects, but found \${allprojects.size}" }
+        """
+
+        expect:
+        BuildResult result = createRunner()
+                .withArguments("--stacktrace", "projects")
+                .build()
+    }
+
+    def "autodetects a multi-project workspace with additional configuration"() {
         given:
         // directories that should be detected
         createBuildFileIn("foo/fuzz")

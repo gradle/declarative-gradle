@@ -10,11 +10,12 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 /// NEW DSL
 
 build {
-    name = "subprojects-dir"
+    name = "logical-layout"
 }
 
 layout {
-    from("subprojects")
+    autodetect = false
+    subproject("myorg:app", "app")
 }
 
 ///

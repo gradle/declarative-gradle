@@ -2,6 +2,7 @@ package org.gradle.experimental.settings.internal
 
 import org.gradle.api.initialization.ProjectDescriptor
 import org.gradle.api.initialization.Settings
+import org.gradle.api.invocation.Gradle
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 import spock.lang.TempDir
@@ -16,12 +17,17 @@ class DefaultWorkspaceSettingsTest extends Specification {
     def settings = Mock(Settings)
     def rootProject = Mock(ProjectDescriptor)
     def project = ProjectBuilder.builder().withProjectDir(projectDir).build()
-    def workspace = project.objects.newInstance(DefaultWorkspaceSettings, settings)
+    def workspace
+
+    def setup() {
+        _ * settings.getGradle() >> Mock(Gradle)
+        workspace = project.objects.newInstance(DefaultWorkspaceSettings, settings)
+    }
 
     def "sets the workspace name"() {
         when:
-        workspace.build("foo") {
-
+        workspace.build {
+            it.name = "foo"
         }
 
         then:
@@ -37,10 +43,10 @@ class DefaultWorkspaceSettingsTest extends Specification {
         def fuzz = Mock(ProjectDescriptor)
 
         when:
-        workspace.build("foo") {
-
+        workspace.build {
+            it.name = "foo"
         }
-        workspace.layout() {
+        workspace.layout {
             subproject("bar")
             subproject("baz") {
                 subproject("qux")
@@ -75,23 +81,24 @@ class DefaultWorkspaceSettingsTest extends Specification {
 
     def "cannot configure the build twice"() {
         when:
-        workspace.build('foo') {
-
+        workspace.build() {
+            it.name = "foo"
         }
 
         then:
         1 * settings.getRootProject() >> rootProject
 
         when:
-        workspace.build('foo') {
-
+        workspace.build {
+            it.name = "foo"
         }
 
         then:
         thrown(UnsupportedOperationException)
 
         when:
-        workspace.build('bar') {
+        workspace.build {
+            it.name = "bar"
         }
 
         then:

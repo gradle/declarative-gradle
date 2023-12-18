@@ -9,7 +9,7 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
 
-projects {
+build {
     name = "single-project"
 }
 

@@ -4,7 +4,7 @@ import org.gradle.api.Action;
 import org.gradle.api.initialization.Settings;
 
 public interface WorkspaceSettings {
-    RootBuildSpecification layout(Action<? super RootBuildSpecification> action);
+    RootProjectSpecification layout(Action<? super RootProjectSpecification> action);
 
-    void build(String name, Action<? super Settings> action);
+    void build(Action<? super BuildSpecification> action);
 }

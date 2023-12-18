@@ -8,30 +8,25 @@ plugins {
 configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
-build("spring-boot-like") {
-    
-}
-projects {
 
-    directory("core") {
-        autodetect = true
-    }
-    directory("tests") {
-        subproject("integ-test") {
-            // :integ-test:test-1
-            // :integ-test:test-2
-            autodetect = true
-        }
-        subproject("perf-test") {
-            // :integ-test:test-1
-            // :integ-test:test-2
-            autodetect = true
-        }
-    }
-    directory("utils") {
-        autodetect = true
-    }
-    subproject("packaging")
+build {
+    name = "spring-boot-like"
+}
+
+layout {
+
+    from("core")
+    from("tests/integ-test")
+
+    // :integ-test:test-1
+    // :integ-test:test-2
+    subproject("integ-test", "tests/integ-test")
+
+    // :integ-test:test-1
+    // :integ-test:test-2
+    subproject("perf-test", "tests/perf-tests")
+
+    from("utils")
 }
 
 ///

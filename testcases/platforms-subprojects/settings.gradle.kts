@@ -9,18 +9,13 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 
 /// NEW DSL
 
-build("platforms-subprojects") {
-    
+build {
+    name = "platforms-subprojects"
 }
-projects {
-    directory("platforms") {
-        subproject("jvm") {
-            autodetect = true
-        }
-        subproject("ide") {
-            autodetect = true
-        }
-    }
+
+layout {
+    from("platforms/jvm")
+    from("platforms/ide")
 }
 
 ///

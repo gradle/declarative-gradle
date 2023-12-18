@@ -3,7 +3,8 @@ package org.gradle.experimental.settings.internal;
 import org.gradle.api.Action;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.model.ObjectFactory;
-import org.gradle.experimental.settings.RootBuildSpecification;
+import org.gradle.experimental.settings.BuildSpecification;
+import org.gradle.experimental.settings.RootProjectSpecification;
 import org.gradle.experimental.settings.WorkspaceSettings;
 
 import javax.inject.Inject;
@@ -16,16 +17,25 @@ abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
     @Inject
     public DefaultWorkspaceSettings(Settings settings) {
         this.settings = settings;
+
+        // this isn't technically correct, but it's the best we can do for the prototype.
+        // presumably this would move to after the project layout is evaluated rather than after settings.
+        settings.getGradle().settingsEvaluated(s -> {
+            if (!projectsConfigured) {
+                DefaultRootProjectSpecification spec = getObjectFactory().newInstance(DefaultRootProjectSpecification.class, settings);
+                spec.autoDetectIfConfigured();
+            }
+        });
     }
 
     @Override
-    public RootBuildSpecification layout(Action<? super RootBuildSpecification> action) {
+    public RootProjectSpecification layout(Action<? super RootProjectSpecification> action) {
         if (projectsConfigured) {
             throw new UnsupportedOperationException("The projects can only be configured once");
         }
         projectsConfigured = true;
 
-        DefaultRootBuildSpecification spec = getObjectFactory().newInstance(DefaultRootBuildSpecification.class, settings);
+        DefaultRootProjectSpecification spec = getObjectFactory().newInstance(DefaultRootProjectSpecification.class, settings);
         action.execute(spec);
         spec.autoDetectIfConfigured();
 
@@ -33,13 +43,17 @@ abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
     }
 
     @Override
-    public void build(String name, Action<? super Settings> action) {
+    public void build(Action<? super BuildSpecification> action) {
         if (buildConfigured) {
             throw new UnsupportedOperationException("The build can only be configured once");
         }
         buildConfigured = true;
-        settings.getRootProject().setName(name);
-        action.execute(settings);
+
+        BuildSpecification spec = getObjectFactory().newInstance(BuildSpecification.class);
+        action.execute(spec);
+        if (spec.getName().isPresent()) {
+            settings.getRootProject().setName(spec.getName().get());
+        }
     }
 
     @Inject
