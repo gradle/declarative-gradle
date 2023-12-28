@@ -55,8 +55,8 @@ class DefaultWorkspaceSettingsTest extends Specification {
         }
 
         then:
-        1 * settings.getRootProject() >> rootProject
-        1 * settings.getRootDir() >> projectDir
+        _ * settings.getRootProject() >> rootProject
+        _ * settings.getRootDir() >> projectDir
         1 * rootProject.setName("foo")
         1 * settings.include(":bar")
         1 * settings.include(":baz")
@@ -160,6 +160,60 @@ class DefaultWorkspaceSettingsTest extends Specification {
         1 * settings.project(":foo") >> foo
         1 * settings.project(":foo:bar") >> bar
         1 * settings.project(":baz") >> baz
+    }
+
+    def "cannot provide a complex logical path (#logicalPath)"() {
+        when:
+        workspace.layout {
+            subproject(logicalPath)
+        }
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        logicalPath << ["foo:bar", ":foo:bar:baz", ":foo"]
+    }
+
+    def "cannot both declare and autodetect the same directory"() {
+        given:
+        createBuildFileIn("foo")
+        createBuildFileIn("bar")
+        createBuildFileIn("bar/foo")
+        def foo = Mock(ProjectDescriptor)
+        def bar = Mock(ProjectDescriptor)
+
+        when:
+        workspace.layout {
+            subproject("foo", "bar/foo")
+        }
+
+        then:
+        _ * settings.getRootProject() >> rootProject
+        _ * settings.getRootDir() >> projectDir
+        1 * settings.include(":foo")
+        1 * settings.include(":bar")
+        1 * settings.project(":foo") >> foo
+        1 * settings.project(":bar") >> bar
+        1 * foo.setProjectDir(new File(projectDir, "bar/foo"))
+    }
+
+    def "cannot declare the same logical path twice"() {
+        given:
+        def foo = Mock(ProjectDescriptor)
+
+        when:
+        workspace.layout {
+            subproject("foo")
+            subproject("foo")
+        }
+
+        then:
+        _ * settings.getRootProject() >> rootProject
+        _ * settings.getRootDir() >> projectDir
+        1 * settings.include(":foo")
+        1 * settings.project(":foo") >> foo
+        thrown(IllegalArgumentException)
     }
 
     private void createBuildFileIn(String path) {

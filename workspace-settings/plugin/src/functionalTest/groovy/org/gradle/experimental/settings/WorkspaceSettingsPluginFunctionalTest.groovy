@@ -83,35 +83,6 @@ class WorkspaceSettingsPluginFunctionalTest extends Specification {
                 .build()
     }
 
-    def "handles the same project configured twice"() {
-        given:
-        settingsFile << """
-            plugins {
-                id("org.gradle.experimental.settings.workspace")
-            }
-            
-            configure<org.gradle.experimental.settings.WorkspaceSettings> {
-                build {
-                    name = "foo"
-                }
-                layout {
-                    subproject("bar")
-                    subproject("bar")
-                }
-            }
-            
-            require(findProject(":bar") != null) { "Expected project ':bar' to be configured, but was not" }
-        """
-        buildFile << """
-            require(allprojects.size == 2) { "Expected 2 projects, but found \${allprojects.size}" }
-        """
-
-        expect:
-        BuildResult result = createRunner()
-                .withArguments("--stacktrace", "projects")
-                .build()
-    }
-
     def "autodetects a multi-project workspace without configuration"() {
         given:
         // directories that should be detected

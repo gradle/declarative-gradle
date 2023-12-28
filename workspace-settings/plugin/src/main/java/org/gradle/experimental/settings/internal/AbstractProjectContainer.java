@@ -2,42 +2,40 @@ package org.gradle.experimental.settings.internal;
 
 import org.gradle.api.Action;
 import org.gradle.api.initialization.Settings;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.experimental.settings.ProjectContainer;
 import org.gradle.experimental.settings.ProjectSpecification;
 import org.gradle.internal.Actions;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.gradle.experimental.settings.ProjectSpecification.LOGICAL_PATH_SEPARATOR;
+import static org.gradle.experimental.settings.ProjectSpecification.logicalPathFromParent;
+
 abstract public class AbstractProjectContainer implements ProjectContainer {
     public static final String PROJECT_MARKER_FILE = "build.gradle.kts";
-    protected static final String LOGICAL_PATH_SEPARATOR = ":";
 
     protected final Settings settings;
     protected final File dir;
 
     protected final Set<File> autoDetectDirs = new HashSet<>();
 
-    protected final String logicalPathName;
+    protected final String logicalPathRelativeToParent;
 
     protected final ProjectContainer parent;
+    private final ProjectSpecificationFactory projectSpecificationFactory;
 
-    public AbstractProjectContainer(Settings settings, File dir, String logicalPathName, @Nullable ProjectContainer parent) {
+    public AbstractProjectContainer(Settings settings, File dir, String logicalPathRelativeToParent, @Nullable ProjectContainer parent, ProjectSpecificationFactory projectSpecificationFactory) {
         this.settings = settings;
         this.dir = dir;
-        this.logicalPathName = logicalPathName;
+        this.logicalPathRelativeToParent = logicalPathRelativeToParent;
         this.parent = parent;
+        this.projectSpecificationFactory = projectSpecificationFactory;
         this.autoDetectDirs.add(dir);
-    }
-
-    public AbstractProjectContainer(Settings settings, File dir, ProjectContainer parent) {
-        this(settings, dir, dir.getName(), parent);
     }
 
     @Override
@@ -70,7 +68,11 @@ abstract public class AbstractProjectContainer implements ProjectContainer {
     }
 
     public ProjectSpecification subproject(String logicalPath, File dir, Action<? super ProjectSpecification> action) {
-        DefaultProjectSpecification spec = getObjectFactory().newInstance(DefaultProjectSpecification.class,  settings, dir, logicalPath, this);
+        if (logicalPath.contains(LOGICAL_PATH_SEPARATOR) || logicalPath.contains(File.separator)) {
+            throw new IllegalArgumentException("The logical path '" + logicalPath + "' should not contain separators.  To create a complex logical path, use nested calls to the 'subproject()' method.");
+        }
+
+        DefaultProjectSpecification spec = projectSpecificationFactory.create(settings, dir, logicalPath, this);
         settings.include(spec.getLogicalPath());
         settings.project(spec.getLogicalPath()).setProjectDir(spec.getDir());
         action.execute(spec);
@@ -88,16 +90,15 @@ abstract public class AbstractProjectContainer implements ProjectContainer {
             autoDetectDirs.forEach(dir -> {
                     if (dir.exists()) {
                         Arrays.stream(dir.listFiles())
-                                .filter(file -> file.isDirectory() && new File(file, PROJECT_MARKER_FILE).exists())
+                                .filter(file -> file.isDirectory()
+                                        && new File(file, PROJECT_MARKER_FILE).exists()
+                                        && !projectSpecificationFactory.isLogicalPathOrDirectoryDeclared(logicalPathFromParent(file.getName(), this), file))
                                 .forEach(this::subproject);
                     }
                 }
             );
         }
     }
-
-    @Inject
-    abstract protected ObjectFactory getObjectFactory();
 
     abstract protected Property<Boolean> getAutodetect();
 }
