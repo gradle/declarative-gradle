@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("../../workspace-settings")
+    includeBuild("../../../workspace-settings")
 }
 plugins {
     id("org.gradle.experimental.settings.workspace")

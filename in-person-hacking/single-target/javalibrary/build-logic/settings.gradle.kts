@@ -5,7 +5,7 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 pluginManagement {
-    includeBuild("../../single-target")
+    includeBuild("../../../single-target")
 }
 dependencyResolutionManagement {
     // Reuse version catalog from the main build.

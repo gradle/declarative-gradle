@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("../../workspace-settings")
+    includeBuild("../../../workspace-settings")
 }
 plugins {
     id("org.gradle.experimental.settings.workspace")
@@ -10,14 +10,11 @@ configure<org.gradle.experimental.settings.WorkspaceSettings> {
 /// NEW DSL
 
 build {
-    name = "logical-layout"
+    name = "subprojects-dir"
 }
 
 layout {
-    autodetect = false
-    subproject("myorg") {
-        subproject("app", "../app")
-    }
+    from("subprojects")
 }
 
 ///
