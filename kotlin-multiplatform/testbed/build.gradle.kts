@@ -7,11 +7,13 @@ repositories {
     google()
 }
 
+defaultTasks("build")
+
 kmpApplication {
     sourceSets {
         commonMain {
             dependencies {
-
+                implementation(libs.kotlinx.coroutines)
             }
         }
     }
