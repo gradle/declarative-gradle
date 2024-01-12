@@ -7,6 +7,12 @@ repositories {
     google()
 }
 
-kmp {
+kmpApplication {
+    sourceSets {
+        commonMain {
+            dependencies {
 
+            }
+        }
+    }
 }
