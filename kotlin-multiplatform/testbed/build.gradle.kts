@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("org.gradle.playground-kmp")
 }
@@ -10,11 +12,19 @@ repositories {
 defaultTasks("build")
 
 kmpApplication {
+    dependencies {
+        implementation(libs.kotlinx.coroutines)
+    }
+
     sourceSets {
         commonMain {
-            dependencies {
-                implementation(libs.kotlinx.coroutines)
-            }
+        }
+
+        jsMain {
+
+        }
+
+        jvmMain {
         }
     }
 }

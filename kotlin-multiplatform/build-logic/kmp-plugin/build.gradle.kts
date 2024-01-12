@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    //alias(libs.plugins.kotlinMultiplatform).apply(false)
 }
 
 java {
@@ -14,6 +15,17 @@ repositories {
     google()
     gradlePluginPortal()
     mavenCentral()
+}
+
+dependencies {
+    implementation(libs.kotlin.multiplatform)
+    implementation(libs.guava)
+}
+
+tasks.named("processResources", Copy::class) {
+    from("../gradle/libs.versions.toml") {
+        into("META-INF/catalogs")
+    }
 }
 
 gradlePlugin {
