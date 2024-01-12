@@ -9,15 +9,48 @@ import org.gradle.api.experimental.internal.VersionCatalogLoader
 import org.gradle.api.plugins.jvm.PlatformDependencyModifiers
 import org.gradle.api.plugins.jvm.TestFixturesDependencyModifiers
 import org.gradle.api.tasks.Nested
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KMPPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        val kmpExtension = project.extensions.create("kmpApplication", KMPApplicationExtension::class.java)
+
         val pluginLibs = VersionCatalogLoader.loadPluginVersionCatalog(project)
         project.plugins.apply(pluginLibs.getPlugin("kotlinMultiplatform").id)
 
-        val kmpExtension = project.extensions.create("kmpApplication", KMPApplicationExtension::class.java)
+        // Necessary to avoid "The value for extension 'kmpApplication' property 'dependencies.implementation' property 'dependencies' is final and cannot be changed any further."
+        // due to how the KotlinDependencyHandler is implemented
+        project.afterEvaluate {
+            configureProjectFromExtension(project, kmpExtension)
+        }
+    }
 
-        println("KMPPlugin applied to ${project.name}")
+    @Suppress("UnstableApiUsage")
+    private fun configureProjectFromExtension(project: Project, kmpExtension: KMPApplicationExtension) {
+        val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+
+        kotlin.jvm()
+        kotlin.js() {
+            browser()
+        }
+
+        kotlin.sourceSets.getByName("commonMain").dependencies {
+            kmpExtension.dependencies.implementation.dependencies.get().forEach {
+                implementation(it)
+            }
+        }
+
+        kotlin.sourceSets.getByName("jsMain").dependencies {
+            kmpExtension.sourceSets.jsMain.dependencies.implementation.dependencies.get().forEach {
+                implementation(it)
+            }
+        }
+
+        kotlin.sourceSets.getByName("jvmMain").dependencies {
+            kmpExtension.sourceSets.jvmMain.dependencies.implementation.dependencies.get().forEach {
+                implementation(it)
+            }
+        }
     }
 }
 
@@ -33,12 +66,12 @@ abstract class KMPDependencies : PlatformDependencyModifiers, TestFixturesDepend
 
 abstract class KMPApplicationExtension {
     @get:Nested
-    abstract val dependencies: KMPSourceSetDependencies
+    abstract val dependencies: KMPDependencies
 
     @get:Nested
     abstract val sourceSets: KMPSourceSets
 
-    fun dependencies(configure: KMPSourceSetDependencies.() -> Unit) {
+    fun dependencies(configure: KMPDependencies.() -> Unit) {
         configure(dependencies)
     }
 
@@ -48,13 +81,6 @@ abstract class KMPApplicationExtension {
 }
 
 abstract class KMPSourceSets {
-    @get:Nested
-    abstract val commonMain: KMPSourceSet
-
-    fun commonMain(configure: KMPSourceSet.() -> Unit) {
-        configure(commonMain)
-    }
-
     @get:Nested
     abstract val jsMain: KMPSourceSet
 
@@ -72,15 +98,9 @@ abstract class KMPSourceSets {
 
 abstract class KMPSourceSet {
     @get:Nested
-    abstract val dependencies: KMPSourceSetDependencies
+    abstract val dependencies: KMPDependencies
 
-    fun dependencies(configure: KMPSourceSetDependencies.() -> Unit) {
+    fun dependencies(configure: KMPDependencies.() -> Unit) {
         configure(dependencies)
     }
-}
-
-@Suppress("UnstableApiUsage")
-abstract class KMPSourceSetDependencies : PlatformDependencyModifiers, TestFixturesDependencyModifiers, GradleDependencies {
-    @get:Nested
-    abstract val implementation: DependencyCollector
 }
