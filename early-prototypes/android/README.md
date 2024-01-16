@@ -4,7 +4,7 @@ This explores ideas with a simpler DSL to configure applications and libraries w
 
 All configuration is moved under a new `androidApplication` block.
 
-## Example
+## [Example](testbed/build.gradle.kts)
 
 Gradle needs to run with Java 17.
 
