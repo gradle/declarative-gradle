@@ -15,19 +15,22 @@ kmpApplication {
 
     // Common dependencies
     dependencies {
+        implementation(libs.kotlin.test)
         implementation(libs.kotlinx.datetime)
     }
 
     targets {
-        jvm {
-            // Dependencies used only by the JVM target
+        val jvm by creating {
             dependencies {
                 implementation(libs.kotlinx.coroutines)
             }
         }
+
+        val js by creating
     }
 }
 
+// This is for testing the publishSources property, ideally this block would live inside the kmpApplication block
 publishing {
     repositories {
         maven {

@@ -2,6 +2,7 @@ import kotlinx.datetime.*
 
 expect fun environment(): String
 
+// This method is for testing the languageVersion property
 fun openEndedRange(): OpenEndRange<Int> {
     return 4..<10 // Open-ended ranges added in Kotlin 1.9
 }
