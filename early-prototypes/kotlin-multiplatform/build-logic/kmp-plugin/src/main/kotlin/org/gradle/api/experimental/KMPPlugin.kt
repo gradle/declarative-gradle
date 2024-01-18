@@ -8,21 +8,39 @@ import org.gradle.api.artifacts.dsl.GradleDependencies
 import org.gradle.api.experimental.internal.VersionCatalogLoader
 import org.gradle.api.plugins.jvm.PlatformDependencyModifiers
 import org.gradle.api.plugins.jvm.TestFixturesDependencyModifiers
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class KMPPlugin : Plugin<Project> {
+    companion object {
+        const val DEFAULT_KOTLIN_VERSION = "1.8"
+    }
+
     override fun apply(project: Project) {
         val kmpExtension = project.extensions.create("kmpApplication", KMPApplicationExtension::class.java)
+        configureConventions(kmpExtension)
 
-        val pluginLibs = VersionCatalogLoader.loadPluginVersionCatalog(project)
-        project.plugins.apply(pluginLibs.getPlugin("kotlinMultiplatform").id)
+        applyPlugins(project)
 
         // Necessary to avoid "The value for extension 'kmpApplication' property 'dependencies.implementation' property 'dependencies' is final and cannot be changed any further."
         // due to how the KotlinDependencyHandler is implemented
         project.afterEvaluate {
             configureProjectFromExtension(project, kmpExtension)
         }
+    }
+
+    private fun applyPlugins(project: Project) {
+        val pluginLibs = VersionCatalogLoader.loadPluginVersionCatalog(project)
+        project.plugins.apply(pluginLibs.getPlugin("kotlinMultiplatform").id)
+
+        project.plugins.apply("maven-publish")
+    }
+
+    private fun configureConventions(kmpExtension: KMPApplicationExtension) {
+        kmpExtension.publishSources.convention(false)
+        kmpExtension.languageVersion.convention(DEFAULT_KOTLIN_VERSION)
     }
 
     @Suppress("UnstableApiUsage")
@@ -51,6 +69,25 @@ class KMPPlugin : Plugin<Project> {
                 implementation(it)
             }
         }
+
+        configureLanguageVersion(kotlin, kmpExtension)
+        configureSourcePublishing(kotlin, kmpExtension)
+    }
+
+    private fun configureSourcePublishing(kotlin: KotlinMultiplatformExtension, kmpExtension: KMPApplicationExtension) {
+        kotlin.withSourcesJar(kmpExtension.publishSources.get())
+    }
+
+    private fun configureLanguageVersion(
+        kotlin: KotlinMultiplatformExtension,
+        kmpExtension: KMPApplicationExtension
+    ) {
+        kotlin.sourceSets.all {
+            languageSettings.apply {
+                languageVersion = kmpExtension.languageVersion.get()
+                apiVersion = kmpExtension.languageVersion.get()
+            }
+        }
     }
 }
 
@@ -65,6 +102,12 @@ abstract class KMPDependencies : PlatformDependencyModifiers, TestFixturesDepend
 }
 
 abstract class KMPApplicationExtension {
+    @get:Input
+    abstract val languageVersion: Property<String>
+
+    @get:Input
+    abstract val publishSources: Property<Boolean>
+
     @get:Nested
     abstract val dependencies: KMPDependencies
 
