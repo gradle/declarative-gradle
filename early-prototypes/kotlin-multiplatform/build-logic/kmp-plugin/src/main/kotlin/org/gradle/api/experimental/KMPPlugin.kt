@@ -41,22 +41,16 @@ class KMPPlugin : Plugin<Project> {
         val kmpExtension = project.extensions.getByType(KMPApplicationExtension::class.java)
         val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
 
-        configureLanguageVersion(kotlin, kmpExtension)
-        configureSourcePublishing(kotlin, kmpExtension)
+        configureLanguageVersion(kmpExtension, kotlin)
+        configureSourcePublishing(kmpExtension, kotlin)
         configureCommonDependencies(kmpExtension, kotlin)
 
-        maybeConfigureJvmTarget(kmpExtension, kotlin)
-        maybeConfigureJsTarget(kmpExtension, kotlin)
+        createAndConfigureTargets(kmpExtension, kotlin)
     }
 
-    private fun configureSourcePublishing(kotlin: KotlinMultiplatformExtension, kmpExtension: KMPApplicationExtension) {
-        kotlin.withSourcesJar(kmpExtension.publishSources.get())
-    }
+    private fun configureSourcePublishing(kmpExtension: KMPApplicationExtension, kotlin: KotlinMultiplatformExtension) = kotlin.withSourcesJar(kmpExtension.publishSources.get())
 
-    private fun configureLanguageVersion(
-        kotlin: KotlinMultiplatformExtension,
-        kmpExtension: KMPApplicationExtension
-    ) {
+    private fun configureLanguageVersion(kmpExtension: KMPApplicationExtension, kotlin: KotlinMultiplatformExtension) {
         kotlin.sourceSets.all {
             languageSettings.apply {
                 languageVersion = kmpExtension.languageVersion.get()
@@ -65,36 +59,26 @@ class KMPPlugin : Plugin<Project> {
         }
     }
 
-    private fun configureCommonDependencies(
-        kmpExtension: KMPApplicationExtension,
-        kotlin: KotlinMultiplatformExtension
-    ) {
-        copyDependencies(kmpExtension.dependencies, kotlin, "commonMain")
-    }
+    private fun configureCommonDependencies(kmpExtension: KMPApplicationExtension, kotlin: KotlinMultiplatformExtension) = copyDependencies(kmpExtension.dependencies, kotlin, "commonMain")
 
-    private fun maybeConfigureJvmTarget(
-        kmpExtension: KMPApplicationExtension,
-        kotlin: KotlinMultiplatformExtension
-    ) {
-        if (kmpExtension.targets.findByName("jvm") != null) {
-            kmpExtension.targets.named("jvm", KMPTarget::class.java).configure {
-                kotlin.jvm()
-                copyDependencies(dependencies, kotlin, "jvmMain")
+    private fun createAndConfigureTargets(kmpExtension: KMPApplicationExtension, kotlin: KotlinMultiplatformExtension) {
+        kmpExtension.platforms.get().forEach { platformName ->
+            enableTargetPlatform(platformName, kotlin)
+
+            val target = kmpExtension.targets.maybeCreate(platformName) // Depending on what we did with the container, this might already exist
+            target.dependencies {
+                copyDependencies(this, kotlin, target.name + "Main")
             }
         }
     }
 
-    private fun maybeConfigureJsTarget(
-        kmpExtension: KMPApplicationExtension,
-        kotlin: KotlinMultiplatformExtension
-    ) {
-        if (kmpExtension.targets.findByName("js") != null) {
-            kmpExtension.targets.named("js", KMPTarget::class.java).configure {
-                kotlin.js() {
-                    browser()
-                }
-                copyDependencies(dependencies, kotlin, "jsMain")
+    private fun enableTargetPlatform(platformName: String, kotlin: KotlinMultiplatformExtension) {
+        when(platformName) {
+            "jvm" -> kotlin.jvm()
+            "js" -> kotlin.js() {
+                browser()
             }
+            else -> throw IllegalArgumentException("Unknown platform: $platformName")
         }
     }
 
@@ -107,4 +91,3 @@ class KMPPlugin : Plugin<Project> {
         }
     }
 }
-

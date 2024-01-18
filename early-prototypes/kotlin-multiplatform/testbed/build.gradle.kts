@@ -10,6 +10,8 @@ repositories {
 }
 
 kmpApplication {
+    platforms = listOf("jvm", "js")
+
     languageVersion = "1.9"
     publishSources = true
 
@@ -20,13 +22,11 @@ kmpApplication {
     }
 
     targets {
-        val jvm by creating {
+        jvm {
             dependencies {
                 implementation(libs.kotlinx.coroutines)
             }
         }
-
-        val js by creating
     }
 }
 
