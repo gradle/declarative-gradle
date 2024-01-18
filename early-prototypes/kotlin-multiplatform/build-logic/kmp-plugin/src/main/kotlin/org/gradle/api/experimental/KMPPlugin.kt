@@ -59,13 +59,13 @@ class KMPPlugin : Plugin<Project> {
         }
 
         kotlin.sourceSets.getByName("jsMain").dependencies {
-            kmpExtension.sourceSets.jsMain.dependencies.implementation.dependencies.get().forEach {
+            kmpExtension.targets.js.dependencies.implementation.dependencies.get().forEach {
                 implementation(it)
             }
         }
 
         kotlin.sourceSets.getByName("jvmMain").dependencies {
-            kmpExtension.sourceSets.jvmMain.dependencies.implementation.dependencies.get().forEach {
+            kmpExtension.targets.jvm.dependencies.implementation.dependencies.get().forEach {
                 implementation(it)
             }
         }
@@ -112,34 +112,34 @@ abstract class KMPApplicationExtension {
     abstract val dependencies: KMPDependencies
 
     @get:Nested
-    abstract val sourceSets: KMPSourceSets
+    abstract val targets: KMPTargets
 
     fun dependencies(configure: KMPDependencies.() -> Unit) {
         configure(dependencies)
     }
 
-    fun sourceSets(configure: KMPSourceSets.() -> Unit) {
-        configure(sourceSets)
+    fun targets(configure: KMPTargets.() -> Unit) {
+        configure(targets)
     }
 }
 
-abstract class KMPSourceSets {
+abstract class KMPTargets {
     @get:Nested
-    abstract val jsMain: KMPSourceSet
+    abstract val js: KMPTarget
 
-    fun jsMain(configure: KMPSourceSet.() -> Unit) {
-        configure(jsMain)
+    fun js(configure: KMPTarget.() -> Unit) {
+        configure(js)
     }
 
     @get:Nested
-    abstract val jvmMain: KMPSourceSet
+    abstract val jvm: KMPTarget
 
-    fun jvmMain(configure: KMPSourceSet.() -> Unit) {
-        configure(jvmMain)
+    fun jvm(configure: KMPTarget.() -> Unit) {
+        configure(jvm)
     }
 }
 
-abstract class KMPSourceSet {
+abstract class KMPTarget {
     @get:Nested
     abstract val dependencies: KMPDependencies
 
