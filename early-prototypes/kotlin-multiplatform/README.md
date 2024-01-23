@@ -2,7 +2,7 @@
 
 This explores how to use a simpler, more static DSL to configure applications and libraries written for KMP.
 
-All configuration is moved under a new `androidApplication` block.
+All configuration is moved under a new `kmpApplication` block.
 This example only demonstrates an application, but the same ideas apply to libraries.
 
 ## [Example](testbed/build.gradle.kts)
