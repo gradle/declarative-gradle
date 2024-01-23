@@ -18,6 +18,12 @@ There is code in the `Greeter.kt` file in `commonMain` that requires Kotlin 1.9 
 Static extension methods are provided for each platform (only `jvm` and `js` implemented so far) to allow for configuring platform-specific dependencies with IDE type assistance.
 - Publishing the project is configured to use a local Maven repo under `build/repo` using the `publishing` block provided by the `maven-publish` plugin, to demonstrate the results of publishing the project with and without sources.
 
+## Goals
+
+- This DSL should look and feel like a Gradle DSL, be similar to Java and Android builds, and be navigable by Gradle developers new to KMP.
+- The `targets` block should be a container holding each platform, not merely a static extension.
+- Extraneous blocks should be simplified or removed and their contents pulled up a level.
+
 ### Running the project
 
 All tasks below should be executed from the `testbed` directory.
