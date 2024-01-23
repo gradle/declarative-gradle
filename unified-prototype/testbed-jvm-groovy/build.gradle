@@ -1,0 +1,9 @@
+plugins {
+    id("org.gradle.unified-prototype")
+}
+
+jvmLibrary {
+    dependencies {
+        api("org:foo:1.0")
+    }
+}
