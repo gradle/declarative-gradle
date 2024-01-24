@@ -1,7 +1,5 @@
-import org.gradle.api.experimental.android.androidLibrary
-
 plugins {
-    id("org.gradle.unified-prototype")
+    id("org.gradle.android-prototype")
 }
 
 androidLibrary {

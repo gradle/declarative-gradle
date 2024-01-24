@@ -1,5 +1,5 @@
 plugins {
-    id("org.gradle.unified-prototype")
+    id("org.gradle.kmp-prototype")
 }
 
 kmpLibrary {

@@ -1,7 +1,5 @@
-import org.gradle.api.experimental.kmp.kmpLibrary
-
 plugins {
-    id("org.gradle.unified-prototype")
+    id("org.gradle.kmp-prototype")
 }
 
 kmpLibrary {

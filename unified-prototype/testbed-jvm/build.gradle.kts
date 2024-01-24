@@ -1,7 +1,5 @@
-import org.gradle.api.experimental.jvm.jvmLibrary
-
 plugins {
-    id("org.gradle.unified-prototype")
+    id("org.gradle.jvm-prototype")
 }
 
 jvmLibrary {
