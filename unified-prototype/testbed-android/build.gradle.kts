@@ -1,5 +1,5 @@
 plugins {
-    id("org.gradle.android-prototype")
+    id("org.gradle.experimental.android-library")
 }
 
 androidLibrary {

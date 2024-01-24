@@ -11,8 +11,8 @@ dependencies {
 gradlePlugin {
     plugins {
         create("android-plugin") {
-            id = "org.gradle.android-prototype"
-            implementationClass = "org.gradle.api.experimental.android.StandaloneAndroidPlugin"
+            id = "org.gradle.experimental.android-library"
+            implementationClass = "org.gradle.api.experimental.android.StandaloneAndroidLibraryPlugin"
         }
     }
 }

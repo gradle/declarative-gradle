@@ -1,5 +1,5 @@
 plugins {
-    id("org.gradle.kmp-prototype")
+    id("org.gradle.experimental.kmp-library")
 }
 
 kmpLibrary {

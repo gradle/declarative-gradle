@@ -11,8 +11,8 @@ dependencies {
 gradlePlugin {
     plugins {
         create("kmp-plugin") {
-            id = "org.gradle.kmp-prototype"
-            implementationClass = "org.gradle.api.experimental.kmp.StandaloneKmpPlugin"
+            id = "org.gradle.experimental.kmp-library"
+            implementationClass = "org.gradle.api.experimental.kmp.StandaloneKmpLibraryPlugin"
         }
     }
 }

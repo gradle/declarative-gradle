@@ -7,7 +7,7 @@ import org.gradle.api.Project;
  * Creates a declarative {@link AndroidLibrary} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.
  */
-public class StandaloneAndroidPlugin implements Plugin<Project> {
+public class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         project.getExtensions().create("androidLibrary", AndroidLibrary.class);

@@ -7,7 +7,7 @@ import org.gradle.api.Project;
  * Creates a declarative {@link KmpLibrary} DSL model, applies the official KMP plugin,
  * and links the declarative model to the official plugin.
  */
-public class StandaloneKmpPlugin implements Plugin<Project> {
+public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         project.getExtensions().create("kmpLibrary", KmpLibrary.class);

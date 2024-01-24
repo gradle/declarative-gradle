@@ -11,8 +11,8 @@ dependencies {
 gradlePlugin {
     plugins {
         create("jvm-plugin") {
-            id = "org.gradle.jvm-prototype"
-            implementationClass = "org.gradle.api.experimental.jvm.StandaloneJvmPlugin"
+            id = "org.gradle.experimental.jvm-library"
+            implementationClass = "org.gradle.api.experimental.jvm.StandaloneJvmLibraryPlugin"
         }
     }
 }

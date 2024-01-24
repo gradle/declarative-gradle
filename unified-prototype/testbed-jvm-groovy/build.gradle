@@ -1,5 +1,5 @@
 plugins {
-    id("org.gradle.jvm-prototype")
+    id("org.gradle.experimental.jvm-library")
 }
 
 jvmLibrary {
