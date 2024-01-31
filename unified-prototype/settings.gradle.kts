@@ -7,6 +7,13 @@ pluginManagement {
     includeBuild("unified-plugin")
 }
 
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+
 rootProject.name = "unified-prototype"
 
 include("testbed-android")

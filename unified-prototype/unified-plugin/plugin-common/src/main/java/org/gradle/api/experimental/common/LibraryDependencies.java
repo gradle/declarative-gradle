@@ -14,6 +14,9 @@ public interface LibraryDependencies extends PlatformDependencyModifiers, TestFi
     DependencyCollector getImplementation();
     DependencyCollector getRuntimeOnly();
     DependencyCollector getCompileOnly();
-    DependencyCollector getCompileOnlyApi();
+
+    // CompileOnlyApi is not included here, since both Android and KMP do not support it.
+    // Does that mean we should also reconsider if we should support it? Or, should we
+    // talk to Android and KMP about adding support
 
 }
