@@ -6,6 +6,7 @@ description = "Implements the declarative KMP DSL prototype"
 
 dependencies {
     implementation(project(":plugin-common"))
+    implementation(libs.kotlin.multiplatform)
 }
 
 gradlePlugin {

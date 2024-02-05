@@ -1,5 +1,5 @@
 plugins {
-    id("java-library")
+    kotlin("jvm") version libs.versions.kotlin
 }
 
 dependencies {

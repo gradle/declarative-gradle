@@ -1,21 +1,24 @@
-package org.gradle.api.experimental.kmp;
+package org.gradle.api.experimental.android;
 
+import com.android.build.api.dsl.BaseFlavor;
 import org.gradle.api.Action;
+import org.gradle.api.Named;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
 
-import javax.inject.Inject;
+public interface AndroidTarget extends Named {
 
-/**
- * The public DSL interface for a declarative KMP library.
- */
-public interface KmpLibrary {
-
+    /**
+     * @see BaseFlavor#getMinSdk()
+     */
     @Input
-    Property<String> getLanguageVersion();
+    Property<Integer> getMinSdk();
 
+    /**
+     * Dependencies for this target.
+     */
     @Nested
     LibraryDependencies getDependencies();
 
@@ -23,9 +26,4 @@ public interface KmpLibrary {
         action.execute(getDependencies());
     }
 
-    KmpTargetContainer getTargets();
-
-    default void targets(Action<? super KmpTargetContainer> action) {
-        action.execute(getTargets());
-    }
 }
