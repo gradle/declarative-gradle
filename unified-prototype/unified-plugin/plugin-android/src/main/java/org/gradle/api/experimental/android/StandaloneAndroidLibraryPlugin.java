@@ -108,16 +108,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             project.getConfigurations().getByName(name + "RuntimeOnly").getDependencies()
                 .addAllLater(target.getDependencies().getRuntimeOnly().getDependencies());
         });
-
-        // This will run after all onVariants calls.
-        project.afterEvaluate(p -> getTargets(dslModel).forEach(target -> {
-            if (!variantNames.contains(target.getName())) {
-                throw new InvalidUserDataException(String.format(
-                    "Configured target '%s' but an Android variant with the same name does not exist.",
-                    target.getName()
-                ));
-            }
-        }));
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {
