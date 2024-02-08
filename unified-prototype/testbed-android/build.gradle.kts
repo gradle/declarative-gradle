@@ -12,7 +12,7 @@ androidLibrary {
     }
 
     targets {
-        create("debug") {
+        debug {
             dependencies {
                 implementation("org.apache.commons:commons-lang3:3.14.0")
             }

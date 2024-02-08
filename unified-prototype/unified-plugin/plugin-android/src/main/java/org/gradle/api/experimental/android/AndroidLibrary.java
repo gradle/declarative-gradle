@@ -12,47 +12,56 @@ import org.gradle.api.tasks.Nested;
 /**
  * The public DSL interface for a declarative Android library.
  */
-public interface AndroidLibrary {
+public abstract class AndroidLibrary {
+    private final AndroidTargets targets;
+
+    public AndroidLibrary(AndroidTargets targets) {
+        this.targets = targets;
+    }
 
     /**
      * @see CommonExtension#getNamespace()
      */
     @Input
-    Property<String> getNamespace();
+    public abstract Property<String> getNamespace();
 
     /**
      * @see CommonExtension#getCompileSdk()
      */
     @Input
-    Property<Integer> getCompileSdk();
+    public abstract Property<Integer> getCompileSdk();
 
     /**
      * @see BaseFlavor#getMinSdk()
      */
     @Input
-    Property<Integer> getMinSdk();
+    public abstract Property<Integer> getMinSdk();
 
     /**
      * JDK version to use for compilation.
      */
     @Input
-    Property<Integer> getJdkVersion();
+    public abstract Property<Integer> getJdkVersion();
 
     /**
      * Common dependencies for all targets.
      */
     @Nested
-    LibraryDependencies getDependencies();
+    public abstract LibraryDependencies getDependencies();
 
-    default void dependencies(Action<? super LibraryDependencies> action) {
+    public void dependencies(Action<? super LibraryDependencies> action) {
         action.execute(getDependencies());
     }
 
+    /**
+     * Static targets extension block.
+     */
     @Nested
-    NamedDomainObjectContainer<AndroidTarget> getTargets();
-
-    default void targets(Action<? super NamedDomainObjectContainer<AndroidTarget>> action) {
-        action.execute(getTargets());
+    public AndroidTargets getTargets() {
+        return targets;
     }
 
+    public void targets(Action<? super AndroidTargets> action) {
+        action.execute(getTargets());
+    }
 }
