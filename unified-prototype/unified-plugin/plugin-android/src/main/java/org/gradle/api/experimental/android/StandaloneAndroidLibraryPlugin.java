@@ -6,17 +6,20 @@ import org.gradle.api.*;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Creates a declarative {@link AndroidLibrary} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.
  */
-public class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
+public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-        AndroidLibrary dslModel = project.getExtensions().create("androidLibrary", AndroidLibrary.class);
+        AndroidLibrary dslModel = createDslModel(project);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -27,6 +30,13 @@ public class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
         project.getPlugins().apply("org.jetbrains.kotlin.android");
 
         linkDslModelToPluginLazy(project, dslModel);
+    }
+    private AndroidLibrary createDslModel(Project project) {
+        AndroidTarget dslDebug = project.getObjects().newInstance(AndroidTarget.class, "debug");
+        AndroidTarget dslRelease = project.getObjects().newInstance(AndroidTarget.class, "release");
+        AndroidTargets dslTargets = project.getExtensions().create("targets", AndroidTargets.class, dslDebug, dslRelease);
+        AndroidLibrary dslModel = project.getExtensions().create("androidLibrary", AndroidLibrary.class, dslTargets);
+        return dslModel;
     }
 
     /**
@@ -68,7 +78,7 @@ public class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
 
         // Link target-specific properties
         androidComponents.beforeVariants(androidComponents.selector().all(), variant -> {
-            AndroidTarget target = dslModel.getTargets().findByName(variant.getName());
+            AndroidTarget target = getTarget(dslModel, variant.getName());
             if (target == null) {
                 // The user did not add any target-specific configuration.
                 return;
@@ -83,8 +93,7 @@ public class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
             String name = variant.getName();
             variantNames.add(name);
 
-
-            AndroidTarget target = dslModel.getTargets().findByName(name);
+            AndroidTarget target = getTarget(dslModel, variant.getName());
             if (target == null) {
                 // The user did not add any target-specific configuration.
                 return;
@@ -99,16 +108,6 @@ public class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
             project.getConfigurations().getByName(name + "RuntimeOnly").getDependencies()
                 .addAllLater(target.getDependencies().getRuntimeOnly().getDependencies());
         });
-
-        // This will run after all onVariants calls.
-        project.afterEvaluate(p -> dslModel.getTargets().all(target -> {
-            if (!variantNames.contains(target.getName())) {
-                throw new InvalidUserDataException(String.format(
-                    "Configured target '%s' but an Android variant with the same name does not exist.",
-                    target.getName()
-                ));
-            }
-        }));
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {
@@ -117,4 +116,15 @@ public class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
         }
     }
 
+    private Set<AndroidTarget> getTargets(AndroidLibrary dslModel) {
+        return Set.of(dslModel.getTargets().getDebug(), dslModel.getTargets().getRelease());
+    }
+
+    @Nullable
+    private AndroidTarget getTarget(AndroidLibrary dslModel, String name) {
+        return getTargets(dslModel).stream()
+                .filter(t -> Objects.equals(t.getName(), name))
+                .findFirst()
+                .orElse(null);
+    }
 }
