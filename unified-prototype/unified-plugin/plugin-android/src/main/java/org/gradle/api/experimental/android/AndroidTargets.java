@@ -15,7 +15,7 @@ public abstract class AndroidTargets {
         this.release = release;
     }
 
-    @Restricted
+    @Nested
     public AndroidTarget getDebug() {
         return debug;
     }
@@ -25,7 +25,7 @@ public abstract class AndroidTargets {
         action.execute(getDebug());
     }
 
-    @Restricted
+    @Nested
     public AndroidTarget getRelease() {
         return release;
     }
