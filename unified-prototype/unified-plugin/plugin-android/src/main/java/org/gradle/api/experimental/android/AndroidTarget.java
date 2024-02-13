@@ -1,37 +1,47 @@
 package org.gradle.api.experimental.android;
 
 import com.android.build.api.dsl.BaseFlavor;
+import com.h0tk3y.kotlin.staticObjectNotation.Configuring;
+import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
+import org.gradle.internal.restricteddsl.project.RestrictedDependenciesHandler;
 
 import javax.inject.Inject;
 
+@Restricted
 @NonNullApi
 public abstract class AndroidTarget implements Named {
     private final String name;
+    private final LibraryDependencies dependencies;
 
     @Inject
-    public AndroidTarget(String name) {
+    public AndroidTarget(String name, ObjectFactory objectFactory) {
         this.name = name;
+        this.dependencies = objectFactory.newInstance(LibraryDependencies.class);
     }
 
     /**
      * @see BaseFlavor#getMinSdk()
      */
-    @Input
+    @Restricted
     public abstract Property<Integer> getMinSdk();
 
     /**
      * Dependencies for this target.
      */
-    @Nested
-    public abstract LibraryDependencies getDependencies();
+    @Restricted
+    public LibraryDependencies getDependencies() {
+        return dependencies;
+    }
 
+    @Configuring
     public void dependencies(Action<? super LibraryDependencies> action) {
         action.execute(getDependencies());
     }

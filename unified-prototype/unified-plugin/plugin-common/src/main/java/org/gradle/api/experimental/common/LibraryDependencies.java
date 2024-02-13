@@ -1,5 +1,7 @@
 package org.gradle.api.experimental.common;
 
+import com.h0tk3y.kotlin.staticObjectNotation.Adding;
+import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.artifacts.dsl.GradleDependencies;
 import org.gradle.api.plugins.jvm.PlatformDependencyModifiers;
@@ -8,8 +10,8 @@ import org.gradle.api.plugins.jvm.TestFixturesDependencyModifiers;
 /**
  * The declarative dependencies DSL block for a library.
  */
+@Restricted
 public interface LibraryDependencies extends PlatformDependencyModifiers, TestFixturesDependencyModifiers, GradleDependencies {
-
     DependencyCollector getApi();
     DependencyCollector getImplementation();
     DependencyCollector getRuntimeOnly();
@@ -19,4 +21,13 @@ public interface LibraryDependencies extends PlatformDependencyModifiers, TestFi
     // Does that mean we should also reconsider if we should support it? Or, should we
     // talk to Android and KMP about adding support
 
+    @Adding
+    default void api(String notation) {
+        getApi().add(notation);
+    }
+
+    @Adding
+    default void implementation(String notation) {
+        getImplementation().add(notation);
+    }
 }
