@@ -21,11 +21,13 @@ public interface LibraryDependencies extends PlatformDependencyModifiers, TestFi
     // Does that mean we should also reconsider if we should support it? Or, should we
     // talk to Android and KMP about adding support
 
+    // TODO: This is an abuse of @Adding
     @Adding
     default void api(String notation) {
         getApi().add(notation);
     }
 
+    // TODO: This is an abuse of @Adding
     @Adding
     default void implementation(String notation) {
         getImplementation().add(notation);
