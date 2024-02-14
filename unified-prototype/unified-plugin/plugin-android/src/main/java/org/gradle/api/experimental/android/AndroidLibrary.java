@@ -5,7 +5,7 @@ import com.android.build.api.dsl.CommonExtension;
 import com.h0tk3y.kotlin.staticObjectNotation.Configuring;
 import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.Action;
-import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.experimental.common.RestrictedLibraryDependencies;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 
@@ -16,13 +16,13 @@ import javax.inject.Inject;
  */
 @Restricted
 public abstract class AndroidLibrary {
-    private final LibraryDependencies dependencies;
+    private final RestrictedLibraryDependencies dependencies;
     private final AndroidTargets targets;
 
     @Inject
     public AndroidLibrary(AndroidTargets targets, ObjectFactory objectFactory) {
         this.targets = targets;
-        this.dependencies = objectFactory.newInstance(LibraryDependencies.class);
+        this.dependencies = objectFactory.newInstance(RestrictedLibraryDependencies.class);
     }
 
     /**
@@ -53,12 +53,12 @@ public abstract class AndroidLibrary {
      * Common dependencies for all targets.
      */
     @Restricted
-    public LibraryDependencies getDependencies() {
+    public RestrictedLibraryDependencies getDependencies() {
         return dependencies;
     }
 
     @Configuring
-    public void dependencies(Action<? super LibraryDependencies> action) {
+    public void dependencies(Action<? super RestrictedLibraryDependencies> action) {
         action.execute(getDependencies());
     }
 

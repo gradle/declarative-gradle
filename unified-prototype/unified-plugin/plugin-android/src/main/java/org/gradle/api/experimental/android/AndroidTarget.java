@@ -6,7 +6,7 @@ import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
 import org.gradle.api.NonNullApi;
-import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.experimental.common.RestrictedLibraryDependencies;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 
@@ -16,12 +16,12 @@ import javax.inject.Inject;
 @NonNullApi
 public abstract class AndroidTarget implements Named {
     private final String name;
-    private final LibraryDependencies dependencies;
+    private final RestrictedLibraryDependencies dependencies;
 
     @Inject
     public AndroidTarget(String name, ObjectFactory objectFactory) {
         this.name = name;
-        this.dependencies = objectFactory.newInstance(LibraryDependencies.class);
+        this.dependencies = objectFactory.newInstance(RestrictedLibraryDependencies.class);
     }
 
     /**
@@ -34,12 +34,12 @@ public abstract class AndroidTarget implements Named {
      * Dependencies for this target.
      */
     @Restricted
-    public LibraryDependencies getDependencies() {
+    public RestrictedLibraryDependencies getDependencies() {
         return dependencies;
     }
 
     @Configuring
-    public void dependencies(Action<? super LibraryDependencies> action) {
+    public void dependencies(Action<? super RestrictedLibraryDependencies> action) {
         action.execute(getDependencies());
     }
 
