@@ -3,7 +3,6 @@ package org.gradle.api.experimental.android;
 import com.h0tk3y.kotlin.staticObjectNotation.Configuring;
 import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.Action;
-import org.gradle.api.tasks.Nested;
 
 @Restricted
 public abstract class AndroidTargets {
@@ -15,7 +14,7 @@ public abstract class AndroidTargets {
         this.release = release;
     }
 
-    @Nested
+    @Restricted
     public AndroidTarget getDebug() {
         return debug;
     }
@@ -25,7 +24,7 @@ public abstract class AndroidTargets {
         action.execute(getDebug());
     }
 
-    @Nested
+    @Restricted
     public AndroidTarget getRelease() {
         return release;
     }

@@ -8,7 +8,6 @@ import org.gradle.api.Action;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Nested;
 
 import javax.inject.Inject;
 
@@ -53,7 +52,7 @@ public abstract class AndroidLibrary {
     /**
      * Common dependencies for all targets.
      */
-    @Nested
+    @Restricted
     public LibraryDependencies getDependencies() {
         return dependencies;
     }
@@ -66,7 +65,7 @@ public abstract class AndroidLibrary {
     /**
      * Static targets extension block.
      */
-    @Nested
+    @Restricted
     public AndroidTargets getTargets() {
         return targets;
     }
