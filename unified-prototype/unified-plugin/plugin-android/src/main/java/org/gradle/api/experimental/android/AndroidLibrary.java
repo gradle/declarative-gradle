@@ -2,53 +2,62 @@ package org.gradle.api.experimental.android;
 
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
+import com.h0tk3y.kotlin.staticObjectNotation.Configuring;
+import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.Action;
-import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Nested;
+
+import javax.inject.Inject;
 
 /**
  * The public DSL interface for a declarative Android library.
  */
+@Restricted
 public abstract class AndroidLibrary {
+    private final LibraryDependencies dependencies;
     private final AndroidTargets targets;
 
-    public AndroidLibrary(AndroidTargets targets) {
+    @Inject
+    public AndroidLibrary(AndroidTargets targets, ObjectFactory objectFactory) {
         this.targets = targets;
+        this.dependencies = objectFactory.newInstance(LibraryDependencies.class);
     }
 
     /**
      * @see CommonExtension#getNamespace()
      */
-    @Input
+    @Restricted
     public abstract Property<String> getNamespace();
 
     /**
      * @see CommonExtension#getCompileSdk()
      */
-    @Input
+    @Restricted
     public abstract Property<Integer> getCompileSdk();
 
     /**
      * @see BaseFlavor#getMinSdk()
      */
-    @Input
+    @Restricted
     public abstract Property<Integer> getMinSdk();
 
     /**
      * JDK version to use for compilation.
      */
-    @Input
+    @Restricted
     public abstract Property<Integer> getJdkVersion();
 
     /**
      * Common dependencies for all targets.
      */
-    @Nested
-    public abstract LibraryDependencies getDependencies();
+    @Restricted
+    public LibraryDependencies getDependencies() {
+        return dependencies;
+    }
 
+    @Configuring
     public void dependencies(Action<? super LibraryDependencies> action) {
         action.execute(getDependencies());
     }
@@ -56,11 +65,12 @@ public abstract class AndroidLibrary {
     /**
      * Static targets extension block.
      */
-    @Nested
+    @Restricted
     public AndroidTargets getTargets() {
         return targets;
     }
 
+    @Configuring
     public void targets(Action<? super AndroidTargets> action) {
         action.execute(getTargets());
     }
