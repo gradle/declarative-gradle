@@ -5,7 +5,7 @@ plugins {
 androidLibrary {
     jdkVersion = 17
     compileSdk = 34
-    namespace = "org.gradle.experimental.android.library.kotlin"
+    namespace = "org.gradle.experimental.android.library"
 
     dependencies {
         api("com.google.guava:guava:32.1.3-jre")

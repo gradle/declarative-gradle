@@ -1,11 +1,11 @@
 package org.gradle.api.experimental.common;
 
-import com.h0tk3y.kotlin.staticObjectNotation.Adding;
-import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.artifacts.dsl.GradleDependencies;
 import org.gradle.api.plugins.jvm.PlatformDependencyModifiers;
 import org.gradle.api.plugins.jvm.TestFixturesDependencyModifiers;
+import org.gradle.declarative.dsl.model.annotations.Adding;
+import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
  * The declarative dependencies DSL block for a library.
