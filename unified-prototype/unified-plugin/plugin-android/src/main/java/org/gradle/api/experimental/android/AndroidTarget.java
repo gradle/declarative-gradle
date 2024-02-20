@@ -1,14 +1,14 @@
 package org.gradle.api.experimental.android;
 
 import com.android.build.api.dsl.BaseFlavor;
-import com.h0tk3y.kotlin.staticObjectNotation.Configuring;
-import com.h0tk3y.kotlin.staticObjectNotation.Restricted;
 import org.gradle.api.Action;
 import org.gradle.api.Named;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
+import org.gradle.declarative.dsl.model.annotations.Configuring;
+import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 import javax.inject.Inject;
 
