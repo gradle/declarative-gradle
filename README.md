@@ -96,6 +96,6 @@ javaLibrary {
 ## Discuss
 
 - `#declarative-gradle` channel on the community Slack
-- Gradle Forums
+- [dedicated category](https://discuss.gradle.org/c/help-discuss/declarative-gradle/38) Gradle Forums
 
 See [Gradle Community Resources](https://gradle.org/resources/) for the links to the channels.
