@@ -14,7 +14,6 @@ import javax.inject.Inject;
  */
 @Restricted
 public abstract class AbstractKmpLibrary implements KmpLibrary {
-
     private final KmpTargetContainer targets;
 
     @Inject

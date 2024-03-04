@@ -6,9 +6,9 @@ plugins {
 }
 
 kmpLibrary {
-//    dependencies {
+    dependencies {
 //        api("io.ktor:ktor-client-core:2.3.7")
-//    }
+    }
 //
 //    targets {
 //        jvm {
