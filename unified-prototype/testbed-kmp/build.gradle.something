@@ -12,12 +12,12 @@ kmpLibrary {
 
     targets {
         jvm {
-//            jvmTarget = JvmTarget.JVM_14
-//
+            jvmTarget = "14"
+
 //            dependencies {
 //                api("org.apache.commons:commons-lang3:3.14.0")
 //            }
-//        }
+        }
 //        js {
 //            environment = JsEnvironment.NODE
 //

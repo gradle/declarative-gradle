@@ -6,6 +6,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.DependencyScopeConfiguration;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 
@@ -62,7 +63,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
         dslModel.getTargets().withType(KmpJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
-                if (target.getEnvironment().get() == KmpJsTarget.JsEnvironment.NODE) {
+                if (KmpJsTarget.JsEnvironment.fromString(target.getEnvironment().get()) == KmpJsTarget.JsEnvironment.NODE) {
                     kotlinTarget.nodejs();
                 } else {
                     kotlinTarget.browser();
@@ -89,7 +90,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                     target.getDependencies()
                 );
                 kotlinTarget.getCompilations().configureEach(compilation -> {
-                    compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJvmTarget());
+                    //compilation.getCompilerOptions().getOptions().getJvmTarget().set(JvmTarget.Companion.fromTarget(target.getJvmTarget().get()));
                 });
             });
         });
