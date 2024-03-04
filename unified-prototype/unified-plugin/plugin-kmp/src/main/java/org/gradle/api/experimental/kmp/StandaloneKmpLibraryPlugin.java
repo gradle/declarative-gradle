@@ -31,9 +31,18 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     private KmpLibrary createDslModel(Project project) {
         KmpLibrary dslModel = project.getExtensions().create("kmpLibrary", AbstractKmpLibrary.class);
 
-//        // no plugin application, must create configurations manually
-//        DependencyScopeConfiguration api = project.getConfigurations().dependencyScope("api").get();
-//        DependencyScopeConfiguration implementation = project.getConfigurations().dependencyScope("implementation").get();
+        // In order for function extraction from the DependencyCollector on the library deps to work, configurations must exist
+        // Matching the names of the getters on LibraryDependencies
+        DependencyScopeConfiguration api = project.getConfigurations().dependencyScope("api").get();
+        DependencyScopeConfiguration implementation = project.getConfigurations().dependencyScope("implementation").get();
+        DependencyScopeConfiguration compileOnly = project.getConfigurations().dependencyScope("compileOnly").get();
+        DependencyScopeConfiguration runtimeOnly = project.getConfigurations().dependencyScope("runtimeOnly").get();
+
+        // Wire the dependency collector to these configurations
+        project.getConfigurations().getByName("api").fromDependencyCollector(dslModel.getDependencies().getApi());
+        project.getConfigurations().getByName("implementation").fromDependencyCollector(dslModel.getDependencies().getImplementation());
+        project.getConfigurations().getByName("compileOnly").fromDependencyCollector(dslModel.getDependencies().getCompileOnly());
+        project.getConfigurations().getByName("runtimeOnly").fromDependencyCollector(dslModel.getDependencies().getRuntimeOnly());
 
         return dslModel;
     }
@@ -97,15 +106,15 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
     }
 
-    private static void linkSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, LibraryDependencies dependencyCollector) {
+    private static void linkSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, LibraryDependencies libraryDependencies) {
         project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getImplementation().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getImplementation().getDependencies());
         project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getApi().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getApi().getDependencies());
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getCompileOnly().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getCompileOnly().getDependencies());
         project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getRuntimeOnly().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getRuntimeOnly().getDependencies());
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {

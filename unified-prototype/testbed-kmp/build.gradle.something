@@ -7,11 +7,11 @@ plugins {
 
 kmpLibrary {
     dependencies {
-//        api("io.ktor:ktor-client-core:2.3.7")
+        api("io.ktor:ktor-client-core:2.3.7")
     }
-//
-//    targets {
-//        jvm {
+
+    targets {
+        jvm {
 //            jvmTarget = JvmTarget.JVM_14
 //
 //            dependencies {
@@ -24,6 +24,6 @@ kmpLibrary {
 //            dependencies {
 //                implementation("com.squareup.sqldelight:runtime:1.5.5")
 //            }
-//        }
-//    }
+        }
+    }
 }
