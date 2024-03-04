@@ -14,7 +14,6 @@ public abstract class AndroidTargets {
         this.release = release;
     }
 
-    @Restricted
     public AndroidTarget getDebug() {
         return debug;
     }
@@ -24,7 +23,6 @@ public abstract class AndroidTargets {
         action.execute(getDebug());
     }
 
-    @Restricted
     public AndroidTarget getRelease() {
         return release;
     }

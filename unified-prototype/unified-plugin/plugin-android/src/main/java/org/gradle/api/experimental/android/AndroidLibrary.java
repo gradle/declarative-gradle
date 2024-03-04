@@ -52,7 +52,6 @@ public abstract class AndroidLibrary {
     /**
      * Common dependencies for all targets.
      */
-    @Restricted
     public LibraryDependencies getDependencies() {
         return dependencies;
     }
@@ -65,7 +64,6 @@ public abstract class AndroidLibrary {
     /**
      * Static targets extension block.
      */
-    @Restricted
     public AndroidTargets getTargets() {
         return targets;
     }

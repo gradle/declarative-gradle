@@ -31,6 +31,7 @@ The `StandaloneAndroidLibraryPlugin` plugin works by using `project.afterEvaluat
 ### Limitations
 
 The Android example is currently limited, and does not support many use cases such as adding tests or running the `publish` task.
+It requires JDK >= 17 to build.
 
 ### Running 
 From the `testbed-android` directory, run `build` using the Gradle wrapper in the parent directory:

@@ -33,7 +33,6 @@ public abstract class AndroidTarget implements Named {
     /**
      * Dependencies for this target.
      */
-    @Restricted
     public LibraryDependencies getDependencies() {
         return dependencies;
     }
