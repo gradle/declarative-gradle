@@ -3,6 +3,7 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.DependencyScopeConfiguration;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-         KmpLibrary dslModel =project.getExtensions().create("kmpLibrary", AbstractKmpLibrary.class);
+        KmpLibrary dslModel = createDslModel(project);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -25,6 +26,16 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
 
         linkDslModelToPluginLazy(project, dslModel);
+    }
+
+    private KmpLibrary createDslModel(Project project) {
+        KmpLibrary dslModel = project.getExtensions().create("kmpLibrary", AbstractKmpLibrary.class);
+
+//        // no plugin application, must create configurations manually
+//        DependencyScopeConfiguration api = project.getConfigurations().dependencyScope("api").get();
+//        DependencyScopeConfiguration implementation = project.getConfigurations().dependencyScope("implementation").get();
+
+        return dslModel;
     }
 
     /**

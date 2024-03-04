@@ -18,6 +18,5 @@ rootProject.name = "unified-prototype"
 
 include("testbed-android")
 include("testbed-kmp")
-include("testbed-kmp-groovy")
 include("testbed-jvm")
 include("testbed-jvm-groovy")
