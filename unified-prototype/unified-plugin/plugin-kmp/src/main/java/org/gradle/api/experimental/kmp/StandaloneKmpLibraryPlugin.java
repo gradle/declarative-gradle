@@ -3,6 +3,7 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.DependencyScopeConfiguration;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
