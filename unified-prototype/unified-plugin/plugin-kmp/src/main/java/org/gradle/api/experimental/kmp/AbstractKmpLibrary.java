@@ -12,7 +12,6 @@ import javax.inject.Inject;
  * This ideally should not exist and {@link KmpLibrary} should be expressed as only an interface,
  * however the KMP targets container needs some special handling for now.
  */
-@Restricted
 public abstract class AbstractKmpLibrary implements KmpLibrary {
     private final KmpTargetContainer targets;
 
