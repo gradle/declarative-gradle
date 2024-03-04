@@ -18,9 +18,9 @@ kmpLibrary {
 //                api("org.apache.commons:commons-lang3:3.14.0")
 //            }
         }
-//        js {
-//            environment = JsEnvironment.NODE
-//
+        js {
+            environment = "node"
+
 //            dependencies {
 //                implementation("com.squareup.sqldelight:runtime:1.5.5")
 //            }
