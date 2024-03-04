@@ -12,7 +12,7 @@ kmpLibrary {
 
     targets {
         jvm {
-            jvmTarget = "14"
+            jdkVersion = "14"
 
             dependencies {
                 api("org.apache.commons:commons-lang3:3.14.0")

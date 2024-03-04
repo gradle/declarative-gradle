@@ -5,7 +5,9 @@ import org.gradle.api.Named;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
+import org.gradle.declarative.dsl.model.annotations.Restricted;
 
+@Restricted
 public interface KmpTarget extends Named {
     @Nested
     LibraryDependencies getDependencies();

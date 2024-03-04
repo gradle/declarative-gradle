@@ -5,7 +5,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 import java.util.Locale;
 
-@Restricted
 public interface KmpJsTarget extends KmpTarget {
     @Restricted
     Property<String> getEnvironment();

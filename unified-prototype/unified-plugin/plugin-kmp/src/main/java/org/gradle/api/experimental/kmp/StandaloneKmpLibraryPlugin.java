@@ -23,7 +23,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
 
-        // Apply the official KMP plugin.
+        // Apply the official KMP plugin
         project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
 
         linkDslModelToPluginLazy(project, dslModel);
@@ -90,7 +90,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                     target.getDependencies()
                 );
                 kotlinTarget.getCompilations().configureEach(compilation -> {
-                    //compilation.getCompilerOptions().getOptions().getJvmTarget().set(JvmTarget.Companion.fromTarget(target.getJvmTarget().get()));
+                    compilation.getCompilerOptions().getOptions().getJvmTarget().set(project.provider(() -> JvmTarget.Companion.fromTarget(target.getJdkVersion().get())));
                 });
             });
         });
