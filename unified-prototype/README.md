@@ -15,6 +15,9 @@ Not yet updated for Declarative DSL.
 The sample Kotlin Multiplatform project lives in the `testbed-kmp` directory and has been updated to use the Declarative Gradle DSL.
 The `unified-prototype/plugin-kmp` plugin demonstrates creating extensions using the Declarative DSL, and loading the data from those extensions into the KMP project used by KGP.
 
+### Limitations
+
+You must annotate the `AbstractKmpLibrary` type with `@Restricted`, annotating the `KmpLibrary` type alone is not yet supported.
 
 ## Android
 
