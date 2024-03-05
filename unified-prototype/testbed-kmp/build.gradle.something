@@ -1,6 +1,3 @@
-import org.gradle.api.experimental.kmp.KmpJsTarget.JsEnvironment
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     id("org.gradle.experimental.kmp-library")
 }
