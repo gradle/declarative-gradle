@@ -100,6 +100,16 @@ javaLibrary {
 
 </details>
 
+## Prototypes
+
+Here are the experimental prototypes
+currently available for initial review.
+They are not ready for evaluation at the moment:
+
+- [Unified Prototype](./unified-prototype/README.md) - prototypes of plugins for JVM, Android, and KMP projects built using "unified" plugins that all utilize a similar model and implemented using the Declarative DSL
+- [Other Early prototypes](./early-prototypes/README.md) -
+Initial prototypes created for feedback and discussion purposes.
+
 ## License
 
 All text/documentation content is open source and licensed under the
