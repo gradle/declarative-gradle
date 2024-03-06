@@ -5,5 +5,5 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 public interface KmpJvmTarget extends KmpTarget {
     @Restricted
-    Property<String> getJdkVersion();
+    Property<Integer> getJdkVersion();
 }
