@@ -1,8 +1,29 @@
 # Declarative Gradle
 
-This repository contains prototypes and public examples
-of the [Declarative Gradle](https://blog.gradle.org/declarative-gradle)
-syntax and project definitions.
+At Gradle, part of our vision is to provide an elegant and extensible declarative build language
+that enables expressing any build in a clear and understandable way.
+We are working on _Declarative Gradle_ to realize that part of the vision.
+This is an experimental project, stay tuned for updates!
+
+Learn more in the [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
+blog post.
+
+## Key Principles
+
+- **Ease of use** for regular software developers.
+  Software developers should be able to define any software and build their projects
+  without the need to understand the details of how the build system works.
+- **Complete flexibility** for build engineers and advanced users.
+  Experienced Gradle users should maintain the current level of flexibility and be able
+  to automate a wide range of software build automation scenarios with custom build logic.
+- **Excellent IDE integration.**
+  Importing the software project to the IDE and interacting with it should be fast and fully reliable.
+  IDEs and other tools should be able to change the software definition automatically or through UI reliably.
+
+We implement those principles through a _declarative DSL_ which is at the moment based on Kotlin.
+The [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
+outlines more details about the project and the new
+Declarative DSL we are building.
 
 ## Disclaimer
 
@@ -20,7 +41,7 @@ See more on the [Contributor Guide](./docs/CONTRIBUTING.md).
 Here are a few very brief examples of what the Declarative Gradle syntax may look like.
 As noted above, this syntax is experimental and might change during the experiment.
 
-### Java libraries
+### Java Libraries
 
 A typical Java library, which targets a single version of Java, might look like this:
 
@@ -46,7 +67,7 @@ javaLibrary {
 }
 ```
 
-### Multi-target projects
+### Multi-target Projects
 
 This example shows the definition of a Java library that targets both Java 11 and 21:
 
