@@ -22,30 +22,15 @@ public abstract class KmpTargetContainer extends DefaultPolymorphicDomainObjectC
         maybeCreate("jvm", KmpJvmTarget.class);
     }
 
-    @Adding
-    public void jvm(String name) {
-        maybeCreate(name, KmpJvmTarget.class);
-    }
-
     @Configuring
     public void jvm(Action<? super KmpJvmTarget> action) {
         KmpJvmTarget jvm = maybeCreate("jvm", KmpJvmTarget.class);
         action.execute(jvm);
     }
 
-    // Can't @Configuring this - a configuring function may not accept any other parameters
-    // public void jvm(String name, Action<? super KmpJvmTarget> action) {
-    //    create(name, KmpJvmTarget.class, action);
-    //}
-
     @Adding
     public void js() {
         maybeCreate("js", KmpJsTarget.class);
-    }
-
-    @Adding
-    public void js(String name) {
-        maybeCreate(name, KmpJsTarget.class);
     }
 
     @Configuring
@@ -53,9 +38,4 @@ public abstract class KmpTargetContainer extends DefaultPolymorphicDomainObjectC
         KmpJsTarget js = maybeCreate("js", KmpJsTarget.class);
         action.execute(js);
     }
-
-    // Can't @Configuring this - a configuring function may not accept any other parameters
-    //public void js(String name, Action<? super KmpJsTarget> action) {
-    //    create(name, KmpJsTarget.class, action);
-    //}
 }
