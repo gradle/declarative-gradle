@@ -1,5 +1,7 @@
 # Declarative Gradle
 
+[![a](https://img.shields.io/badge/slack-%23declarative_gradle-brightgreen?style=flat&logo=slack)](https://gradle.org/slack-invite)
+
 At Gradle, part of our vision is to provide an elegant and extensible declarative build language
 that enables expressing any build in a clear and understandable way.
 We are working on _Declarative Gradle_ to realize that part of the vision.
