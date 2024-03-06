@@ -5,6 +5,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 
@@ -15,16 +16,29 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-         KmpLibrary dslModel =project.getExtensions().create("kmpLibrary", AbstractKmpLibrary.class);
+        KmpLibrary dslModel = createDslModel(project);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
 
-        // Apply the official KMP plugin.
+        // Apply the official KMP plugin
         project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
 
         linkDslModelToPluginLazy(project, dslModel);
+    }
+
+    private KmpLibrary createDslModel(Project project) {
+        KmpLibrary dslModel = project.getExtensions().create("kmpLibrary", AbstractKmpLibrary.class);
+
+        // In order for function extraction from the DependencyCollector on the library deps to work, configurations must exist
+        // Matching the names of the getters on LibraryDependencies
+        project.getConfigurations().dependencyScope("api").get();
+        project.getConfigurations().dependencyScope("implementation").get();
+        project.getConfigurations().dependencyScope("compileOnly").get();
+        project.getConfigurations().dependencyScope("runtimeOnly").get();
+
+        return dslModel;
     }
 
     /**
@@ -42,7 +56,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
         dslModel.getTargets().withType(KmpJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
-                if (target.getEnvironment().get() == KmpJsTarget.JsEnvironment.NODE) {
+                if (KmpJsTarget.JsEnvironment.fromString(target.getEnvironment().get()) == KmpJsTarget.JsEnvironment.NODE) {
                     kotlinTarget.nodejs();
                 } else {
                     kotlinTarget.browser();
@@ -69,7 +83,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                     target.getDependencies()
                 );
                 kotlinTarget.getCompilations().configureEach(compilation -> {
-                    compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJvmTarget());
+                    compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(value -> JvmTarget.Companion.fromTarget(String.valueOf(value))));
                 });
             });
         });
@@ -86,15 +100,15 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
     }
 
-    private static void linkSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, LibraryDependencies dependencyCollector) {
+    private static void linkSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, LibraryDependencies libraryDependencies) {
         project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getImplementation().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getImplementation().getDependencies());
         project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getApi().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getApi().getDependencies());
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getCompileOnly().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getCompileOnly().getDependencies());
         project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-            .getDependencies().addAllLater(dependencyCollector.getRuntimeOnly().getDependencies());
+            .getDependencies().addAllLater(libraryDependencies.getRuntimeOnly().getDependencies());
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {

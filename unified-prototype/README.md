@@ -12,7 +12,44 @@ Not yet updated for Declarative DSL.
 
 ## KMP
 
-Not yet updated for Declarative DSL.
+The sample Kotlin Multiplatform project lives in the `testbed-kmp` directory and has been updated to use the Declarative Gradle DSL.
+The `unified-prototype/plugin-kmp` plugin demonstrates creating extensions using the Declarative DSL, and loading the data from those extensions into the KMP project used by KGP.
+
+The sample project demonstrates setting properties, using a common dependencies block, and adding dependencies to specific targets.
+
+### Implementation Notes
+
+An Apache Commons dependency is used by the JVM code.
+A SQLDelight dependency is used by the JS code.
+The kotlinx.datetime multiplatform dep is used by common code.
+
+The `StandaloneKmpLibraryPlugin` plugin works by using `project.afterEvaluate` to load data from the Declarative DSL extensions into KGP's model.
+
+### Limitations
+
+The KMP example is currently limited, and does not support any targets other than `js` and `jvm`.
+
+### Running
+From the `testbed-kmp` directory, run `build` using the Gradle wrapper in the parent directory:
+
+```shell
+cd testbed-kmp
+../gradlew build
+```
+
+to build the JS, JVM and KMP metadata jars for the example KMP project build in the `testbed-kmp/build/libs` directory.
+
+You can also build the JS and JVM libs separately:
+
+```shell 
+cd testbed-kmp
+../gradlew :testbed-kmp:jsJar
+```
+
+```shell 
+cd testbed-kmp
+../gradlew :testbed-kmp:jvmJar
+```
 
 ## Android
 
@@ -41,7 +78,7 @@ cd testbed-android
 ../gradlew build
 ```
 
-to build debug and release `aar`s for the example Android project build in the `testbed-android/biuld/outputs/aar` directory.
+to build debug and release `aar`s for the example Android project build in the `testbed-android/build/outputs/aar` directory.
 
 You can also build the `Debug` and `Release` variants separately:
 

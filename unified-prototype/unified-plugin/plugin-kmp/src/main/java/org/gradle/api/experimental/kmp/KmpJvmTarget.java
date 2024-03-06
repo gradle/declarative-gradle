@@ -1,10 +1,9 @@
 package org.gradle.api.experimental.kmp;
 
 import org.gradle.api.provider.Property;
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
+import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 public interface KmpJvmTarget extends KmpTarget {
-
-    Property<JvmTarget> getJvmTarget();
-
+    @Restricted
+    Property<Integer> getJdkVersion();
 }

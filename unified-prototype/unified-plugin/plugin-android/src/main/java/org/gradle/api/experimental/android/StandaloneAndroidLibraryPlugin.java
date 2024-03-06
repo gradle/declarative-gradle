@@ -31,6 +31,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
 
         linkDslModelToPluginLazy(project, dslModel);
     }
+
     private AndroidLibrary createDslModel(Project project) {
         AndroidTarget dslDebug = project.getObjects().newInstance(AndroidTarget.class, "debug");
         AndroidTarget dslRelease = project.getObjects().newInstance(AndroidTarget.class, "release");

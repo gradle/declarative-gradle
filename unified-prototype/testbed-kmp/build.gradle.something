@@ -2,24 +2,21 @@ plugins {
     id("org.gradle.experimental.kmp-library")
 }
 
-import org.gradle.api.experimental.kmp.KmpJsTarget.JsEnvironment
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 kmpLibrary {
     dependencies {
-        api("io.ktor:ktor-client-core:2.3.7")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     }
 
     targets {
         jvm {
-            jvmTarget = JvmTarget.JVM_14
+            jdkVersion = 14
 
             dependencies {
                 api("org.apache.commons:commons-lang3:3.14.0")
             }
         }
         js {
-            environment = JsEnvironment.NODE
+            environment = "node"
 
             dependencies {
                 implementation("com.squareup.sqldelight:runtime:1.5.5")
