@@ -3,7 +3,6 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.DependencyScopeConfiguration;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
@@ -34,16 +33,10 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
 
         // In order for function extraction from the DependencyCollector on the library deps to work, configurations must exist
         // Matching the names of the getters on LibraryDependencies
-        DependencyScopeConfiguration api = project.getConfigurations().dependencyScope("api").get();
-        DependencyScopeConfiguration implementation = project.getConfigurations().dependencyScope("implementation").get();
-        DependencyScopeConfiguration compileOnly = project.getConfigurations().dependencyScope("compileOnly").get();
-        DependencyScopeConfiguration runtimeOnly = project.getConfigurations().dependencyScope("runtimeOnly").get();
-
-        // Wire the dependency collector to these configurations
-        project.getConfigurations().getByName("api").fromDependencyCollector(dslModel.getDependencies().getApi());
-        project.getConfigurations().getByName("implementation").fromDependencyCollector(dslModel.getDependencies().getImplementation());
-        project.getConfigurations().getByName("compileOnly").fromDependencyCollector(dslModel.getDependencies().getCompileOnly());
-        project.getConfigurations().getByName("runtimeOnly").fromDependencyCollector(dslModel.getDependencies().getRuntimeOnly());
+        project.getConfigurations().dependencyScope("api").get();
+        project.getConfigurations().dependencyScope("implementation").get();
+        project.getConfigurations().dependencyScope("compileOnly").get();
+        project.getConfigurations().dependencyScope("runtimeOnly").get();
 
         return dslModel;
     }
