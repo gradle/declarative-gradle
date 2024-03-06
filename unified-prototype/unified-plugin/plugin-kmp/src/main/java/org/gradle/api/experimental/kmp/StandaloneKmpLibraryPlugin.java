@@ -90,7 +90,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                     target.getDependencies()
                 );
                 kotlinTarget.getCompilations().configureEach(compilation -> {
-                    compilation.getCompilerOptions().getOptions().getJvmTarget().set(project.provider(() -> JvmTarget.Companion.fromTarget(target.getJdkVersion().get())));
+                    compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(JvmTarget.Companion::fromTarget));
                 });
             });
         });
