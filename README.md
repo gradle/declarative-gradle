@@ -20,7 +20,7 @@ blog post.
   to automate a wide range of software build automation scenarios with custom build logic.
 - **Excellent IDE integration.**
   Importing the software project to the IDE and interacting with it should be fast and fully reliable.
-  IDEs and other tools should be able to change the software definition automatically or through UI reliably.
+  IDEs and other tools should be able to change the definition automatically or through UI reliably.
 
 We implement those principles through a _declarative DSL_ which is at the moment based on Kotlin.
 The [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
