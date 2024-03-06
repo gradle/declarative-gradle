@@ -20,3 +20,5 @@ include("testbed-android")
 include("testbed-kmp")
 include("testbed-jvm")
 include("testbed-jvm-groovy")
+
+include("now-in-android-prototypes")
