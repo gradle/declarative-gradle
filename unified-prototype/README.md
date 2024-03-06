@@ -1,4 +1,4 @@
-# DEclarative Gradle - Unified Plugin Prototypes
+# Declarative Gradle - Unified Plugin Prototypes
 
 This directory contains prototypes of plugins for JVM, Android, and KMP projects built using "unified" plugins that all utilize a similar model and are implemented using the Declarative DSL.
 

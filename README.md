@@ -11,6 +11,7 @@ Currently, no compatibility is guaranteed, and there is no commitment to the DSL
 and available features.
 More information will be released soon.
 Any feedback is welcome!
+See more on the [Contributor Guide](./docs/CONTRIBUTING.md).
 
 <!-- TODO: Add project manifesto -->
 
@@ -124,6 +125,6 @@ or other permissive OSI-compliant licenses.
 ## Discuss
 
 - `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
-- [dedicated category](https://discuss.gradle.org/c/help-discuss/declarative-gradle/38) Gradle Forums
+- [Dedicated category](https://discuss.gradle.org/c/help-discuss/declarative-gradle/38) Gradle Forums
 
 See [Gradle Community Resources](https://gradle.org/resources/) for the links to the channels.
