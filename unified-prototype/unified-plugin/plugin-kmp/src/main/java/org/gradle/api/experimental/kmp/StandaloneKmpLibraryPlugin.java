@@ -39,12 +39,6 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         project.getConfigurations().dependencyScope("compileOnly").get();
         project.getConfigurations().dependencyScope("runtimeOnly").get();
 
-        // Wire the dependency collector to these configurations
-        project.getConfigurations().getByName("api").fromDependencyCollector(dslModel.getDependencies().getApi());
-        project.getConfigurations().getByName("implementation").fromDependencyCollector(dslModel.getDependencies().getImplementation());
-        project.getConfigurations().getByName("compileOnly").fromDependencyCollector(dslModel.getDependencies().getCompileOnly());
-        project.getConfigurations().getByName("runtimeOnly").fromDependencyCollector(dslModel.getDependencies().getRuntimeOnly());
-
         return dslModel;
     }
 

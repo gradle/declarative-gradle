@@ -1,7 +1,6 @@
 package org.gradle.api.experimental.kmp;
 
 import org.gradle.api.internal.CollectionCallbackActionDecorator;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.reflect.Instantiator;
 import org.gradle.internal.service.ServiceRegistry;
