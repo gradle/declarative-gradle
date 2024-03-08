@@ -9,6 +9,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 /**
  * The declarative dependencies DSL block for a library.
  */
+@SuppressWarnings("UnstableApiUsage")
 @Restricted
 public interface LibraryDependencies extends PlatformDependencyModifiers, TestFixturesDependencyModifiers, GradleDependencies {
     DependencyCollector getApi();
