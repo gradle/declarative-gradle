@@ -5,9 +5,9 @@ plugins {
 description = "Implements the declarative Android DSL prototype"
 
 dependencies {
-    implementation(project(":plugin-common"))
-    implementation(libs.android.agp.application)
-    implementation(libs.android.kotlin.android)
+    api(project(":plugin-common"))
+    api(libs.android.agp.application)
+    api(libs.android.kotlin.android)
 }
 
 gradlePlugin {
