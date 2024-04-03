@@ -53,17 +53,17 @@ cd testbed-kmp
 
 ## Android
 
-The sample Android project lives in the `testbed-android` directory and has been updated to use the Declarative Gradle DSL. 
+The sample Android projects lives in the `testbed-android-library` and `testbed-android-application` directories. They have been updated to use the Declarative Gradle DSL. 
 The `unified-prototype/plugin-android` plugin demonstrates creating extensions using the Declarative DSL, and loading the data from those extensions into the Android project used by AGP.
 
 The sample project demonstrates setting properties, using a common dependencies block, and adding dependencies to specific Android targets.
 
 ### Implementation Notes
 
-A Guava dependency is exposed as part of the library's API.
-The OKHttp dep is used by the release variant's implementation, and is not necessary for the debug variant.
+Guava is declared as an implementation dependency.
+The OKHttp dep is used by the release build type's implementation, and is not necessary for the debug variant.
 
-The `StandaloneAndroidLibraryPlugin` plugin works by using `project.afterEvaluate` to load data from the Declarative DSL extensions into AGP's model.
+Both plugin implementations work by using `project.afterEvaluate` to load data from the Declarative DSL extensions into AGP's model.
 
 ### Limitations
 
@@ -71,10 +71,10 @@ The Android example is currently limited, and does not support many use cases su
 It requires JDK >= 17 to build.
 
 ### Running 
-From the `testbed-android` directory, run `build` using the Gradle wrapper in the parent directory:
+From the `testbed-android-library` or `testbed-android-application` directory, run `build` using the Gradle wrapper in the parent directory:
 
 ```shell
-cd testbed-android
+cd testbed-android-application
 ../gradlew build
 ```
 
@@ -83,11 +83,9 @@ to build debug and release `aar`s for the example Android project build in the `
 You can also build the `Debug` and `Release` variants separately:
 
 ```shell 
-cd testbed-android
-../gradlew :testbed-android:assembleDebug
+gradlew :testbed-android-application:assembleDebug
 ```
 
 ```shell 
-cd testbed-android
-../gradlew :testbed-android:assembleRelease
+gradlew :testbed-android-application:assembleRelease
 ```

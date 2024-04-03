@@ -12,9 +12,13 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("android-plugin") {
+        create("android-library-plugin") {
             id = "org.gradle.experimental.android-library"
-            implementationClass = "org.gradle.api.experimental.android.StandaloneAndroidLibraryPlugin"
+            implementationClass = "org.gradle.api.experimental.android.library.StandaloneAndroidLibraryPlugin"
+        }
+        create("android-application-plugin") {
+            id = "org.gradle.experimental.android-application"
+            implementationClass = "org.gradle.api.experimental.android.application.StandaloneAndroidApplicationPlugin"
         }
     }
 }

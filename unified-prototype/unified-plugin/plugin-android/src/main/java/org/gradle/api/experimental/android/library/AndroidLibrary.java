@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.gradle.api.experimental.android;
+package org.gradle.api.experimental.android.library;
 
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
+import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
@@ -35,31 +37,33 @@ public interface AndroidLibrary {
      * @see CommonExtension#getNamespace()
      */
     @Restricted
-    public abstract Property<String> getNamespace();
+    Property<String> getNamespace();
 
     /**
      * @see BaseFlavor#getMinSdk()
      */
     @Restricted
-    public abstract Property<Integer> getMinSdk();
+    Property<Integer> getMinSdk();
 
     /**
      * JDK version to use for compilation.
      */
     @Restricted
-    public abstract Property<Integer> getJdkVersion();
+    Property<Integer> getJdkVersion();
 
-    AndroidLibraryDependencies getDependencies();
+    @Nested
+    LibraryDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super AndroidLibraryDependencies> action) {
+    default void dependencies(Action<? super LibraryDependencies> action) {
         action.execute(getDependencies());
     }
 
-    AndroidTargets getTargets();
+    @Nested
+    AndroidLibraryBuildTypes getBuildTypes();
 
     @Configuring
-    default void targets(Action<? super AndroidTargets> action) {
-        action.execute(getTargets());
+    default void buildTypes(Action<? super AndroidLibraryBuildTypes> action) {
+        action.execute(getBuildTypes());
     }
 }
