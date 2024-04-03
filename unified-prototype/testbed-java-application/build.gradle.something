@@ -1,0 +1,8 @@
+plugins {
+    id("org.gradle.experimental.java-application")
+}
+
+javaApplication {
+    javaVersion = 21
+    mainClass = "com.example.App"
+}
