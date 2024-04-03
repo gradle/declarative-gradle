@@ -16,16 +16,46 @@
 
 package org.gradle.api.experimental.android;
 
+import com.android.build.api.dsl.BaseFlavor;
+import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
+import org.gradle.api.experimental.common.Dependencies;
+import org.gradle.api.provider.Property;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface AndroidLibrary extends AndroidComponent {
-    AndroidLibraryDependencies getDependencies();
+public interface AndroidComponent {
+    /**
+     * @see CommonExtension#getCompileSdk()
+     */
+    @Restricted
+    Property<Integer> getCompileSdk();
+
+    /**
+     * @see CommonExtension#getNamespace()
+     */
+    @Restricted
+    Property<String> getNamespace();
+
+    /**
+     * @see BaseFlavor#getMinSdk()
+     */
+    @Restricted
+    Property<Integer> getMinSdk();
+
+    /**
+     * JDK version to use for compilation.
+     */
+    @Restricted
+    Property<Integer> getJdkVersion();
+
+    Dependencies getDependencies();
+
+    AndroidTargets getTargets();
 
     @Configuring
-    default void dependencies(Action<? super AndroidLibraryDependencies> action) {
-        action.execute(getDependencies());
+    default void targets(Action<? super AndroidTargets> action) {
+        action.execute(getTargets());
     }
 }

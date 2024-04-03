@@ -11,10 +11,10 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
  */
 @SuppressWarnings("UnstableApiUsage")
 @Restricted
-public interface LibraryDependencies extends Dependencies {
-    DependencyCollector getApi();
+public interface Dependencies extends PlatformDependencyModifiers, TestFixturesDependencyModifiers, GradleDependencies {
+    DependencyCollector getImplementation();
 
-    // CompileOnlyApi is not included here, since both Android and KMP do not support it.
-    // Does that mean we should also reconsider if we should support it? Or, should we
-    // talk to Android and KMP about adding support
+    DependencyCollector getRuntimeOnly();
+
+    DependencyCollector getCompileOnly();
 }

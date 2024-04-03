@@ -17,6 +17,7 @@ dependencyResolutionManagement {
 rootProject.name = "unified-prototype"
 
 include("testbed-android")
+include("testbed-android-application")
 include("testbed-kmp")
 include("testbed-jvm")
 include("testbed-jvm-groovy")

@@ -17,15 +17,14 @@
 package org.gradle.api.experimental.android;
 
 import org.gradle.api.Action;
+import org.gradle.api.experimental.common.Dependencies;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface AndroidLibrary extends AndroidComponent {
-    AndroidLibraryDependencies getDependencies();
-
+public interface AndroidApplication extends AndroidComponent {
     @Configuring
-    default void dependencies(Action<? super AndroidLibraryDependencies> action) {
+    default void dependencies(Action<? super Dependencies> action) {
         action.execute(getDependencies());
     }
 }
