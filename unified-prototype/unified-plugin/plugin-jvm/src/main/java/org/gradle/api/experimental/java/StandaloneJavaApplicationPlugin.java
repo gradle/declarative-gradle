@@ -1,4 +1,4 @@
-package org.gradle.api.experimental.jvm;
+package org.gradle.api.experimental.java;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;

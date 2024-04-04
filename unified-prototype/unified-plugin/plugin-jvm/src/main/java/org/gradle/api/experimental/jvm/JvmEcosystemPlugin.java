@@ -1,6 +1,7 @@
 package org.gradle.api.experimental.jvm;
 
 import org.gradle.api.Plugin;
+import org.gradle.api.experimental.java.StandaloneJavaApplicationPlugin;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.internal.SettingsInternal;
 import org.gradle.plugin.software.internal.SoftwareTypeRegistry;
