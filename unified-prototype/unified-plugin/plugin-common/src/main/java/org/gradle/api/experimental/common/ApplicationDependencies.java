@@ -1,9 +1,7 @@
 package org.gradle.api.experimental.common;
 
+import org.gradle.api.artifacts.dsl.Dependencies;
 import org.gradle.api.artifacts.dsl.DependencyCollector;
-import org.gradle.api.artifacts.dsl.GradleDependencies;
-import org.gradle.api.plugins.jvm.PlatformDependencyModifiers;
-import org.gradle.api.plugins.jvm.TestFixturesDependencyModifiers;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
@@ -11,7 +9,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
  */
 @SuppressWarnings("UnstableApiUsage")
 @Restricted
-public interface ApplicationDependencies extends PlatformDependencyModifiers, TestFixturesDependencyModifiers, GradleDependencies {
+public interface ApplicationDependencies extends Dependencies {
     DependencyCollector getImplementation();
     DependencyCollector getRuntimeOnly();
     DependencyCollector getCompileOnly();
