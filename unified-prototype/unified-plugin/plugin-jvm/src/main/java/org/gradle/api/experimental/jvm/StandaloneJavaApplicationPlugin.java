@@ -7,7 +7,7 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 /**
- * Creates a declarative {@link JvmLibrary} DSL model, applies the official Jvm plugin,
+ * Creates a declarative {@link JavaApplication} DSL model, applies the official Java application plugin,
  * and links the declarative model to the official plugin.
  */
 public class StandaloneJavaApplicationPlugin implements Plugin<Project> {
