@@ -10,9 +10,13 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("jvm-plugin") {
+        create("jvm-library") {
             id = "org.gradle.experimental.jvm-library"
             implementationClass = "org.gradle.api.experimental.jvm.StandaloneJvmLibraryPlugin"
+        }
+        create("java-application") {
+            id = "org.gradle.experimental.java-application"
+            implementationClass = "org.gradle.api.experimental.jvm.StandaloneJavaApplicationPlugin"
         }
     }
 }
