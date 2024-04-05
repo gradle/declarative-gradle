@@ -3,6 +3,7 @@ package org.gradle.api.experimental.jvm;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -32,7 +33,7 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
         SourceSet commonSources = JavaPluginHelper.getJavaComponent(project).getMainFeature().getSourceSet();
         commonSources.getJava().srcDirs(project.getLayout().getProjectDirectory().dir("src").dir("common").dir("java"));
-        linkSourceSetToDependencies(project, commonSources, dslModel.getDependencies());
+        JvmPluginSupport.linkSourceSetToDependencies(project, commonSources, dslModel.getDependencies());
 
         dslModel.getTargets().withType(JavaTarget.class).all(target -> {
             SourceSet sourceSet = java.getSourceSets().create("java" + target.getJavaVersion());
@@ -46,7 +47,7 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
             });
 
             // Link dependencies to DSL
-            linkSourceSetToDependencies(project, sourceSet, target.getDependencies());
+            JvmPluginSupport.linkSourceSetToDependencies(project, sourceSet, target.getDependencies());
 
             // Extend common sources
             sourceSet.getJava().srcDirs(commonSources.getAllJava());
@@ -61,16 +62,5 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
             project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
                 .extendsFrom(project.getConfigurations().getByName(commonSources.getApiConfigurationName()));
         });
-    }
-
-    private void linkSourceSetToDependencies(Project project, SourceSet sourceSet, LibraryDependencies dependencies) {
-        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-            .getDependencies().addAllLater(dependencies.getImplementation().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-            .getDependencies().addAllLater(dependencies.getCompileOnly().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-            .getDependencies().addAllLater(dependencies.getRuntimeOnly().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
-            .getDependencies().addAllLater(dependencies.getApi().getDependencies());
     }
 }
