@@ -14,6 +14,10 @@ gradlePlugin {
             id = "org.gradle.experimental.jvm-library"
             implementationClass = "org.gradle.api.experimental.jvm.StandaloneJvmLibraryPlugin"
         }
+        create("java-library") {
+            id = "org.gradle.experimental.java-library"
+            implementationClass = "org.gradle.api.experimental.java.StandaloneJavaLibraryPlugin"
+        }
         create("java-application") {
             id = "org.gradle.experimental.java-application"
             implementationClass = "org.gradle.api.experimental.java.StandaloneJavaApplicationPlugin"

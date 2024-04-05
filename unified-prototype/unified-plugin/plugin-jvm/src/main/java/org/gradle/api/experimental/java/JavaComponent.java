@@ -4,7 +4,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface JavaApplication extends JavaComponent {
+public interface JavaComponent {
     @Restricted
-    Property<String> getMainClass();
+    Property<Integer> getJavaVersion();
 }
