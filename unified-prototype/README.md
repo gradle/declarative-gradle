@@ -4,7 +4,20 @@ This directory contains prototypes of plugins for JVM, Android, and KMP projects
 
 Currently, these different ecosystems still apply distinct plugins, but those plugins all share a common `plugin-common` dependency, which will gradually grow to contain more functionality.
 
-So far, the only example modified to use the Declarative DSL is the Android example.
+So far, only the Android and Java examples have been modified to use the Declarative DSL.
+
+## Java
+
+Sample Java projects live in the `testbed-java-library` and `testbed-java-application` directories.
+They have been updated to use the Declarative Gradle DSL.
+
+These samples show the definition of a simple Java application and library that target a single version of Java.
+
+To run the application, use:
+
+```
+> ./gradlew testbed-java-application:run
+```
 
 ## JVM
 
