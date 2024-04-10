@@ -1,7 +1,8 @@
-package org.gradle.api.experimental.jvm;
+package org.gradle.api.experimental.java;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.ApplicationPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -30,5 +31,7 @@ abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project>
 
         org.gradle.api.plugins.JavaApplication app = project.getExtensions().getByType(org.gradle.api.plugins.JavaApplication.class);
         app.getMainClass().set(dslModel.getMainClass());
+
+        JvmPluginSupport.linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dslModel.getDependencies());
     }
 }

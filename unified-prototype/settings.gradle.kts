@@ -9,6 +9,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.experimental.android-ecosystem")
+    id("org.gradle.experimental.jvm-ecosystem")
     id("org.gradle.experimental.kmp-ecosystem")
 }
 
@@ -27,3 +28,4 @@ include("testbed-kmp")
 include("testbed-jvm")
 include("testbed-jvm-groovy")
 include("testbed-java-application")
+include("testbed-java-library")

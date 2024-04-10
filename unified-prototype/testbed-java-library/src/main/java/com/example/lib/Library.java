@@ -1,12 +1,8 @@
-package com.example;
+package com.example.lib;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 
-public class App {
+public class Library {
     private final ListMultimap<String, Long> values = ImmutableListMultimap.of();
-
-    public static void main(String[] args) {
-        System.out.println("Hello from Java " + System.getProperty("java.version"));
-    }
 }
