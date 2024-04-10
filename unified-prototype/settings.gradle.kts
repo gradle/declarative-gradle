@@ -7,6 +7,11 @@ pluginManagement {
     includeBuild("unified-plugin")
 }
 
+plugins {
+    id("org.gradle.experimental.android-ecosystem")
+    id("org.gradle.experimental.kmp-ecosystem")
+}
+
 dependencyResolutionManagement {
     repositories {
         mavenCentral()

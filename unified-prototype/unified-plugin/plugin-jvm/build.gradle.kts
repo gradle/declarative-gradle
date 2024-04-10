@@ -18,5 +18,9 @@ gradlePlugin {
             id = "org.gradle.experimental.java-application"
             implementationClass = "org.gradle.api.experimental.jvm.StandaloneJavaApplicationPlugin"
         }
+        create("jvm-ecosystem") {
+            id = "org.gradle.experimental.jvm-ecosystem"
+            implementationClass = "org.gradle.api.experimental.jvm.JvmEcosystemPlugin"
+        }
     }
 }

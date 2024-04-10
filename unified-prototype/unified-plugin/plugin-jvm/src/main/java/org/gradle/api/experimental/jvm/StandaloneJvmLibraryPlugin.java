@@ -3,6 +3,7 @@ package org.gradle.api.experimental.jvm;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JavaPluginHelper;
@@ -13,10 +14,13 @@ import org.gradle.api.tasks.compile.JavaCompile;
  * Creates a declarative {@link JvmLibrary} DSL model, applies the official Jvm plugin,
  * and links the declarative model to the official plugin.
  */
-public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
+abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
+    @SoftwareType(name= "jvmLibrary", modelPublicType=JvmLibrary.class)
+    abstract public AbstractJvmLibrary getJvmLibrary();
+
     @Override
     public void apply(Project project) {
-        AbstractJvmLibrary dslModel = project.getExtensions().create("jvmLibrary", AbstractJvmLibrary.class);
+        AbstractJvmLibrary dslModel = getJvmLibrary();
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 

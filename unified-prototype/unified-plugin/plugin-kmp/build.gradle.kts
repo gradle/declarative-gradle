@@ -15,5 +15,9 @@ gradlePlugin {
             id = "org.gradle.experimental.kmp-library"
             implementationClass = "org.gradle.api.experimental.kmp.StandaloneKmpLibraryPlugin"
         }
+        create("kmp-ecosystem") {
+            id = "org.gradle.experimental.kmp-ecosystem"
+            implementationClass = "org.gradle.api.experimental.kmp.KmpEcosystemPlugin"
+        }
     }
 }
