@@ -1,9 +1,9 @@
 [versions]
 # Find latest version at: https://kotlinlang.org/docs/releases.html#release-details
-kotlin = "1.9.22"
+kotlin = "1.9.21"
 
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
-android = "8.2.2"
+android = "8.2.0"
 
 [libraries]
 # Kotlin dependencies
