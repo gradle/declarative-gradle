@@ -5,6 +5,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.DependencyScopeConfiguration;
 import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
@@ -14,7 +15,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
  * Creates a declarative {@link KmpLibrary} DSL model, applies the official KMP plugin,
  * and links the declarative model to the official plugin.
  */
-public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
+abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
+    @SoftwareType(name="kmpLibrary", modelPublicType=KmpLibrary.class)
+    abstract public AbstractKmpLibrary getKmpLibrary();
+
     @Override
     public void apply(Project project) {
         KmpLibrary dslModel = createDslModel(project);
@@ -30,7 +34,7 @@ public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     }
 
     private KmpLibrary createDslModel(Project project) {
-        KmpLibrary dslModel = project.getExtensions().create("kmpLibrary", AbstractKmpLibrary.class);
+        KmpLibrary dslModel = getKmpLibrary();
 
         // In order for function extraction from the DependencyCollector on the library deps to work, configurations must exist
         // Matching the names of the getters on LibraryDependencies

@@ -1,7 +1,3 @@
-plugins {
-    id("org.gradle.experimental.android-library")
-}
-
 androidLibrary {
     jdkVersion = 17
     compileSdk = 34

@@ -9,6 +9,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.common.ApplicationDependencies;
+import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
@@ -18,9 +19,12 @@ import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
  * and links the declarative model to the official plugin.
  */
 public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Project> {
+    @SoftwareType(name = "androidApplication", modelPublicType=AndroidApplication.class)
+    abstract public AndroidApplication getAndroidApplication();
+
     @Override
     public void apply(Project project) {
-        AndroidApplication dslModel = project.getExtensions().create("androidApplication", AndroidApplication.class);
+        AndroidApplication dslModel = getAndroidApplication();
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
