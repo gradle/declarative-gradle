@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    id("build-logic.publishing")
 }
 
 description = "Implements the declarative Android DSL prototype"
@@ -15,14 +16,17 @@ gradlePlugin {
         create("android-library-plugin") {
             id = "org.gradle.experimental.android-library"
             implementationClass = "org.gradle.api.experimental.android.library.StandaloneAndroidLibraryPlugin"
+            tags = setOf("declarative-gradle", "android")
         }
         create("android-application-plugin") {
             id = "org.gradle.experimental.android-application"
             implementationClass = "org.gradle.api.experimental.android.application.StandaloneAndroidApplicationPlugin"
+            tags = setOf("declarative-gradle", "android")
         }
         create("android-ecosystem-plugin") {
             id = "org.gradle.experimental.android-ecosystem"
             implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemPlugin"
+            tags = setOf("declarative-gradle", "android")
         }
     }
 }

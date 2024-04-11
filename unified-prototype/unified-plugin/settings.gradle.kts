@@ -6,6 +6,7 @@ dependencyResolutionManagement {
     }
 }
 
+includeBuild("build-logic")
 include("plugin-android")
 include("plugin-jvm")
 include("plugin-kmp")
