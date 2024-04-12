@@ -16,6 +16,7 @@
 
 package org.gradle.api.experimental.android.application;
 
+import com.android.build.api.dsl.ApplicationBaseFlavor;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
@@ -27,6 +28,27 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
 public interface AndroidApplication {
+
+    /**
+     * @see ApplicationBaseFlavor#setVersionName(String)
+     */
+    @Restricted
+    Property<String> getVersionName();
+
+
+    /**
+     * @see ApplicationBaseFlavor#setVersionCode(Integer)
+     */
+    @Restricted
+    Property<Integer> getVersionCode();
+
+
+    /**
+     * @see ApplicationBaseFlavor#setApplicationId(String)
+     */
+    @Restricted
+    Property<String> getApplicationId();
+
     /**
      * @see CommonExtension#getCompileSdk()
      */
