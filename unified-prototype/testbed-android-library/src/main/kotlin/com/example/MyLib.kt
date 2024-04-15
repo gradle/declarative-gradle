@@ -12,5 +12,8 @@ class MyLib {
 
     // Demonstrates Guava is part of API
     fun getAbcs() = ImmutableList.of("a", "b", "c")
+
+    // Demonstrate Project dependency
+    fun getWelcome() = Utils().getWelcome()
 }
 

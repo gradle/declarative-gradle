@@ -16,6 +16,6 @@ class MyBufferOKIOImpl(private val buffer: Buffer) : MyBuffer {
         get() = buffer.size
 }
 
-fun MyLib.getBufferMaker(): BufferMaker {
+fun MyApp.getBufferMaker(): BufferMaker {
     return BufferMakerOKIOImpl()
 }

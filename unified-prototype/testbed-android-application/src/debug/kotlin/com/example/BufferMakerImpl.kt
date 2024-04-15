@@ -16,6 +16,6 @@ class MyBufferTestImpl() : MyBuffer {
         get() = buffer.size.toLong()
 }
 
-fun MyLib.getBufferMaker(): BufferMaker {
+fun MyApp.getBufferMaker(): BufferMaker {
     return BufferMakerTestImpl()
 }
