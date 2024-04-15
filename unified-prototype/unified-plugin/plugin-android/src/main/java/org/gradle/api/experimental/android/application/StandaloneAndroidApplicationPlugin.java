@@ -50,6 +50,9 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         ifPresent(dslModel.getCompileSdk(), android::setCompileSdk);
         android.defaultConfig(defaultConfig -> {
             ifPresent(dslModel.getMinSdk(), defaultConfig::setMinSdk);
+            ifPresent(dslModel.getVersionCode(), defaultConfig::setVersionCode);
+            ifPresent(dslModel.getVersionName(), defaultConfig::setVersionName);
+            ifPresent(dslModel.getApplicationId(), defaultConfig::setApplicationId);
             return null;
         });
         ifPresent(dslModel.getJdkVersion(), jdkVersion -> {
