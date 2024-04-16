@@ -7,7 +7,7 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface JavaLibrary extends JavaComponent {
+public interface JavaLibrary extends HasJavaTarget {
     @Nested
     LibraryDependencies getDependencies();
 

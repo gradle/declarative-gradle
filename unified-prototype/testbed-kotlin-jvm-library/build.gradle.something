@@ -1,0 +1,3 @@
+kotlinJvmApplication {
+    javaVersion = 21
+}

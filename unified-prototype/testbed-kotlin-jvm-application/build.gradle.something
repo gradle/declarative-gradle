@@ -1,0 +1,4 @@
+kotlinJvmApplication {
+    javaVersion = 21
+    mainClass = "com.example.App"
+}

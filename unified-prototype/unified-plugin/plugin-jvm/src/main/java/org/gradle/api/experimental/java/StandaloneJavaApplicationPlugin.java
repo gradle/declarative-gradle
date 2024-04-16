@@ -14,11 +14,11 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
  */
 abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project> {
     @SoftwareType(name= "javaApplication", modelPublicType=JavaApplication.class)
-    abstract public JavaApplication getJavaApplication();
+    abstract public JavaApplication getApplication();
 
     @Override
     public void apply(Project project) {
-        JavaApplication dslModel = getJavaApplication();
+        JavaApplication dslModel = getApplication();
 
         project.getPlugins().apply(ApplicationPlugin.class);
 
