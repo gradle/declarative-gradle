@@ -4,12 +4,11 @@ This directory contains prototypes of plugins for JVM, Android, and KMP projects
 
 Currently, these different ecosystems still apply distinct plugins, but those plugins all share a common `plugin-common` dependency, which will gradually grow to contain more functionality.
 
-So far, only the Android and Java examples have been modified to use the Declarative DSL.
+Some samples have not yet been converted to use the declarative DSL files.
 
 ## Java
 
 Sample Java projects live in the `testbed-java-library` and `testbed-java-application` directories.
-They have been updated to use the Declarative Gradle DSL.
 
 These samples show the definition of a simple Java application and library that target a single version of Java.
 
@@ -23,9 +22,21 @@ To run the application, use:
 
 Not yet updated for Declarative DSL.
 
+## Kotlin JVM
+
+Sample Kotlin JVM projects live in the `testbed-kotlin-jvm-library` and `testbed-kotlin-jvm-application` directories.
+
+These samples show the definition of a simple Kotlin JVM application and library that target a single version of Kotlin and Java.
+
+To run the application, use:
+
+```
+> ./gradlew testbed-kotlin-jvm-application:run
+```
+
 ## KMP
 
-The sample Kotlin Multiplatform project lives in the `testbed-kmp` directory and has been updated to use the Declarative Gradle DSL.
+The sample Kotlin Multiplatform project lives in the `testbed-kmp` directory.
 The `unified-prototype/plugin-kmp` plugin demonstrates creating extensions using the Declarative DSL, and loading the data from those extensions into the KMP project used by KGP.
 
 The sample project demonstrates setting properties, using a common dependencies block, and adding dependencies to specific targets.
@@ -66,7 +77,7 @@ cd testbed-kmp
 
 ## Android
 
-Sample Android projects live in the `testbed-android-library` and `testbed-android-application` directories. They have been updated to use the Declarative Gradle DSL. 
+Sample Android projects live in the `testbed-android-library` and `testbed-android-application` directories.
 The `unified-prototype/plugin-android` plugin demonstrates creating extensions using the Declarative DSL, and loading the data from those extensions into the Android project used by AGP.
 
 The sample project demonstrates setting properties, using a common dependencies block, and adding dependencies to specific Android targets.
