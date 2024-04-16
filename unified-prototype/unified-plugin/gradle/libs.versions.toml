@@ -8,6 +8,7 @@ android = "8.2.0"
 [libraries]
 # Kotlin dependencies
 kotlin-multiplatform = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
+kotlin-jvm = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
 
 # Android dependencies
 android-agp-application = { module = "com.android.application:com.android.application.gradle.plugin", version.ref = "android" }

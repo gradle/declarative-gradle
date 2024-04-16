@@ -13,7 +13,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project> {
-    @SoftwareType(name= "javaApplication", modelPublicType=JavaApplication.class)
+    @SoftwareType(name = "javaApplication", modelPublicType = JavaApplication.class)
     abstract public JavaApplication getApplication();
 
     @Override
@@ -29,9 +29,7 @@ abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project>
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
         java.getToolchain().getLanguageVersion().set(dslModel.getJavaVersion().map(JavaLanguageVersion::of));
 
-        org.gradle.api.plugins.JavaApplication app = project.getExtensions().getByType(org.gradle.api.plugins.JavaApplication.class);
-        app.getMainClass().set(dslModel.getMainClass());
-
+        JvmPluginSupport.linkApplicationMainClass(project, dslModel);
         JvmPluginSupport.linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dslModel.getDependencies());
     }
 }

@@ -1,4 +1,4 @@
 kotlinJvmApplication {
     javaVersion = 21
-    mainClass = "com.example.App"
+    mainClass = "com.example.AppKt"
 }
