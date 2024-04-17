@@ -26,6 +26,10 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
     public void apply(Project project) {
         AndroidLibrary dslModel = getAndroidLibrary();
 
+        // Setup Android Library conventions
+        dslModel.getJdkVersion().convention(17);
+        dslModel.getCompileSdk().convention(34);
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
