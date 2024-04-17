@@ -8,7 +8,6 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
@@ -34,9 +33,11 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
 
-        // Apply the official Android plugin.
+        // Apply the official Android plugin and support for Kotlin
         project.getPlugins().apply("com.android.library");
         project.getPlugins().apply("org.jetbrains.kotlin.android");
+        // Add support for KSP
+        project.getPlugins().apply("com.google.devtools.ksp");
 
         linkDslModelToPluginLazy(project, dslModel);
     }
@@ -77,22 +78,23 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         linkCommonDependencies(dslModel.getDependencies(), configurations);
     }
 
-    private static void linkCommonDependencies(LibraryDependencies dependencies, ConfigurationContainer configurations) {
+    private static void linkCommonDependencies(AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
         configurations.getByName("implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName("api").fromDependencyCollector(dependencies.getApi());
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
+        configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
     }
 
     /**
      * Links build types from the model to the android extension.
      */
-    private static void linkBuildType(LibraryBuildType android, AndroidLibraryBuildType model, ConfigurationContainer configurations) {
-        ifPresent(model.getMinifyEnabled(), android::setMinifyEnabled);
-        linkBuildTypeDependencies(android, model.getDependencies(), configurations);
+    private static void linkBuildType(LibraryBuildType buildType, AndroidLibraryBuildType model, ConfigurationContainer configurations) {
+        ifPresent(model.getMinifyEnabled(), buildType::setMinifyEnabled);
+        linkBuildTypeDependencies(buildType, model.getDependencies(), configurations);
     }
 
-    private static void linkBuildTypeDependencies(BuildType buildType, LibraryDependencies dependencies, ConfigurationContainer configurations) {
+    private static void linkBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
         String name = buildType.getName();
         configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName(name + "Api").fromDependencyCollector(dependencies.getApi());
