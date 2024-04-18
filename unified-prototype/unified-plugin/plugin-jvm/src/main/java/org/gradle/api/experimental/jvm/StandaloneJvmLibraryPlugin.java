@@ -2,7 +2,6 @@ package org.gradle.api.experimental.jvm;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.JavaLibraryPlugin;
@@ -25,10 +24,10 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 
-        linkDslModelToPluginLazy(project, dslModel);
+        linkDslModelToPlugin(project, dslModel);
     }
 
-    private void linkDslModelToPluginLazy(Project project, AbstractJvmLibrary dslModel) {
+    private void linkDslModelToPlugin(Project project, AbstractJvmLibrary dslModel) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
 
         SourceSet commonSources = JavaPluginHelper.getJavaComponent(project).getMainFeature().getSourceSet();
