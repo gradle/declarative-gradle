@@ -19,12 +19,12 @@ import javax.inject.Inject;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name= "jvmLibrary", modelPublicType=JvmLibrary.class)
-    abstract public AbstractJvmLibrary getJvmLibrary();
+    @SoftwareType(name = "jvmLibrary", modelPublicType = JvmLibrary.class)
+    abstract public JvmLibrary getJvmLibrary();
 
     @Override
     public void apply(Project project) {
-        AbstractJvmLibrary dslModel = getJvmLibrary();
+        JvmLibrary dslModel = getJvmLibrary();
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 
@@ -34,7 +34,7 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
     @Inject
     protected abstract JavaToolchainService getJavaToolchainService();
 
-    private void linkDslModelToPlugin(Project project, AbstractJvmLibrary dslModel) {
+    private void linkDslModelToPlugin(Project project, JvmLibrary dslModel) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
 
         SourceSet commonSources = JavaPluginHelper.getJavaComponent(project).getMainFeature().getSourceSet();
@@ -42,7 +42,7 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
         JvmPluginSupport.linkSourceSetToDependencies(project, commonSources, dslModel.getDependencies());
 
         java.getToolchain().getLanguageVersion().set(project.provider(() ->
-            JavaLanguageVersion.of(dslModel.getTargets().withType(JavaTarget.class).stream().mapToInt(JavaTarget::getJavaVersion).min().getAsInt())
+                JavaLanguageVersion.of(dslModel.getTargets().withType(JavaTarget.class).stream().mapToInt(JavaTarget::getJavaVersion).min().getAsInt())
         ));
 
         dslModel.getTargets().withType(JavaTarget.class).all(target -> {
@@ -65,13 +65,13 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
             // Extend common dependencies
             project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-                .extendsFrom(project.getConfigurations().getByName(commonSources.getImplementationConfigurationName()));
+                    .extendsFrom(project.getConfigurations().getByName(commonSources.getImplementationConfigurationName()));
             project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-                .extendsFrom(project.getConfigurations().getByName(commonSources.getCompileOnlyConfigurationName()));
+                    .extendsFrom(project.getConfigurations().getByName(commonSources.getCompileOnlyConfigurationName()));
             project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-                .extendsFrom(project.getConfigurations().getByName(commonSources.getRuntimeOnlyConfigurationName()));
+                    .extendsFrom(project.getConfigurations().getByName(commonSources.getRuntimeOnlyConfigurationName()));
             project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
-                .extendsFrom(project.getConfigurations().getByName(commonSources.getApiConfigurationName()));
+                    .extendsFrom(project.getConfigurations().getByName(commonSources.getApiConfigurationName()));
 
             // Assemble for all targets
             project.getTasks().named("assemble").configure(task -> task.dependsOn(sourceSet.getOutput()));

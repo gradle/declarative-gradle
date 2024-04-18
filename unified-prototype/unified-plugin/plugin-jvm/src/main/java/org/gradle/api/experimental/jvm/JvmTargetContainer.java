@@ -6,16 +6,21 @@ import org.gradle.api.internal.DefaultNamedDomainObjectSet;
 import org.gradle.declarative.dsl.model.annotations.Adding;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
+import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.reflect.Instantiator;
+import org.gradle.internal.service.ServiceRegistry;
+
+import javax.inject.Inject;
 
 @Restricted
 public class JvmTargetContainer extends DefaultNamedDomainObjectSet<JvmTarget> {
 
     private final Instantiator elementInstantiator;
 
-    public JvmTargetContainer(Instantiator instantiator, Instantiator elementInstantiator, CollectionCallbackActionDecorator callbackDecorator) {
+    @Inject
+    public JvmTargetContainer(Instantiator instantiator, InstantiatorFactory instantiatorFactory, ServiceRegistry serviceRegistry, CollectionCallbackActionDecorator callbackDecorator) {
         super(JvmTarget.class, instantiator, callbackDecorator);
-        this.elementInstantiator = elementInstantiator;
+        this.elementInstantiator = instantiatorFactory.decorateLenient(serviceRegistry);
     }
 
     public void java(int version) {
