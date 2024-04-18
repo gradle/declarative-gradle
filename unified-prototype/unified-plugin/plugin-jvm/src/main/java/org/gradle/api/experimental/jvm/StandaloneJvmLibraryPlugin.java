@@ -9,6 +9,10 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JavaPluginHelper;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.jvm.toolchain.JavaToolchainService;
+
+import javax.inject.Inject;
 
 /**
  * Creates a declarative {@link JvmLibrary} DSL model, applies the official Jvm plugin,
@@ -27,12 +31,19 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
         linkDslModelToPlugin(project, dslModel);
     }
 
+    @Inject
+    protected abstract JavaToolchainService getJavaToolchainService();
+
     private void linkDslModelToPlugin(Project project, AbstractJvmLibrary dslModel) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
 
         SourceSet commonSources = JavaPluginHelper.getJavaComponent(project).getMainFeature().getSourceSet();
         commonSources.getJava().srcDirs(project.getLayout().getProjectDirectory().dir("src").dir("common").dir("java"));
         JvmPluginSupport.linkSourceSetToDependencies(project, commonSources, dslModel.getDependencies());
+
+        java.getToolchain().getLanguageVersion().set(project.provider(() ->
+            JavaLanguageVersion.of(dslModel.getTargets().withType(JavaTarget.class).stream().mapToInt(JavaTarget::getJavaVersion).min().getAsInt())
+        ));
 
         dslModel.getTargets().withType(JavaTarget.class).all(target -> {
             SourceSet sourceSet = java.getSourceSets().create("java" + target.getJavaVersion());
@@ -42,7 +53,7 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
             // Link properties
             project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, task -> {
-                task.getOptions().getRelease().set(target.getJavaVersion());
+                task.getJavaCompiler().set(getJavaToolchainService().compilerFor(spec -> spec.getLanguageVersion().set(JavaLanguageVersion.of(target.getJavaVersion()))));
             });
 
             // Link dependencies to DSL
