@@ -1,6 +1,6 @@
 [versions]
 # Find latest version at: https://kotlinlang.org/docs/releases.html#release-details
-kotlin = "1.9.21"
+kotlin = "1.9.23"
 
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
 android = "8.2.0"
