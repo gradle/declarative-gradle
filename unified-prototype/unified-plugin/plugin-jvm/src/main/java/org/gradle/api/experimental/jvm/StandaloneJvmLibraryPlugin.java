@@ -72,6 +72,9 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
                 .extendsFrom(project.getConfigurations().getByName(commonSources.getRuntimeOnlyConfigurationName()));
             project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
                 .extendsFrom(project.getConfigurations().getByName(commonSources.getApiConfigurationName()));
+
+            // Assemble for all targets
+            project.getTasks().named("assemble").configure(task -> task.dependsOn(sourceSet.getOutput()));
         });
     }
 }
