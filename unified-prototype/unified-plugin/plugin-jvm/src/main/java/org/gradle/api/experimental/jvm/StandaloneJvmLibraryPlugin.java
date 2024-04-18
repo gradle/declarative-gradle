@@ -6,7 +6,6 @@ import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.api.plugins.internal.JavaPluginHelper;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
@@ -35,15 +34,13 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
     protected abstract JavaToolchainService getJavaToolchainService();
 
     private void linkDslModelToPlugin(Project project, JvmLibrary dslModel) {
-        JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
 
-        SourceSet commonSources = JavaPluginHelper.getJavaComponent(project).getMainFeature().getSourceSet();
-        commonSources.getJava().srcDirs(project.getLayout().getProjectDirectory().dir("src").dir("common").dir("java"));
+        SourceSet commonSources = JvmPluginSupport.setupCommonSourceSet(project);
         JvmPluginSupport.linkSourceSetToDependencies(project, commonSources, dslModel.getDependencies());
 
-        java.getToolchain().getLanguageVersion().set(project.provider(() ->
-                JavaLanguageVersion.of(dslModel.getTargets().withType(JavaTarget.class).stream().mapToInt(JavaTarget::getJavaVersion).min().getAsInt())
-        ));
+        JvmPluginSupport.linkJavaVersion(project, dslModel);
+
+        JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
 
         dslModel.getTargets().withType(JavaTarget.class).all(target -> {
             SourceSet sourceSet = java.getSourceSets().create("java" + target.getJavaVersion());

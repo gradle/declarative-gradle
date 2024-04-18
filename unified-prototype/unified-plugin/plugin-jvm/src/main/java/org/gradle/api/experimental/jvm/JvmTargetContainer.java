@@ -30,7 +30,8 @@ public class JvmTargetContainer extends DefaultNamedDomainObjectSet<JvmTarget> {
     @Adding
     public JvmTarget java(int version, Action<? super JvmTarget> action) {
         JavaTarget element = elementInstantiator.newInstance(JavaTarget.class, version);
-        add(element, action);
+        add(element);
+        action.execute(element);
         return element;
     }
 }
