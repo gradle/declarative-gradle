@@ -3,11 +3,9 @@ package org.gradle.api.experimental.kotlin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
+import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.ApplicationPlugin;
-import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.jvm.toolchain.JavaLanguageVersion;
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension;
 
 /**
  * Creates a declarative {@link KotlinJvmApplication} DSL model, applies the official Kotlin and application plugin,
@@ -28,12 +26,8 @@ abstract public class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
     }
 
     private void linkDslModelToPlugin(Project project, KotlinJvmApplication dslModel) {
-        KotlinJvmProjectExtension kotlin = project.getExtensions().getByType(KotlinJvmProjectExtension.class);
-        kotlin.jvmToolchain(spec -> spec.getLanguageVersion().set(dslModel.getJavaVersion().map(JavaLanguageVersion::of)));
-
+        KotlinPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkApplicationMainClass(project, dslModel);
-
-        JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
-        JvmPluginSupport.linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dslModel.getDependencies());
+        JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
     }
 }

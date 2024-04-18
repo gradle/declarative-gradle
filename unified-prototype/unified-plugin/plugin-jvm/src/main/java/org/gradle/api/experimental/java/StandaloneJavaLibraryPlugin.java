@@ -5,8 +5,6 @@ import org.gradle.api.Project;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.JavaLibraryPlugin;
-import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.jvm.toolchain.JavaLanguageVersion;
 
 /**
  * Creates a declarative {@link JavaLibrary} DSL model, applies the official Java library plugin,
@@ -26,9 +24,7 @@ public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
     }
 
     private void linkDslModelToPlugin(Project project, JavaLibrary dslModel) {
-        JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
-        java.getToolchain().getLanguageVersion().set(dslModel.getJavaVersion().map(JavaLanguageVersion::of));
-
-        JvmPluginSupport.linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dslModel.getDependencies());
+        JvmPluginSupport.linkJavaVersion(project, dslModel);
+        JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
     }
 }
