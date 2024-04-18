@@ -59,8 +59,9 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
             // Link dependencies to DSL
             JvmPluginSupport.linkSourceSetToDependencies(project, sourceSet, target.getDependencies());
 
-            // Extend common sources
-            sourceSet.getJava().srcDirs(commonSources.getAllJava());
+            // Depend on common sources
+            project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
+                    .getDependencies().add(project.getDependencies().create(commonSources.getOutput()));
 
             // Extend common dependencies
             project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
