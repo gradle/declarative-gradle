@@ -7,10 +7,10 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
- * A library that is built for a single Java version.
+ * Represents a library that runs on the JVM.
  */
 @Restricted
-public interface LibraryWithJavaTarget extends HasJavaTarget {
+public interface HasJvmLibrary {
     @Nested
     LibraryDependencies getDependencies();
 

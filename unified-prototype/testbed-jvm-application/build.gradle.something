@@ -1,7 +1,10 @@
 jvmApplication {
+    mainClass = "com.example.App"
+
     dependencies {
         implementation("org.apache.commons:commons-lang3:3.14.0")
     }
+
     targets {
         java(11) {
             dependencies {

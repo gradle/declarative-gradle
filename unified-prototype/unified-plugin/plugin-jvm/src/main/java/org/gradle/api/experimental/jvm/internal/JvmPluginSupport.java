@@ -3,8 +3,8 @@ package org.gradle.api.experimental.jvm.internal;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.api.experimental.common.LibraryDependencies;
-import org.gradle.api.experimental.jvm.ApplicationWithJavaTarget;
 import org.gradle.api.experimental.jvm.HasJavaTarget;
+import org.gradle.api.experimental.jvm.HasJvmApplication;
 import org.gradle.api.plugins.JavaApplication;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
@@ -46,7 +46,7 @@ public class JvmPluginSupport {
         java.getToolchain().getLanguageVersion().set(dslModel.getJavaVersion().map(JavaLanguageVersion::of));
     }
 
-    public static void linkApplicationMainClass(Project project, ApplicationWithJavaTarget application) {
+    public static void linkApplicationMainClass(Project project, HasJvmApplication application) {
         JavaApplication app = project.getExtensions().getByType(JavaApplication.class);
         app.getMainClass().set(application.getMainClass());
     }
