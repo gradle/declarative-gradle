@@ -22,10 +22,10 @@ public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 
-        linkDslModelToPluginLazy(project, dslModel);
+        linkDslModelToPlugin(project, dslModel);
     }
 
-    private void linkDslModelToPluginLazy(Project project, JavaLibrary dslModel) {
+    private void linkDslModelToPlugin(Project project, JavaLibrary dslModel) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
         java.getToolchain().getLanguageVersion().set(dslModel.getJavaVersion().map(JavaLanguageVersion::of));
 

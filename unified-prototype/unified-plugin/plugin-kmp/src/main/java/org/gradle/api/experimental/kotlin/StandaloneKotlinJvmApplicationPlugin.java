@@ -24,10 +24,10 @@ abstract public class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
         project.getPlugins().apply(ApplicationPlugin.class);
         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
 
-        linkDslModelToPluginLazy(project, dslModel);
+        linkDslModelToPlugin(project, dslModel);
     }
 
-    private void linkDslModelToPluginLazy(Project project, KotlinJvmApplication dslModel) {
+    private void linkDslModelToPlugin(Project project, KotlinJvmApplication dslModel) {
         KotlinJvmProjectExtension kotlin = project.getExtensions().getByType(KotlinJvmProjectExtension.class);
         kotlin.jvmToolchain(spec -> spec.getLanguageVersion().set(dslModel.getJavaVersion().map(JavaLanguageVersion::of)));
 
