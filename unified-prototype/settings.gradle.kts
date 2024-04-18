@@ -24,9 +24,12 @@ rootProject.name = "unified-prototype"
 
 include("android-util")
 include("java-util")
+include("kotlin-jvm-util")
 include("testbed-android-library")
 include("testbed-android-application")
 include("testbed-kmp")
+include("testbed-kotlin-jvm-application")
+include("testbed-kotlin-jvm-library")
 include("testbed-jvm")
 include("testbed-jvm-groovy")
 include("testbed-java-application")

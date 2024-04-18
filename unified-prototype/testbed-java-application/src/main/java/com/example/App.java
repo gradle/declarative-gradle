@@ -1,18 +1,19 @@
 package com.example;
 
 import com.example.utils.Utils;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+import com.google.common.collect.ImmutableList;
 
 public class App {
     public static void main(String[] args) {
         // Verify that Guava is available
-        ListMultimap<String, Long> values = ArrayListMultimap.create();
-        values.put("Hello from Java " + System.getProperty("java.version"), 12L);
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        builder.add("Hello from Java " + System.getProperty("java.version"));
 
         // Verify that the Java library is available
-        values.put(new Utils().getWelcome(), 11L);
+        Utils utils = new Utils();
+        builder.add(utils.getWelcome());
 
-        values.keySet().forEach(System.out::println);
+        ImmutableList<String> messages = builder.build();
+        messages.forEach(System.out::println);
     }
 }

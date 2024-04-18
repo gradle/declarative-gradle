@@ -13,17 +13,17 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("android-library-plugin") {
+        create("android-library") {
             id = "org.gradle.experimental.android-library"
             implementationClass = "org.gradle.api.experimental.android.library.StandaloneAndroidLibraryPlugin"
             tags = setOf("declarative-gradle", "android")
         }
-        create("android-application-plugin") {
+        create("android-application") {
             id = "org.gradle.experimental.android-application"
             implementationClass = "org.gradle.api.experimental.android.application.StandaloneAndroidApplicationPlugin"
             tags = setOf("declarative-gradle", "android")
         }
-        create("android-ecosystem-plugin") {
+        create("android-ecosystem") {
             id = "org.gradle.experimental.android-ecosystem"
             implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemPlugin"
             tags = setOf("declarative-gradle", "android")

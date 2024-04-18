@@ -3,7 +3,6 @@ package org.gradle.api.experimental.java;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
-import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -15,11 +14,11 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
  */
 public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
     @SoftwareType(name = "javaLibrary", modelPublicType = JavaLibrary.class)
-    abstract public JavaLibrary getJavaApplication();
+    abstract public JavaLibrary getLibrary();
 
     @Override
     public void apply(Project project) {
-        JavaLibrary dslModel = getJavaApplication();
+        JavaLibrary dslModel = getLibrary();
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 

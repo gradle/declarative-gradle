@@ -3,6 +3,8 @@ package org.gradle.api.experimental.jvm.internal;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.experimental.jvm.ApplicationWithJavaTarget;
+import org.gradle.api.plugins.JavaApplication;
 import org.gradle.api.tasks.SourceSet;
 
 public class JvmPluginSupport {
@@ -24,6 +26,11 @@ public class JvmPluginSupport {
                 .getDependencies().addAllLater(dependencies.getCompileOnly().getDependencies());
         project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
                 .getDependencies().addAllLater(dependencies.getRuntimeOnly().getDependencies());
+    }
+
+    public static void linkApplicationMainClass(Project project, ApplicationWithJavaTarget application) {
+        JavaApplication app = project.getExtensions().getByType(JavaApplication.class);
+        app.getMainClass().set(application.getMainClass());
     }
 
 }
