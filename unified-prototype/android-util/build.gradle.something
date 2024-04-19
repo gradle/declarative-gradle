@@ -2,16 +2,4 @@ androidLibrary {
     jdkVersion = 17
     compileSdk = 34
     namespace = "org.gradle.experimental.android.library.util"
-
-    buildTypes {
-        dependencies {
-            ksp("com.google.dagger:hilt-android-compiler:2.50")
-        }
-
-        debug {
-            dependencies {
-                implementation("com.google.dagger:hilt-android:2.50")
-            }
-        }
-    }
 }
