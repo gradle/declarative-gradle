@@ -17,9 +17,6 @@
 package org.gradle.api.experimental.android;
 
 import org.gradle.api.Action;
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.VersionCatalog;
-import org.gradle.api.artifacts.VersionCatalogsExtension;
 import org.gradle.api.provider.Property;
 
 public final class AndroidDSLSupport {
@@ -29,9 +26,5 @@ public final class AndroidDSLSupport {
         if (property.isPresent()) {
             action.execute(property.get());
         }
-    }
-
-    public static VersionCatalog getLibs(Project project) {
-        return project.getExtensions().getByType(VersionCatalogsExtension.class).find("libs").orElseThrow(IllegalStateException::new);
     }
 }
