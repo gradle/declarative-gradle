@@ -33,6 +33,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getJdkVersion().convention(17);
         dslModel.getCompileSdk().convention(34);
         dslModel.getMinSdk().convention(21); // https://developer.android.com/build/multidex#mdex-gradle
+        dslModel.getIncludeKotlinSerialization().convention(false);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -88,6 +89,10 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
         setContentTypeAttributes(project);
+
+        if (dslModel.getIncludeKotlinSerialization().get()) {
+            project.getPluginManager().apply("kotlinx-serialization");
+        }
     }
 
     /**

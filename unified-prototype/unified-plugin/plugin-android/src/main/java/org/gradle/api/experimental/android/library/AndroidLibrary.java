@@ -50,6 +50,12 @@ public interface AndroidLibrary {
     @Restricted
     Property<Integer> getJdkVersion();
 
+    /**
+     * Whether or not to set up Kotlin serialization, applying the plugins and adding any necessary dependencies.
+     */
+    @Restricted
+    public abstract Property<Boolean> getIncludeKotlinSerialization();
+
     @Nested
     AndroidLibraryDependencies getDependencies();
 
