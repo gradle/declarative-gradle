@@ -17,6 +17,7 @@ import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
  * Creates a declarative {@link AndroidLibrary} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.
  */
+@SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
     @SoftwareType(name = "androidLibrary", modelPublicType=AndroidLibrary.class)
     abstract public AndroidLibrary getAndroidLibrary();
@@ -28,6 +29,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         // Setup Android Library conventions
         dslModel.getJdkVersion().convention(17);
         dslModel.getCompileSdk().convention(34);
+        dslModel.getMinSdk().convention(21); // https://developer.android.com/build/multidex#mdex-gradle
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -38,6 +40,8 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         project.getPlugins().apply("org.jetbrains.kotlin.android");
         // Add support for KSP
         project.getPlugins().apply("com.google.devtools.ksp");
+        // Add support for Hilt
+        project.getPlugins().apply("dagger.hilt.android.plugin");
 
         linkDslModelToPluginLazy(project, dslModel);
     }
@@ -55,6 +59,14 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         ifPresent(dslModel.getCompileSdk(), android::setCompileSdk);
         android.defaultConfig(defaultConfig -> {
             ifPresent(dslModel.getMinSdk(), defaultConfig::setMinSdk);
+            return null;
+        });
+        android.compileOptions(compileOptions -> {
+            // Up to Java 11 APIs are available through desugaring
+            // https://developer.android.com/studio/write/java11-minimal-support-table
+            compileOptions.setSourceCompatibility(JavaVersion.VERSION_11);
+            compileOptions.setTargetCompatibility(JavaVersion.VERSION_11);
+            compileOptions.setCoreLibraryDesugaringEnabled(true);
             return null;
         });
         ifPresent(dslModel.getJdkVersion(), jdkVersion -> {
@@ -84,6 +96,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
         configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
+        configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
     }
 
     /**
