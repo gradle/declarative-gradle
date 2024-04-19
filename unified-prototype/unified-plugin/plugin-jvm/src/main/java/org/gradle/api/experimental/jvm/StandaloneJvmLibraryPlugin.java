@@ -38,22 +38,12 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
         JvmPluginSupport.linkJavaVersion(project, dslModel);
 
         dslModel.getTargets().withType(JavaTarget.class).all(target -> {
-            SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(project, target, getJavaToolchainService());
+            SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(project, target, commonSources, getJavaToolchainService());
 
             // Link dependencies to DSL
             JvmPluginSupport.linkSourceSetToDependencies(project, sourceSet, target.getDependencies());
 
-            // Depend on common sources
-            project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-                    .getDependencies().add(project.getDependencies().create(commonSources.getOutput()));
-
             // Extend common dependencies
-            project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-                    .extendsFrom(project.getConfigurations().getByName(commonSources.getImplementationConfigurationName()));
-            project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-                    .extendsFrom(project.getConfigurations().getByName(commonSources.getCompileOnlyConfigurationName()));
-            project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-                    .extendsFrom(project.getConfigurations().getByName(commonSources.getRuntimeOnlyConfigurationName()));
             project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
                     .extendsFrom(project.getConfigurations().getByName(commonSources.getApiConfigurationName()));
         });

@@ -37,7 +37,7 @@ abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> 
         JvmPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkApplicationMainClass(project, dslModel);
         dslModel.getTargets().withType(JavaTarget.class).all(target -> {
-            SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(project, target, getJavaToolchainService());
+            SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(project, target, commonSources, getJavaToolchainService());
 
             // Link dependencies to DSL
             JvmPluginSupport.linkSourceSetToDependencies(project, sourceSet, target.getDependencies());

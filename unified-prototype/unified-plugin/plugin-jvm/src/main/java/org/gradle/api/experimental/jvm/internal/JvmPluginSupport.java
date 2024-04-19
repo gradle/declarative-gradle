@@ -73,7 +73,10 @@ public class JvmPluginSupport {
         return commonSources;
     }
 
-    public static SourceSet createTargetSourceSet(Project project, JavaTarget target, JavaToolchainService javaToolchainService) {
+    public static SourceSet createTargetSourceSet(Project project,
+                                                  JavaTarget target,
+                                                  SourceSet commonSources,
+                                                  JavaToolchainService javaToolchainService) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
         SourceSet sourceSet = java.getSourceSets().create("java" + target.getJavaVersion());
         java.registerFeature("java" + target.getJavaVersion(), feature -> {
@@ -84,6 +87,18 @@ public class JvmPluginSupport {
         project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, task -> {
             task.getJavaCompiler().set(javaToolchainService.compilerFor(spec -> spec.getLanguageVersion().set(JavaLanguageVersion.of(target.getJavaVersion()))));
         });
+
+        // Depend on common sources
+        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
+                .getDependencies().add(project.getDependencies().create(commonSources.getOutput()));
+
+        // Extend common dependencies
+        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
+                .extendsFrom(project.getConfigurations().getByName(commonSources.getImplementationConfigurationName()));
+        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
+                .extendsFrom(project.getConfigurations().getByName(commonSources.getCompileOnlyConfigurationName()));
+        project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
+                .extendsFrom(project.getConfigurations().getByName(commonSources.getRuntimeOnlyConfigurationName()));
 
         // Assemble includes all targets
         project.getTasks().named("assemble").configure(task -> task.dependsOn(sourceSet.getOutput()));
