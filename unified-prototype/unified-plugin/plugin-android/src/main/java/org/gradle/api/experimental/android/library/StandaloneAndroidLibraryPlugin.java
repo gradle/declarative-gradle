@@ -38,10 +38,14 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         // Apply the official Android plugin and support for Kotlin
         project.getPlugins().apply("com.android.library");
         project.getPlugins().apply("org.jetbrains.kotlin.android");
+
         // Add support for KSP
         project.getPlugins().apply("com.google.devtools.ksp");
+        project.getDependencies().add("ksp", "com.google.dagger:hilt-android-compiler:2.50");
+
         // Add support for Hilt
         project.getPlugins().apply("dagger.hilt.android.plugin");
+        project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.50");
 
         linkDslModelToPluginLazy(project, dslModel);
     }
