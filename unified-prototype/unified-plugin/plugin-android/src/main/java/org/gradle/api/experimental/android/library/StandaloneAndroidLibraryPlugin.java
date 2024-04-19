@@ -43,6 +43,13 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         // Add support for Hilt
         project.getPlugins().apply("dagger.hilt.android.plugin");
 
+        project.getConfigurations().configureEach(configuration -> {
+            if (configuration.isCanBeDeclared()) {
+                project.getDependencies().getConstraints().add(configuration.getName(), "com.squareup:javapoet:1.13.0");
+                project.getDependencies().getConstraints().add(configuration.getName(), "com.squareup:kotlinpoet:1.13.0");
+            }
+        });
+
         linkDslModelToPluginLazy(project, dslModel);
     }
 
