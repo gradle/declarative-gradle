@@ -16,11 +16,11 @@ import javax.inject.Inject;
  */
 abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> {
     @SoftwareType(name = "jvmApplication", modelPublicType = JvmApplication.class)
-    abstract public JvmApplication getJvmLibrary();
+    abstract public JvmApplication getJvmApplication();
 
     @Override
     public void apply(Project project) {
-        JvmApplication dslModel = getJvmLibrary();
+        JvmApplication dslModel = getJvmApplication();
 
         project.getPlugins().apply(ApplicationPlugin.class);
 
