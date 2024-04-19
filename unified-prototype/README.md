@@ -4,8 +4,6 @@ This directory contains prototypes of plugins for JVM, Android, and KMP projects
 
 Currently, these different ecosystems still apply distinct plugins, but those plugins all share a common `plugin-common` dependency, which will gradually grow to contain more functionality.
 
-Some samples have not yet been converted to use the declarative DSL files.
-
 ## Java
 
 Sample Java projects live in the `testbed-java-library` and `testbed-java-application` directories.
@@ -20,7 +18,15 @@ To run the application, use:
 
 ## JVM
 
-Not yet updated for Declarative DSL.
+Sample Java projects live in the `testbed-jvm-library` and `testbed-jvm-application` directories.
+
+These samples show the definition of a simple Java application and library that are implemented using a mix of Java 11 and Java 17 source code.
+
+To run the application, use:
+
+```
+> ./gradlew testbed-java-application:run
+```
 
 ## Kotlin JVM
 

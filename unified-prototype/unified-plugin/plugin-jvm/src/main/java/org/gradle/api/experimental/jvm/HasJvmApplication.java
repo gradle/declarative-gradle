@@ -8,10 +8,10 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
- * An application that is built for a single Java version.
+ * Represents an application that runs on the JVM.
  */
 @Restricted
-public interface ApplicationWithJavaTarget extends HasJavaTarget {
+public interface HasJvmApplication {
     @Restricted
     Property<String> getMainClass();
 

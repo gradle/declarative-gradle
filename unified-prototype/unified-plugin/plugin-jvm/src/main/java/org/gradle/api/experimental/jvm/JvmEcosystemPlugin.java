@@ -8,7 +8,12 @@ import org.gradle.api.internal.SettingsInternal;
 import org.gradle.api.internal.plugins.software.RegistersSoftwareTypes;
 import org.gradle.plugin.software.internal.SoftwareTypeRegistry;
 
-@RegistersSoftwareTypes({StandaloneJavaApplicationPlugin.class, StandaloneJavaLibraryPlugin.class, StandaloneJvmLibraryPlugin.class})
+@RegistersSoftwareTypes({
+        StandaloneJavaApplicationPlugin.class,
+        StandaloneJavaLibraryPlugin.class,
+        StandaloneJvmLibraryPlugin.class,
+        StandaloneJvmApplicationPlugin.class
+})
 public class JvmEcosystemPlugin implements Plugin<Settings> {
     @Override
     public void apply(Settings target) { }
