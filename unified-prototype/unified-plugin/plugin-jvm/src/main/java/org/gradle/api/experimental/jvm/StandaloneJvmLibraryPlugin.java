@@ -5,10 +5,7 @@ import org.gradle.api.Project;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.JavaLibraryPlugin;
-import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.compile.JavaCompile;
-import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
 import javax.inject.Inject;
@@ -40,18 +37,8 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
         JvmPluginSupport.linkJavaVersion(project, dslModel);
 
-        JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
-
         dslModel.getTargets().withType(JavaTarget.class).all(target -> {
-            SourceSet sourceSet = java.getSourceSets().create("java" + target.getJavaVersion());
-            java.registerFeature("java" + target.getJavaVersion(), feature -> {
-                feature.usingSourceSet(sourceSet);
-            });
-
-            // Link properties
-            project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, task -> {
-                task.getJavaCompiler().set(getJavaToolchainService().compilerFor(spec -> spec.getLanguageVersion().set(JavaLanguageVersion.of(target.getJavaVersion()))));
-            });
+            SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(project, target, getJavaToolchainService());
 
             // Link dependencies to DSL
             JvmPluginSupport.linkSourceSetToDependencies(project, sourceSet, target.getDependencies());
@@ -69,9 +56,7 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
                     .extendsFrom(project.getConfigurations().getByName(commonSources.getRuntimeOnlyConfigurationName()));
             project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
                     .extendsFrom(project.getConfigurations().getByName(commonSources.getApiConfigurationName()));
-
-            // Assemble for all targets
-            project.getTasks().named("assemble").configure(task -> task.dependsOn(sourceSet.getOutput()));
         });
     }
+
 }

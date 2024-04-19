@@ -12,7 +12,9 @@ import org.gradle.api.plugins.JavaApplication;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JavaPluginHelper;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.jvm.toolchain.JavaToolchainService;
 
 import java.util.Collections;
 
@@ -69,6 +71,24 @@ public class JvmPluginSupport {
         Directory srcDir = project.getLayout().getProjectDirectory().dir("src").dir("common").dir("java");
         commonSources.getJava().setSrcDirs(Collections.singleton(srcDir));
         return commonSources;
+    }
+
+    public static SourceSet createTargetSourceSet(Project project, JavaTarget target, JavaToolchainService javaToolchainService) {
+        JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
+        SourceSet sourceSet = java.getSourceSets().create("java" + target.getJavaVersion());
+        java.registerFeature("java" + target.getJavaVersion(), feature -> {
+            feature.usingSourceSet(sourceSet);
+        });
+
+        // Link properties
+        project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, task -> {
+            task.getJavaCompiler().set(javaToolchainService.compilerFor(spec -> spec.getLanguageVersion().set(JavaLanguageVersion.of(target.getJavaVersion()))));
+        });
+
+        // Assemble includes all targets
+        project.getTasks().named("assemble").configure(task -> task.dependsOn(sourceSet.getOutput()));
+
+        return sourceSet;
     }
 
 }

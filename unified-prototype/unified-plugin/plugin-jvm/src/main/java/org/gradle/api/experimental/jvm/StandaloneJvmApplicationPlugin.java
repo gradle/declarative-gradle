@@ -6,6 +6,9 @@ import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.ApplicationPlugin;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.jvm.toolchain.JavaToolchainService;
+
+import javax.inject.Inject;
 
 /**
  * Creates a declarative {@link JvmApplication} DSL model, applies the official Jvm plugin,
@@ -24,11 +27,20 @@ abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> 
         linkDslModelToPlugin(project, dslModel);
     }
 
+    @Inject
+    protected abstract JavaToolchainService getJavaToolchainService();
+
     private void linkDslModelToPlugin(Project project, JvmApplication dslModel) {
         SourceSet commonSources = JvmPluginSupport.setupCommonSourceSet(project);
         JvmPluginSupport.linkSourceSetToDependencies(project, commonSources, dslModel.getDependencies());
 
         JvmPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkApplicationMainClass(project, dslModel);
+        dslModel.getTargets().withType(JavaTarget.class).all(target -> {
+            SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(project, target, getJavaToolchainService());
+
+            // Link dependencies to DSL
+            JvmPluginSupport.linkSourceSetToDependencies(project, sourceSet, target.getDependencies());
+        });
     }
 }
