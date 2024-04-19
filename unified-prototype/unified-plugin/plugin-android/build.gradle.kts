@@ -3,12 +3,22 @@ plugins {
     id("build-logic.publishing")
 }
 
+buildscript {
+    dependencies {
+        constraints {
+            classpath("com.google.dagger:dagger:2.50")
+        }
+    }
+}
+
 description = "Implements the declarative Android DSL prototype"
 
 dependencies {
     api(project(":plugin-common"))
     api(libs.android.agp.application)
     api(libs.android.kotlin.android)
+    api("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.21-1.0.16")
+    api("com.google.dagger:hilt-android-gradle-plugin:2.50")
 }
 
 gradlePlugin {

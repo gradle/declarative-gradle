@@ -26,6 +26,11 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
     public void apply(Project project) {
         AndroidApplication dslModel = getAndroidApplication();
 
+        // Setup Android Application conventions
+        dslModel.getJdkVersion().convention(17);
+        dslModel.getCompileSdk().convention(34);
+        dslModel.getMinSdk().convention(21); // https://developer.android.com/build/multidex#mdex-gradle
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));

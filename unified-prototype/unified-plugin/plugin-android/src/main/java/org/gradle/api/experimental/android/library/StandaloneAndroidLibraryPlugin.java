@@ -43,13 +43,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         // Add support for Hilt
         project.getPlugins().apply("dagger.hilt.android.plugin");
 
-        project.getConfigurations().configureEach(configuration -> {
-            if (configuration.isCanBeDeclared()) {
-                project.getDependencies().getConstraints().add(configuration.getName(), "com.squareup:javapoet:1.13.0");
-                project.getDependencies().getConstraints().add(configuration.getName(), "com.squareup:kotlinpoet:1.13.0");
-            }
-        });
-
         linkDslModelToPluginLazy(project, dslModel);
     }
 
@@ -73,7 +66,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             // https://developer.android.com/studio/write/java11-minimal-support-table
             compileOptions.setSourceCompatibility(JavaVersion.VERSION_11);
             compileOptions.setTargetCompatibility(JavaVersion.VERSION_11);
-            compileOptions.setCoreLibraryDesugaringEnabled(true);
+            compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
             return null;
         });
         ifPresent(dslModel.getJdkVersion(), jdkVersion -> {
