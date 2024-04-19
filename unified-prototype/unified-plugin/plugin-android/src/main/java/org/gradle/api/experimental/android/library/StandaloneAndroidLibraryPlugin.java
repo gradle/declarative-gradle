@@ -1,5 +1,6 @@
 package org.gradle.api.experimental.android.library;
 
+import com.android.build.api.attributes.ProductFlavorAttr;
 import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.LibraryBuildType;
 import com.android.build.api.dsl.LibraryExtension;
@@ -8,6 +9,8 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.attributes.Attribute;
+import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
@@ -84,6 +87,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         AndroidLibraryBuildTypes modelBuildType = dslModel.getBuildTypes();
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
+        setContentTypeAttributes(project);
     }
 
     /**
@@ -109,6 +113,23 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
     private static void linkBuildType(LibraryBuildType buildType, AndroidLibraryBuildType model, ConfigurationContainer configurations) {
         ifPresent(model.getMinifyEnabled(), buildType::setMinifyEnabled);
         linkBuildTypeDependencies(buildType, model.getDependencies(), configurations);
+    }
+
+    private static void setContentTypeAttributes(Project project) {
+        // These attributes must be set to avoid Ambiguous Variants resolution errors between the
+        // demoDebugRuntimeElements and prodDebugRuntimeElements for project dependencies in NiA
+        // TODO: They are not set by the NiA build because it doesn't know about the product flavor yet
+        project.getConfigurations().configureEach(c -> {
+            AttributeContainer attributes = c.getAttributes();
+            String lowerConfName = c.getName().toLowerCase();
+            if (lowerConfName.contains("debug")) {
+                attributes.attribute(ProductFlavorAttr.of("contentType"), project.getObjects().named(ProductFlavorAttr.class, "demo"));
+                attributes.attribute(Attribute.of("contentType", String.class), "demo");
+            } else if (lowerConfName.contains("release")) {
+                attributes.attribute(ProductFlavorAttr.of("contentType"), project.getObjects().named(ProductFlavorAttr.class, "prod"));
+                attributes.attribute(Attribute.of("contentType", String.class), "prod");
+            }
+        });
     }
 
     private static void linkBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
