@@ -1,22 +1,29 @@
 package org.gradle.api.experimental.android.nia;
 
 import com.android.build.api.dsl.*;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
+import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions;
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import static org.gradle.api.experimental.android.library.StandaloneAndroidLibraryPlugin.TARGET_ANDROID_SDK;
-
 public class NiaSupport {
-    public static void configureNia(Project project, AndroidLibrary dslModel, LibraryExtension android) {
+    public static void configureNia(Project project,
+                                    @SuppressWarnings("unused") AndroidLibrary dslModel,
+                                    LibraryExtension android) {
         setTargetSdk(android);
         android.setResourcePrefix(buildResourcePrefix(project));
         configureFlavors(android, (flavor, niaFlavor) -> {});
+        configureKotlin(project);
     }
 
     private static void configureFlavors(
@@ -67,7 +74,7 @@ public class NiaSupport {
 
     @SuppressWarnings("deprecation")
     private static void setTargetSdk(LibraryExtension android) {
-        android.getDefaultConfig().setTargetSdk(TARGET_ANDROID_SDK); // Deprecated, but done in NiA
+        android.getDefaultConfig().setTargetSdk(DEFAULT_SDKS.TARGET_ANDROID_SDK); // Deprecated, but done in NiA
     }
 
     /**
@@ -88,5 +95,25 @@ public class NiaSupport {
                 .toLowerCase();
         result += "_";
         return result;
+    }
+
+    private static void configureKotlin(Project project) {
+        project.getTasks().withType(KotlinCompile.class, task -> {
+            KotlinJvmOptions kotlinOptions = task.getKotlinOptions();
+            // Set JVM target to 11
+            kotlinOptions.setJvmTarget(JavaVersion.VERSION_11.toString());
+
+            // Treat all Kotlin warnings as errors (disabled by default)
+            // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
+            boolean warningsAsErrors = false;
+            if (project.hasProperty("warningsAsErrors")) {
+                warningsAsErrors = Boolean.parseBoolean(project.getProperties().get("warningsAsErrors").toString());
+            }
+            kotlinOptions.setAllWarningsAsErrors(warningsAsErrors);
+
+            List<String> freeCompilerArgs = new ArrayList<>(kotlinOptions.getFreeCompilerArgs());
+            freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi");
+            kotlinOptions.setFreeCompilerArgs(freeCompilerArgs);
+        });
     }
 }

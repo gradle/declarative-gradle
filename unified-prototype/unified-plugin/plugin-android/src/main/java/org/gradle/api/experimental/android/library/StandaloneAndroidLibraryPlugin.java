@@ -1,6 +1,5 @@
 package org.gradle.api.experimental.android.library;
 
-import com.android.build.api.attributes.ProductFlavorAttr;
 import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.LibraryBuildType;
 import com.android.build.api.dsl.LibraryExtension;
@@ -9,8 +8,7 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.attributes.Attribute;
-import org.gradle.api.attributes.AttributeContainer;
+import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 import org.gradle.api.experimental.android.nia.NiaSupport;
@@ -23,10 +21,6 @@ import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
  */
 @SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
-    private static final int JDK_VERSION = 17;
-    public static final int TARGET_ANDROID_SDK = 34;
-    private static final int MIN_ANDROID_SDK = 21;
-
     @SoftwareType(name = "androidLibrary", modelPublicType=AndroidLibrary.class)
     abstract public AndroidLibrary getAndroidLibrary();
 
@@ -35,9 +29,9 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         AndroidLibrary dslModel = getAndroidLibrary();
 
         // Setup Android Library conventions
-        dslModel.getJdkVersion().convention(JDK_VERSION);
-        dslModel.getCompileSdk().convention(TARGET_ANDROID_SDK);
-        dslModel.getMinSdk().convention(MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
+        dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
+        dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
+        dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getIncludeKotlinSerialization().convention(false);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
@@ -77,8 +71,8 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         android.compileOptions(compileOptions -> {
             // Up to Java 11 APIs are available through desugaring
             // https://developer.android.com/studio/write/java11-minimal-support-table
-            compileOptions.setSourceCompatibility(JavaVersion.VERSION_11);
-            compileOptions.setTargetCompatibility(JavaVersion.VERSION_11);
+            compileOptions.setSourceCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
+            compileOptions.setTargetCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
             compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
             return null;
         });
