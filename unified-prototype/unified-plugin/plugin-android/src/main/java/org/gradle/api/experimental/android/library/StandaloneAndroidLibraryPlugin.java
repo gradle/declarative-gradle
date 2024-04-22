@@ -12,7 +12,11 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.attributes.Attribute;
 import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
 
@@ -57,6 +61,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
     /**
      * Performs linking actions that must occur within an afterEvaluate block.
      */
+    @SuppressWarnings("deprecation") // For setTargetSdk
     public static void linkDslModelToPlugin(Project project, AndroidLibrary dslModel) {
         LibraryExtension android = project.getExtensions().getByType(LibraryExtension.class);
         KotlinAndroidProjectExtension kotlin = project.getExtensions().getByType(KotlinAndroidProjectExtension.class);
@@ -66,6 +71,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         ifPresent(dslModel.getNamespace(), android::setNamespace);
         ifPresent(dslModel.getCompileSdk(), android::setCompileSdk);
         android.defaultConfig(defaultConfig -> {
+            defaultConfig.setTargetSdk(34); // Deprecated, but done in NiA
             ifPresent(dslModel.getMinSdk(), defaultConfig::setMinSdk);
             return null;
         });
@@ -93,6 +99,8 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         if (dslModel.getIncludeKotlinSerialization().get()) {
             project.getPluginManager().apply("kotlinx-serialization");
         }
+
+        android.setResourcePrefix(buildResourcePrefix(project));
     }
 
     /**
@@ -143,5 +151,25 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configurations.getByName(name + "Api").fromDependencyCollector(dependencies.getApi());
         configurations.getByName(name + "CompileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName(name + "RuntimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
+    }
+
+    /**
+     * Builds a resource prefix based on the project path.
+     * <p>
+     * The resource prefix is derived from the module name,
+     * so resources inside ":core:module1" must be prefixed with "core_module1_".
+     *
+     * @param project the project to derive the resource prefix from
+     * @return the computed resource prefix
+     */
+    private static @NotNull String buildResourcePrefix(Project project) {
+        String[] parts = project.getPath().split("\\W+");
+        String result = Arrays.stream(parts)
+                .skip(1)  // Skipping the first element
+                .distinct()  // Why? This was in the original code though
+                .collect(Collectors.joining("_"))
+                .toLowerCase();
+        result += "_";
+        return result;
     }
 }
