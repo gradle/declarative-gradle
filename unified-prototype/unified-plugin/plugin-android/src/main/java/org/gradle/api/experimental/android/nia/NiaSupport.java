@@ -21,18 +21,25 @@ public class NiaSupport {
     @SuppressWarnings("UnstableApiUsage")
     public static void configureNia(Project project,
                                     @SuppressWarnings("unused") AndroidLibrary dslModel) {
-        LibraryExtension android = project.getExtensions().getByType(LibraryExtension.class);
-        LibraryAndroidComponentsExtension androidComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
+        LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
+        LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
-        setTargetSdk(android);
-        android.setResourcePrefix(buildResourcePrefix(project));
-        configureFlavors(android, (flavor, niaFlavor) -> {});
+        setTargetSdk(androidLib);
+        androidLib.setResourcePrefix(buildResourcePrefix(project));
+        configureFlavors(androidLib, (flavor, niaFlavor) -> {});
         configureKotlin(project);
 
         dslModel.getDependencies().getTestImplementation().add("org.jetbrains.kotlin:kotlin-test");
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
 
-        disableUnnecessaryAndroidTests(project, androidComponents);
+        disableUnnecessaryAndroidTests(project, androidLibComponents);
+
+        configureLint(androidLib);
+    }
+
+    private static void configureLint(LibraryExtension androidLib) {
+        androidLib.getLint().setXmlReport(true);
+        androidLib.getLint().setCheckDependencies(true);
     }
 
     private static void configureFlavors(
