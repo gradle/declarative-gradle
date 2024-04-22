@@ -25,4 +25,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 public interface AndroidLibraryDependencies extends LibraryDependencies {
     DependencyCollector getKsp();
     DependencyCollector getCoreLibraryDesugaring();
+
+    DependencyCollector getTestImplementation();
 }
