@@ -1,6 +1,7 @@
 package org.gradle.api.experimental.android.nia;
 
 import com.android.build.api.dsl.*;
+import com.android.build.api.variant.LibraryAndroidComponentsExtension;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
@@ -16,11 +17,13 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("UnstableApiUsage")
 public class NiaSupport {
+    @SuppressWarnings("UnstableApiUsage")
     public static void configureNia(Project project,
-                                    @SuppressWarnings("unused") AndroidLibrary dslModel,
-                                    LibraryExtension android) {
+                                    @SuppressWarnings("unused") AndroidLibrary dslModel) {
+        LibraryExtension android = project.getExtensions().getByType(LibraryExtension.class);
+        LibraryAndroidComponentsExtension androidComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
+
         setTargetSdk(android);
         android.setResourcePrefix(buildResourcePrefix(project));
         configureFlavors(android, (flavor, niaFlavor) -> {});
@@ -28,6 +31,8 @@ public class NiaSupport {
 
         dslModel.getDependencies().getTestImplementation().add("org.jetbrains.kotlin:kotlin-test");
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
+
+        disableUnnecessaryAndroidTests(project, androidComponents);
     }
 
     private static void configureFlavors(
@@ -118,6 +123,12 @@ public class NiaSupport {
             List<String> freeCompilerArgs = new ArrayList<>(kotlinOptions.getFreeCompilerArgs());
             freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi");
             kotlinOptions.setFreeCompilerArgs(freeCompilerArgs);
+        });
+    }
+
+    private static void disableUnnecessaryAndroidTests(Project project, LibraryAndroidComponentsExtension androidComponents) {
+        androidComponents.beforeVariants(androidComponents.selector().all(), it -> {
+            it.setEnableAndroidTest(it.getEnableAndroidTest() && project.getLayout().getProjectDirectory().file("src/androidTest").getAsFile().exists());
         });
     }
 }
