@@ -13,6 +13,7 @@ import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
+import static org.gradle.api.experimental.android.AndroidDSLSupport.setContentTypeAttributes;
 
 /**
  * Creates a declarative {@link AndroidApplication} DSL model, applies the official Android plugin,
@@ -71,6 +72,11 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         AndroidApplicationBuildTypes modelBuildType = dslModel.getBuildTypes();
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
+
+        // TODO: ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
+        // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
+        // TODO: Maybe there should be an AbstractAndroidPlugin that does this for all Android plugins?
+        setContentTypeAttributes(project);
     }
 
     /**

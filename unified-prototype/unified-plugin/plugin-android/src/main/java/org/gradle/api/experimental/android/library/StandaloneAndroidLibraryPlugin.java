@@ -12,11 +12,8 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.attributes.Attribute;
 import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.internal.plugins.software.SoftwareType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import org.gradle.api.experimental.android.nia.NiaSupport;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
 
@@ -26,6 +23,10 @@ import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
  */
 @SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
+    private static final int JDK_VERSION = 17;
+    public static final int TARGET_ANDROID_SDK = 34;
+    private static final int MIN_ANDROID_SDK = 21;
+
     @SoftwareType(name = "androidLibrary", modelPublicType=AndroidLibrary.class)
     abstract public AndroidLibrary getAndroidLibrary();
 
@@ -34,9 +35,9 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         AndroidLibrary dslModel = getAndroidLibrary();
 
         // Setup Android Library conventions
-        dslModel.getJdkVersion().convention(17);
-        dslModel.getCompileSdk().convention(34);
-        dslModel.getMinSdk().convention(21); // https://developer.android.com/build/multidex#mdex-gradle
+        dslModel.getJdkVersion().convention(JDK_VERSION);
+        dslModel.getCompileSdk().convention(TARGET_ANDROID_SDK);
+        dslModel.getMinSdk().convention(MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getIncludeKotlinSerialization().convention(false);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
@@ -61,7 +62,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
     /**
      * Performs linking actions that must occur within an afterEvaluate block.
      */
-    @SuppressWarnings("deprecation") // For setTargetSdk
     public static void linkDslModelToPlugin(Project project, AndroidLibrary dslModel) {
         LibraryExtension android = project.getExtensions().getByType(LibraryExtension.class);
         KotlinAndroidProjectExtension kotlin = project.getExtensions().getByType(KotlinAndroidProjectExtension.class);
@@ -71,7 +71,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         ifPresent(dslModel.getNamespace(), android::setNamespace);
         ifPresent(dslModel.getCompileSdk(), android::setCompileSdk);
         android.defaultConfig(defaultConfig -> {
-            defaultConfig.setTargetSdk(34); // Deprecated, but done in NiA
             ifPresent(dslModel.getMinSdk(), defaultConfig::setMinSdk);
             return null;
         });
@@ -94,13 +93,12 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         AndroidLibraryBuildTypes modelBuildType = dslModel.getBuildTypes();
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
-        setContentTypeAttributes(project);
 
         if (dslModel.getIncludeKotlinSerialization().get()) {
             project.getPluginManager().apply("kotlinx-serialization");
         }
 
-        android.setResourcePrefix(buildResourcePrefix(project));
+        NiaSupport.configureNia(project, dslModel, android);
     }
 
     /**
@@ -128,48 +126,11 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         linkBuildTypeDependencies(buildType, model.getDependencies(), configurations);
     }
 
-    private static void setContentTypeAttributes(Project project) {
-        // These attributes must be set to avoid Ambiguous Variants resolution errors between the
-        // demoDebugRuntimeElements and prodDebugRuntimeElements for project dependencies in NiA
-        // TODO: They are not set by the NiA build because it doesn't know about the product flavor yet
-        project.getConfigurations().configureEach(c -> {
-            AttributeContainer attributes = c.getAttributes();
-            String lowerConfName = c.getName().toLowerCase();
-            if (lowerConfName.contains("debug")) {
-                attributes.attribute(ProductFlavorAttr.of("contentType"), project.getObjects().named(ProductFlavorAttr.class, "demo"));
-                attributes.attribute(Attribute.of("contentType", String.class), "demo");
-            } else if (lowerConfName.contains("release")) {
-                attributes.attribute(ProductFlavorAttr.of("contentType"), project.getObjects().named(ProductFlavorAttr.class, "prod"));
-                attributes.attribute(Attribute.of("contentType", String.class), "prod");
-            }
-        });
-    }
-
     private static void linkBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
         String name = buildType.getName();
         configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName(name + "Api").fromDependencyCollector(dependencies.getApi());
         configurations.getByName(name + "CompileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName(name + "RuntimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
-    }
-
-    /**
-     * Builds a resource prefix based on the project path.
-     * <p>
-     * The resource prefix is derived from the module name,
-     * so resources inside ":core:module1" must be prefixed with "core_module1_".
-     *
-     * @param project the project to derive the resource prefix from
-     * @return the computed resource prefix
-     */
-    private static @NotNull String buildResourcePrefix(Project project) {
-        String[] parts = project.getPath().split("\\W+");
-        String result = Arrays.stream(parts)
-                .skip(1)  // Skipping the first element
-                .distinct()  // Why? This was in the original code though
-                .collect(Collectors.joining("_"))
-                .toLowerCase();
-        result += "_";
-        return result;
     }
 }
