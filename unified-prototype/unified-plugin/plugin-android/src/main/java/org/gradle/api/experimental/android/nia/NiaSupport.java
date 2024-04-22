@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("UnstableApiUsage")
 public class NiaSupport {
     public static void configureNia(Project project,
                                     @SuppressWarnings("unused") AndroidLibrary dslModel,
@@ -24,6 +25,9 @@ public class NiaSupport {
         android.setResourcePrefix(buildResourcePrefix(project));
         configureFlavors(android, (flavor, niaFlavor) -> {});
         configureKotlin(project);
+
+        dslModel.getDependencies().getTestImplementation().add("org.jetbrains.kotlin:kotlin-test");
+        dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
     }
 
     private static void configureFlavors(
