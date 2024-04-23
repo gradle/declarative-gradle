@@ -54,7 +54,7 @@ public interface AndroidLibrary {
      * Whether or not to set up Kotlin serialization, applying the plugins and adding any necessary dependencies.
      */
     @Restricted
-    public abstract Property<Boolean> getIncludeKotlinSerialization();
+    Property<Boolean> getIncludeKotlinSerialization();
 
     @Nested
     AndroidLibraryDependencies getDependencies();
@@ -62,6 +62,14 @@ public interface AndroidLibrary {
     @Configuring
     default void dependencies(Action<? super AndroidLibraryDependencies> action) {
         action.execute(getDependencies());
+    }
+
+    @Nested
+    TestOptions getTestOptions();
+
+    @Configuring
+    default void testOptions(Action<? super TestOptions> action) {
+        action.execute(getTestOptions());
     }
 
     @Nested

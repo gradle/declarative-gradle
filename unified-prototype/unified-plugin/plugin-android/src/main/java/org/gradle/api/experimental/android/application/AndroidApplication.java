@@ -74,10 +74,10 @@ public interface AndroidApplication {
     Property<Integer> getJdkVersion();
 
     @Nested
-    ApplicationDependencies getDependencies();
+    AndroidApplicationDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super ApplicationDependencies> action) {
+    default void dependencies(Action<? super AndroidApplicationDependencies> action) {
         action.execute(getDependencies());
     }
 

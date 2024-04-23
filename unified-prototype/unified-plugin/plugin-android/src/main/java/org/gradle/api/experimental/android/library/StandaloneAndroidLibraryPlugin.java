@@ -34,6 +34,10 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getIncludeKotlinSerialization().convention(false);
 
+        // And Test Options
+        dslModel.getTestOptions().getIncludeAndroidResources().convention(false);
+        dslModel.getTestOptions().getReturnDefaultValues().convention(false);
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
@@ -73,7 +77,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             // https://developer.android.com/studio/write/java11-minimal-support-table
             compileOptions.setSourceCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
             compileOptions.setTargetCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
-            compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
             return null;
         });
         ifPresent(dslModel.getJdkVersion(), jdkVersion -> {
@@ -93,7 +96,15 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             project.getDependencies().add("testImplementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3");
         }
 
+        android.getTestOptions().getUnitTests().setIncludeAndroidResources(dslModel.getTestOptions().getIncludeAndroidResources().get());
+        android.getTestOptions().getUnitTests().setReturnDefaultValues(dslModel.getTestOptions().getReturnDefaultValues().get());
+
         NiaSupport.configureNia(project, dslModel);
+
+        android.compileOptions(compileOptions -> {
+            compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
+            return null;
+        });
     }
 
     /**
