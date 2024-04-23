@@ -2,7 +2,9 @@ package org.gradle.api.experimental.android.nia;
 
 import com.android.build.api.dsl.*;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
+import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
 import org.gradle.api.JavaVersion;
+import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
@@ -34,6 +36,7 @@ public class NiaSupport {
 
         disableUnnecessaryAndroidTests(project, androidLibComponents);
 
+        configureGradleManagedDevices(androidLib);
         configureLint(androidLib);
     }
 
@@ -136,6 +139,35 @@ public class NiaSupport {
     private static void disableUnnecessaryAndroidTests(Project project, LibraryAndroidComponentsExtension androidComponents) {
         androidComponents.beforeVariants(androidComponents.selector().all(), it -> {
             it.setEnableAndroidTest(it.getEnableAndroidTest() && project.getLayout().getProjectDirectory().file("src/androidTest").getAsFile().exists());
+        });
+    }
+
+    /**
+     * Configure project for Gradle managed devices
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    private static void configureGradleManagedDevices(CommonExtension<?, ?, ?, ?, ?, ?> commonExtension) {
+        DeviceConfig pixel4 = new DeviceConfig("Pixel 4", 30, "aosp-atd");
+        DeviceConfig pixel6 = new DeviceConfig("Pixel 6", 31, "aosp");
+        DeviceConfig pixelC = new DeviceConfig("Pixel C", 30, "aosp-atd");
+
+        List<DeviceConfig> allDevices = Arrays.asList(pixel4, pixel6, pixelC);
+        List<DeviceConfig> ciDevices = Arrays.asList(pixel4, pixelC);
+
+        TestOptions testOptions = commonExtension.getTestOptions();
+
+        ExtensiblePolymorphicDomainObjectContainer<Device> devices = testOptions.getManagedDevices().getDevices();
+        allDevices.forEach(deviceConfig -> {
+            ManagedVirtualDevice newDevice = devices.maybeCreate(deviceConfig.getTaskName(), ManagedVirtualDevice.class);
+            newDevice.setDevice(deviceConfig.getDevice());
+            newDevice.setApiLevel(deviceConfig.getApiLevel());
+            newDevice.setSystemImageSource(deviceConfig.getSystemImageSource());
+        });
+
+        NamedDomainObjectContainer<DeviceGroup> groups = testOptions.getManagedDevices().getGroups();
+        DeviceGroup newGroup = groups.maybeCreate("ci");
+        ciDevices.forEach(deviceConfig -> {
+            newGroup.getTargetDevices().add(devices.getByName(deviceConfig.getTaskName()));
         });
     }
 }
