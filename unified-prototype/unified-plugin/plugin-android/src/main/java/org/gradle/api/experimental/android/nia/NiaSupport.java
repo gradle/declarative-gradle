@@ -1,21 +1,22 @@
 package org.gradle.api.experimental.android.nia;
 
+import com.android.build.api.artifact.SingleArtifact;
 import com.android.build.api.dsl.*;
+import com.android.build.api.variant.AndroidComponentsExtension;
+import com.android.build.api.variant.BuiltArtifactsLoader;
+import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
-import org.gradle.api.JavaVersion;
-import org.gradle.api.NamedDomainObjectContainer;
-import org.gradle.api.Project;
+import org.gradle.api.*;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
+import org.gradle.api.file.Directory;
+import org.gradle.api.provider.Provider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions;
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class NiaSupport {
 
         configureGradleManagedDevices(androidLib);
         configureLint(androidLib);
+        configurePrintApksTask(project, androidLibComponents);
     }
 
     private static void configureLint(LibraryExtension androidLib) {
@@ -50,18 +52,16 @@ public class NiaSupport {
             BiConsumer<ProductFlavor, NiaFlavor> flavorConfigurationBlock) {
         commonExtension.getFlavorDimensions().add(FlavorDimension.contentType.name());
 
-        Arrays.stream(NiaFlavor.values()).forEach(it -> {
-            commonExtension.getProductFlavors().create(it.name(), flavor -> {
-                setDimensionReflectively(flavor, it.dimension.name());
-                flavorConfigurationBlock.accept(flavor, it);
+        Arrays.stream(NiaFlavor.values()).forEach(it -> commonExtension.getProductFlavors().create(it.name(), flavor -> {
+            setDimensionReflectively(flavor, it.dimension.name());
+            flavorConfigurationBlock.accept(flavor, it);
 
-                if (commonExtension instanceof ApplicationExtension && flavor instanceof ApplicationProductFlavor) {
-                    if (it.applicationIdSuffix != null) {
-                        ((ApplicationProductFlavor) flavor).setApplicationIdSuffix(it.applicationIdSuffix);
-                    }
+            if (commonExtension instanceof ApplicationExtension && flavor instanceof ApplicationProductFlavor) {
+                if (it.applicationIdSuffix != null) {
+                    ((ApplicationProductFlavor) flavor).setApplicationIdSuffix(it.applicationIdSuffix);
                 }
-            });
-        });
+            }
+        }));
     }
 
     /**
@@ -136,6 +136,7 @@ public class NiaSupport {
         });
     }
 
+    @SuppressWarnings("deprecation")
     private static void disableUnnecessaryAndroidTests(Project project, LibraryAndroidComponentsExtension androidComponents) {
         androidComponents.beforeVariants(androidComponents.selector().all(), it -> {
             it.setEnableAndroidTest(it.getEnableAndroidTest() && project.getLayout().getProjectDirectory().file("src/androidTest").getAsFile().exists());
@@ -166,8 +167,45 @@ public class NiaSupport {
 
         NamedDomainObjectContainer<DeviceGroup> groups = testOptions.getManagedDevices().getGroups();
         DeviceGroup newGroup = groups.maybeCreate("ci");
-        ciDevices.forEach(deviceConfig -> {
-            newGroup.getTargetDevices().add(devices.getByName(deviceConfig.getTaskName()));
+        ciDevices.forEach(deviceConfig -> newGroup.getTargetDevices().add(devices.getByName(deviceConfig.getTaskName())));
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static void configurePrintApksTask(Project project, AndroidComponentsExtension<?, ?, ?> extension) {
+        extension.onVariants(extension.selector().all(), variant -> {
+            if (variant instanceof HasAndroidTest hasAndroidTestVariant) {
+                BuiltArtifactsLoader loader = variant.getArtifacts().getBuiltArtifactsLoader();
+                Provider<Directory> artifact = hasAndroidTestVariant.getAndroidTest() != null ? hasAndroidTestVariant.getAndroidTest().getArtifacts().get(SingleArtifact.APK.INSTANCE) : null;
+                Provider<? extends Collection<Directory>> javaSources = hasAndroidTestVariant.getAndroidTest() != null ? Objects.requireNonNull(hasAndroidTestVariant.getAndroidTest().getSources().getJava()).getAll() : null;
+                Provider<? extends Collection<Directory>> kotlinSources = hasAndroidTestVariant.getAndroidTest() != null ? Objects.requireNonNull(hasAndroidTestVariant.getAndroidTest().getSources().getKotlin()).getAll() : null;
+
+                Provider<? extends Collection<Directory>> testSources;
+                if (javaSources != null && kotlinSources != null) {
+                    testSources = javaSources.zip(kotlinSources, (javaDirs, kotlinDirs) -> {
+                        List<Directory> dirs = new ArrayList<>(javaDirs);
+                        dirs.addAll(kotlinDirs);
+                        return dirs;
+                    });
+                } else {
+                    if (javaSources != null) {
+                        testSources = javaSources;
+                    } else {
+                        testSources = kotlinSources;
+                    }
+                }
+
+                if (artifact != null && testSources != null) {
+                    project.getTasks().register(
+                            variant.getName() + "PrintTestApk",
+                            PrintApkLocationTask.class, task -> {
+                                task.getApkFolder().set(artifact);
+                                task.getBuiltArtifactsLoader().set(loader);
+                                task.getVariantName().set(variant.getName());
+                                task.getSources().set(testSources);
+                            }
+                    );
+                }
+            }
         });
     }
 }
