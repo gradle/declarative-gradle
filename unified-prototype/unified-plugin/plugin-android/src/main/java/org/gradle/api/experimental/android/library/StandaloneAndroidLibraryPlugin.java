@@ -90,6 +90,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
 
         if (dslModel.getIncludeKotlinSerialization().get()) {
             project.getPluginManager().apply("kotlinx-serialization");
+            project.getDependencies().add("testImplementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3");
         }
 
         NiaSupport.configureNia(project, dslModel);
