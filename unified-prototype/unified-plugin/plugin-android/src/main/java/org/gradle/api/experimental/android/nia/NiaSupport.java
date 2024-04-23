@@ -43,7 +43,7 @@ public class NiaSupport {
     }
 
     private static void configureFlavors(
-            CommonExtension<?, ?, ?, ?, ?> commonExtension,
+            CommonExtension<?, ?, ?, ?, ?, ?> commonExtension,
             BiConsumer<ProductFlavor, NiaFlavor> flavorConfigurationBlock) {
         commonExtension.getFlavorDimensions().add(FlavorDimension.contentType.name());
 
