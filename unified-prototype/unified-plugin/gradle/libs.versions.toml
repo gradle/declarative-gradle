@@ -7,6 +7,8 @@ ksp = "1.9.22-1.0.18"
 android = "8.3.0"
 hilt = "2.50"
 
+apache-commons = "3.3.1"
+
 [libraries]
 # Kotlin dependencies
 kotlin-multiplatform = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
@@ -19,3 +21,6 @@ android-kotlin-android = { module = "org.jetbrains.kotlin.android:org.jetbrains.
 hilt-android-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"}
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+
+# Other libraries
+apache-commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "apache-commons" }

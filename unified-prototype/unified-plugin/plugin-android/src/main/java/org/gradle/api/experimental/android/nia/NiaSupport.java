@@ -6,15 +6,21 @@ import com.android.build.api.variant.AndroidComponentsExtension;
 import com.android.build.api.variant.BuiltArtifactsLoader;
 import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.*;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.testing.Test;
+import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension;
+import org.gradle.testing.jacoco.tasks.JacocoReport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions;
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -43,6 +49,10 @@ public class NiaSupport {
         configureGradleManagedDevices(androidLib);
         configureLint(androidLib);
         configurePrintApksTask(project, androidLibComponents);
+
+        if (dslModel.getConfigureJacoco().get()) {
+            configureJacoco(project, androidLib);
+        }
     }
 
     private static void configureLint(LibraryExtension androidLib) {
@@ -209,6 +219,69 @@ public class NiaSupport {
                     );
                 }
             }
+        });
+    }
+
+    private static List<String> coverageExclusions() {
+        return Arrays.asList(
+                "**/R.class",
+                "**/R$*.class",
+                "**/BuildConfig.*",
+                "**/Manifest*.*"
+        );
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void configureJacoco(Project project, LibraryExtension androidLib) {
+        project.getPlugins().apply("jacoco");
+
+        androidLib.getBuildTypes().configureEach(buildType -> {
+            buildType.setEnableAndroidTestCoverage(true);
+            buildType.setEnableUnitTestCoverage(true);
+        });
+
+        JacocoPluginExtension jacocoPluginExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
+        jacocoPluginExtension.setToolVersion("0.8.7");
+
+        LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
+        androidLibComponents.onVariants(androidLibComponents.selector().all(), variant -> {
+            final String testTaskName = "test" + StringUtils.capitalize(variant.getName()) + "UnitTest";
+            final File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
+            project.getTasks().register("jacoco" + StringUtils.capitalize(testTaskName) + "Report", JacocoReport.class, task -> {
+                task.dependsOn(testTaskName);
+
+                task.reports(report -> {
+                    report.getXml().getRequired().set(true);
+                    report.getXml().getRequired().set(true);
+                });
+
+                task.getClassDirectories().setFrom(
+                        project.fileTree(project.getBuildDir() + "/tmp/kotlin-classes/" + variant.getName(), tree -> {
+                            tree.exclude(coverageExclusions());
+                        })
+                );
+
+                task.getSourceDirectories().setFrom(
+                        project.files(project.getProjectDir() + "/src/main/java", project.getProjectDir() + "/src/main/kotlin"
+                        ));
+
+                task.getExecutionData().setFrom(
+                        project.files(buildDir + "/jacoco/" + testTaskName + ".exec")
+                );
+            });
+        });
+
+        project.getTasks().withType(Test.class, test -> {
+            JacocoTaskExtension jacocoTaskExtension = test.getExtensions().getByType(JacocoTaskExtension.class);
+
+            // Required for JaCoCo + Robolectric
+            // https://github.com/robolectric/robolectric/issues/2230
+            // Consider removing if not we don't add Robolectric
+            jacocoTaskExtension.setIncludeNoLocationClasses(true);
+
+            // Required for JDK 11 with the above
+            // https://github.com/gradle/gradle/issues/5184#issuecomment-391982009
+            jacocoTaskExtension.setExcludes(Collections.singletonList("jdk.internal.*"));
         });
     }
 }

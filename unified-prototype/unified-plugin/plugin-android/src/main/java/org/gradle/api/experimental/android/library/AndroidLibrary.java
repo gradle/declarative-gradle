@@ -56,6 +56,12 @@ public interface AndroidLibrary {
     @Restricted
     Property<Boolean> getIncludeKotlinSerialization();
 
+    /**
+     * Whether or not to set up Jacoco support.
+     */
+    @Restricted
+    Property<Boolean> getConfigureJacoco();
+
     @Nested
     AndroidLibraryDependencies getDependencies();
 
