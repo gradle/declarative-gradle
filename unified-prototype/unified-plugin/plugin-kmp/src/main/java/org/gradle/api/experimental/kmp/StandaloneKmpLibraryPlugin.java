@@ -3,12 +3,11 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 
 /**
  * Creates a declarative {@link KmpLibrary} DSL model, applies the official KMP plugin,
@@ -76,12 +75,12 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
 
         // Link common dependencies
-        linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
+        KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
 
         // Link JVM targets
         dslModel.getTargets().withType(KmpJvmTarget.class).all(target -> {
             kotlin.jvm(target.getName(), kotlinTarget -> {
-                linkSourceSetToDependencies(
+                KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
                         kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
                         target.getDependencies()
@@ -95,24 +94,13 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         // Link JS targets
         dslModel.getTargets().withType(KmpJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
-                linkSourceSetToDependencies(
+                KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
                         kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
                         target.getDependencies()
                 );
             });
         });
-    }
-
-    private static void linkSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, LibraryDependencies libraryDependencies) {
-        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-                .getDependencies().addAllLater(libraryDependencies.getImplementation().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
-                .getDependencies().addAllLater(libraryDependencies.getApi().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-                .getDependencies().addAllLater(libraryDependencies.getCompileOnly().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-                .getDependencies().addAllLater(libraryDependencies.getRuntimeOnly().getDependencies());
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {
