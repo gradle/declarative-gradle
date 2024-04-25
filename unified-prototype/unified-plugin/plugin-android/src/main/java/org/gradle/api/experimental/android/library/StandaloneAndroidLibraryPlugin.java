@@ -8,9 +8,10 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
+import org.gradle.api.experimental.android.nia.NiaSupport;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
 
@@ -18,6 +19,7 @@ import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
  * Creates a declarative {@link AndroidLibrary} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.
  */
+@SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> {
     @SoftwareType(name = "androidLibrary", modelPublicType=AndroidLibrary.class)
     abstract public AndroidLibrary getAndroidLibrary();
@@ -26,13 +28,32 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
     public void apply(Project project) {
         AndroidLibrary dslModel = getAndroidLibrary();
 
+        // Setup Android Library conventions
+        dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
+        dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
+        dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
+        dslModel.getIncludeKotlinSerialization().convention(false);
+        dslModel.getConfigureJacoco().convention(false);
+
+        // And Test Options
+        dslModel.getTestOptions().getIncludeAndroidResources().convention(false);
+        dslModel.getTestOptions().getReturnDefaultValues().convention(false);
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
 
-        // Apply the official Android plugin.
+        // Apply the official Android plugin and support for Kotlin
         project.getPlugins().apply("com.android.library");
         project.getPlugins().apply("org.jetbrains.kotlin.android");
+
+        // Add support for KSP
+        project.getPlugins().apply("com.google.devtools.ksp");
+        project.getDependencies().add("ksp", "com.google.dagger:hilt-android-compiler:2.50");
+
+        // Add support for Hilt
+        project.getPlugins().apply("dagger.hilt.android.plugin");
+        project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.50");
 
         linkDslModelToPluginLazy(project, dslModel);
     }
@@ -52,6 +73,13 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             ifPresent(dslModel.getMinSdk(), defaultConfig::setMinSdk);
             return null;
         });
+        android.compileOptions(compileOptions -> {
+            // Up to Java 11 APIs are available through desugaring
+            // https://developer.android.com/studio/write/java11-minimal-support-table
+            compileOptions.setSourceCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
+            compileOptions.setTargetCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
+            return null;
+        });
         ifPresent(dslModel.getJdkVersion(), jdkVersion -> {
             kotlin.jvmToolchain(jdkVersion);
             android.getCompileOptions().setSourceCompatibility(JavaVersion.toVersion(jdkVersion));
@@ -63,6 +91,21 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         AndroidLibraryBuildTypes modelBuildType = dslModel.getBuildTypes();
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
+
+        if (dslModel.getIncludeKotlinSerialization().get()) {
+            project.getPluginManager().apply("kotlinx-serialization");
+            project.getDependencies().add("testImplementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3");
+        }
+
+        android.getTestOptions().getUnitTests().setIncludeAndroidResources(dslModel.getTestOptions().getIncludeAndroidResources().get());
+        android.getTestOptions().getUnitTests().setReturnDefaultValues(dslModel.getTestOptions().getReturnDefaultValues().get());
+
+        NiaSupport.configureNia(project, dslModel);
+
+        android.compileOptions(compileOptions -> {
+            compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
+            return null;
+        });
     }
 
     /**
@@ -73,22 +116,26 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         linkCommonDependencies(dslModel.getDependencies(), configurations);
     }
 
-    private static void linkCommonDependencies(LibraryDependencies dependencies, ConfigurationContainer configurations) {
+    private static void linkCommonDependencies(AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
         configurations.getByName("implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName("api").fromDependencyCollector(dependencies.getApi());
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
+        configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
+        configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
+
+        configurations.getByName("testImplementation").fromDependencyCollector(dependencies.getTestImplementation());
     }
 
     /**
      * Links build types from the model to the android extension.
      */
-    private static void linkBuildType(LibraryBuildType android, AndroidLibraryBuildType model, ConfigurationContainer configurations) {
-        ifPresent(model.getMinifyEnabled(), android::setMinifyEnabled);
-        linkBuildTypeDependencies(android, model.getDependencies(), configurations);
+    private static void linkBuildType(LibraryBuildType buildType, AndroidLibraryBuildType model, ConfigurationContainer configurations) {
+        ifPresent(model.getMinifyEnabled(), buildType::setMinifyEnabled);
+        linkBuildTypeDependencies(buildType, model.getDependencies(), configurations);
     }
 
-    private static void linkBuildTypeDependencies(BuildType buildType, LibraryDependencies dependencies, ConfigurationContainer configurations) {
+    private static void linkBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
         String name = buildType.getName();
         configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName(name + "Api").fromDependencyCollector(dependencies.getApi());

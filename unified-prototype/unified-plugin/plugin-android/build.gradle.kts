@@ -9,6 +9,11 @@ dependencies {
     api(project(":plugin-common"))
     api(libs.android.agp.application)
     api(libs.android.kotlin.android)
+
+    implementation(libs.ksp.plugin)
+    implementation(libs.hilt.android.plugin)
+
+    implementation(libs.apache.commons.lang)
 }
 
 gradlePlugin {

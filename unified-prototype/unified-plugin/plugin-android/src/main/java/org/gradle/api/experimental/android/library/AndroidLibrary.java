@@ -19,7 +19,6 @@ package org.gradle.api.experimental.android.library;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
-import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -51,12 +50,32 @@ public interface AndroidLibrary {
     @Restricted
     Property<Integer> getJdkVersion();
 
+    /**
+     * Whether or not to set up Kotlin serialization, applying the plugins and adding any necessary dependencies.
+     */
+    @Restricted
+    Property<Boolean> getIncludeKotlinSerialization();
+
+    /**
+     * Whether or not to set up Jacoco support.
+     */
+    @Restricted
+    Property<Boolean> getConfigureJacoco();
+
     @Nested
-    LibraryDependencies getDependencies();
+    AndroidLibraryDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super LibraryDependencies> action) {
+    default void dependencies(Action<? super AndroidLibraryDependencies> action) {
         action.execute(getDependencies());
+    }
+
+    @Nested
+    TestOptions getTestOptions();
+
+    @Configuring
+    default void testOptions(Action<? super TestOptions> action) {
+        action.execute(getTestOptions());
     }
 
     @Nested

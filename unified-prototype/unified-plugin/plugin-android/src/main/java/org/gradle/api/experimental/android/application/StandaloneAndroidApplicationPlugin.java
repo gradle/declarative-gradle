@@ -8,16 +8,19 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
+import static org.gradle.api.experimental.android.AndroidDSLSupport.setContentTypeAttributes;
 
 /**
  * Creates a declarative {@link AndroidApplication} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.
  */
+@SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Project> {
     @SoftwareType(name = "androidApplication", modelPublicType=AndroidApplication.class)
     abstract public AndroidApplication getAndroidApplication();
@@ -25,6 +28,11 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
     @Override
     public void apply(Project project) {
         AndroidApplication dslModel = getAndroidApplication();
+
+        // Setup Android Application conventions
+        dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
+        dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
+        dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -55,6 +63,13 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
             ifPresent(dslModel.getApplicationId(), defaultConfig::setApplicationId);
             return null;
         });
+        android.compileOptions(compileOptions -> {
+            // Up to Java 11 APIs are available through desugaring
+            // https://developer.android.com/studio/write/java11-minimal-support-table
+            compileOptions.setSourceCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
+            compileOptions.setTargetCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
+            return null;
+        });
         ifPresent(dslModel.getJdkVersion(), jdkVersion -> {
             kotlin.jvmToolchain(jdkVersion);
             android.getCompileOptions().setSourceCompatibility(JavaVersion.toVersion(jdkVersion));
@@ -66,6 +81,16 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         AndroidApplicationBuildTypes modelBuildType = dslModel.getBuildTypes();
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
+
+        // TODO: ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
+        // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
+        // TODO: Maybe there should be an AbstractAndroidPlugin that does this for all Android plugins?
+        setContentTypeAttributes(project);
+
+        android.compileOptions(compileOptions -> {
+            compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
+            return null;
+        });
     }
 
     /**
@@ -76,10 +101,12 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         linkCommonDependencies(dslModel.getDependencies(), configurations);
     }
 
-    private static void linkCommonDependencies(ApplicationDependencies dependencies, ConfigurationContainer configurations) {
+    @SuppressWarnings("UnstableApiUsage")
+    private static void linkCommonDependencies(AndroidApplicationDependencies dependencies, ConfigurationContainer configurations) {
         configurations.getByName("implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
+        configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
     }
 
     /**
@@ -92,6 +119,7 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         linkBuildTypeDependencies(android, model.getDependencies(), configurations);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private static void linkBuildTypeDependencies(BuildType buildType, ApplicationDependencies dependencies, ConfigurationContainer configurations) {
         String name = buildType.getName();
         configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
