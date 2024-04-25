@@ -7,7 +7,11 @@ import org.gradle.api.initialization.Settings;
 import org.gradle.api.internal.plugins.software.RegistersSoftwareTypes;
 
 
-@RegistersSoftwareTypes({StandaloneKmpLibraryPlugin.class, StandaloneKotlinJvmLibraryPlugin.class, StandaloneKotlinJvmApplicationPlugin.class})
+@RegistersSoftwareTypes({
+        StandaloneKmpLibraryPlugin.class,
+        StandaloneKmpApplicationPlugin.class,
+        StandaloneKotlinJvmLibraryPlugin.class,
+        StandaloneKotlinJvmApplicationPlugin.class})
 public class KmpEcosystemPlugin implements Plugin<Settings> {
     @Override
     public void apply(Settings target) { }

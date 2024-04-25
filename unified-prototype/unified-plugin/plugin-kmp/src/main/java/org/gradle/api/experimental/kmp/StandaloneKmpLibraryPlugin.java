@@ -3,7 +3,6 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.DependencyScopeConfiguration;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.provider.Property;
@@ -16,8 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name="kmpLibrary", modelPublicType=KmpLibrary.class)
-    abstract public AbstractKmpLibrary getKmpLibrary();
+    @SoftwareType(name = "kotlinLibrary", modelPublicType = KmpLibrary.class)
+    abstract public KmpLibrary getKmpLibrary();
 
     @Override
     public void apply(Project project) {
@@ -83,9 +82,9 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         dslModel.getTargets().withType(KmpJvmTarget.class).all(target -> {
             kotlin.jvm(target.getName(), kotlinTarget -> {
                 linkSourceSetToDependencies(
-                    project,
-                    kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                    target.getDependencies()
+                        project,
+                        kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                        target.getDependencies()
                 );
                 kotlinTarget.getCompilations().configureEach(compilation -> {
                     compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(value -> JvmTarget.Companion.fromTarget(String.valueOf(value))));
@@ -97,9 +96,9 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         dslModel.getTargets().withType(KmpJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
                 linkSourceSetToDependencies(
-                    project,
-                    kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                    target.getDependencies()
+                        project,
+                        kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                        target.getDependencies()
                 );
             });
         });
@@ -107,13 +106,13 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
 
     private static void linkSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, LibraryDependencies libraryDependencies) {
         project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-            .getDependencies().addAllLater(libraryDependencies.getImplementation().getDependencies());
+                .getDependencies().addAllLater(libraryDependencies.getImplementation().getDependencies());
         project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
-            .getDependencies().addAllLater(libraryDependencies.getApi().getDependencies());
+                .getDependencies().addAllLater(libraryDependencies.getApi().getDependencies());
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-            .getDependencies().addAllLater(libraryDependencies.getCompileOnly().getDependencies());
+                .getDependencies().addAllLater(libraryDependencies.getCompileOnly().getDependencies());
         project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-            .getDependencies().addAllLater(libraryDependencies.getRuntimeOnly().getDependencies());
+                .getDependencies().addAllLater(libraryDependencies.getRuntimeOnly().getDependencies());
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {

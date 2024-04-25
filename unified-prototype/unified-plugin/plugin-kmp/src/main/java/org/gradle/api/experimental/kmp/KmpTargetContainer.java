@@ -6,15 +6,19 @@ import org.gradle.api.internal.DefaultPolymorphicDomainObjectContainer;
 import org.gradle.declarative.dsl.model.annotations.Adding;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
+import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.reflect.Instantiator;
+import org.gradle.internal.service.ServiceRegistry;
 
 import javax.inject.Inject;
 
 @Restricted
 public abstract class KmpTargetContainer extends DefaultPolymorphicDomainObjectContainer<KmpTarget> {
     @Inject
-    public KmpTargetContainer(Instantiator instantiator, Instantiator elementInstantiator, CollectionCallbackActionDecorator callbackDecorator) {
-        super(KmpTarget.class, instantiator, elementInstantiator, callbackDecorator);
+    public KmpTargetContainer(Instantiator instantiator, InstantiatorFactory instantiatorFactory, CollectionCallbackActionDecorator callbackDecorator, ServiceRegistry services) {
+        super(KmpTarget.class, instantiator, instantiatorFactory.decorateLenient(services), callbackDecorator);
+        registerBinding(KmpJvmTarget.class, KmpJvmTarget.class);
+        registerBinding(KmpJsTarget.class, KmpJsTarget.class);
     }
 
     @Adding
