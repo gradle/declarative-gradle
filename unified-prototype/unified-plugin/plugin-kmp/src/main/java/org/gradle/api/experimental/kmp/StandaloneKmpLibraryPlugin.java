@@ -57,14 +57,12 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                 ifPresent(dslModel.getLanguageVersion(), languageSettings::setApiVersion);
             });
         });
-        dslModel.getTargets().withType(KmpJsTarget.class).all(target -> {
-            kotlin.js(target.getName(), kotlinTarget -> {
-                if (KmpJsTarget.JsEnvironment.fromString(target.getEnvironment().get()) == KmpJsTarget.JsEnvironment.NODE) {
-                    kotlinTarget.nodejs();
-                } else {
-                    kotlinTarget.browser();
-                }
-            });
+
+        // TODO - figure out how to get rid of this task
+        project.getTasks().configureEach(task -> {
+            if (task.getName().equals("jvmRun")) {
+                task.setEnabled(false);
+            }
         });
     }
 
@@ -78,7 +76,7 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
 
         // Link JVM targets
-        dslModel.getTargets().withType(KmpJvmTarget.class).all(target -> {
+        dslModel.getTargets().withType(KmpLibraryJvmTarget.class).all(target -> {
             kotlin.jvm(target.getName(), kotlinTarget -> {
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
@@ -92,8 +90,9 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
 
         // Link JS targets
-        dslModel.getTargets().withType(KmpJsTarget.class).all(target -> {
+        dslModel.getTargets().withType(KmpLibraryNodeJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
+                kotlinTarget.nodejs();
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
                         kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),

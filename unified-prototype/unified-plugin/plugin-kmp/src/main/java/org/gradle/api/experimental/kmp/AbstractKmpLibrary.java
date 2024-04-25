@@ -12,7 +12,7 @@ import javax.inject.Inject;
  * however the KMP targets container needs some special handling for now.
  */
 public abstract class AbstractKmpLibrary implements KmpLibrary {
-    private final KmpTargetContainer targets;
+    private final KmpLibraryTargetContainer targets;
 
     @Inject
     public AbstractKmpLibrary(
@@ -22,13 +22,13 @@ public abstract class AbstractKmpLibrary implements KmpLibrary {
         CollectionCallbackActionDecorator decorator
     ) {
         Instantiator elementInstantiator = instantiatorFactory.decorateLenient(services);
-        targets = instantiator.newInstance(KmpTargetContainer.class, instantiator, elementInstantiator, decorator);
-        targets.registerBinding(KmpJvmTarget.class, KmpJvmTarget.class);
-        targets.registerBinding(KmpJsTarget.class, KmpJsTarget.class);
+        targets = instantiator.newInstance(KmpLibraryTargetContainer.class, instantiator, elementInstantiator, decorator);
+        targets.registerBinding(KmpLibraryJvmTarget.class, KmpLibraryJvmTarget.class);
+        targets.registerBinding(KmpLibraryNodeJsTarget.class, KmpLibraryNodeJsTarget.class);
     }
 
     @Override
-    public KmpTargetContainer getTargets() {
+    public KmpLibraryTargetContainer getTargets() {
         return targets;
     }
 }

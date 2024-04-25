@@ -5,15 +5,12 @@ kotlinLibrary {
 
     targets {
         jvm {
-            jdkVersion = 14
-
+            jdkVersion = 17
             dependencies {
                 api("org.apache.commons:commons-lang3:3.14.0")
             }
         }
-        js {
-            environment = "node"
-
+        nodeJs {
             dependencies {
                 implementation("com.squareup.sqldelight:runtime:1.5.5")
             }

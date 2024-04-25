@@ -2,18 +2,18 @@ package org.gradle.api.experimental.kmp;
 
 import org.gradle.api.Action;
 import org.gradle.api.Named;
-import org.gradle.api.experimental.common.LibraryDependencies;
+import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface KmpTarget extends Named {
+public interface KmpApplicationTarget extends Named {
     @Nested
-    LibraryDependencies getDependencies();
+    ApplicationDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super LibraryDependencies> action) {
+    default void dependencies(Action<? super ApplicationDependencies> action) {
         action.execute(getDependencies());
     }
 }

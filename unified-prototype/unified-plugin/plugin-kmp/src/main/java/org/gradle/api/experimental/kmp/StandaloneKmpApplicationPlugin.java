@@ -1,5 +1,6 @@
 package org.gradle.api.experimental.kmp;
 
+import kotlin.Unit;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.plugins.software.SoftwareType;
@@ -42,14 +43,19 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
         KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
 
         // Link JVM targets
-        dslModel.getTargets().withType(KmpJvmTarget.class).all(target -> {
+        dslModel.getTargets().withType(KmpApplicationJvmTarget.class).all(target -> {
             kotlin.jvm(target.getName(), kotlinTarget -> {
+                kotlinTarget.mainRun(kotlinJvmRunDsl -> {
+                    kotlinJvmRunDsl.getMainClass().set(target.getMainClass());
+                    return Unit.INSTANCE;
+                });
             });
         });
 
         // Link JS targets
-        dslModel.getTargets().withType(KmpJsTarget.class).all(target -> {
+        dslModel.getTargets().withType(KmpApplicationNodeJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
+                kotlinTarget.nodejs();
             });
         });
 
