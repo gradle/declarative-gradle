@@ -102,6 +102,11 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         // Link Native targets
         dslModel.getTargets().withType(KmpLibraryNativeTarget.class).all(target -> {
             kotlin.macosArm64(target.getName(), kotlinTarget -> {
+                KotlinPluginSupport.linkSourceSetToDependencies(
+                        project,
+                        kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                        target.getDependencies()
+                );
                 kotlinTarget.binaries(nativeBinaries -> {
                     nativeBinaries.sharedLib();
                 });
