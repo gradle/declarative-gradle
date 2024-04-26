@@ -16,5 +16,8 @@ kotlinApplication {
                 implementation("com.squareup.sqldelight:runtime:1.5.5")
             }
         }
+        macOsArm64 {
+            entryPoint = "com.example.main"
+        }
     }
 }

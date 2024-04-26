@@ -21,8 +21,6 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     public void apply(Project project) {
         KmpLibrary dslModel = createDslModel(project);
 
-        // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
-        // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
 
         // Apply the official KMP plugin
@@ -100,6 +98,16 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                 );
             });
         });
+
+        // Link Native targets
+        dslModel.getTargets().withType(KmpLibraryNativeTarget.class).all(target -> {
+            kotlin.macosArm64(target.getName(), kotlinTarget -> {
+                kotlinTarget.binaries(nativeBinaries -> {
+                    nativeBinaries.sharedLib();
+                });
+            });
+        });
+
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {

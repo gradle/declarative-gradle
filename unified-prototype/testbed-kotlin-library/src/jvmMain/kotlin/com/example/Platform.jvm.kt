@@ -6,7 +6,7 @@ class JVMSPlatform : Platform {
     override var name: String = "jVM"
 }
 
-actual fun getPlatform(): Platform {
+actual fun platform(): Platform {
     val platform = JVMSPlatform()
     // Testing a JVM dep here
     platform.name = StringUtils.capitalize(platform.name)

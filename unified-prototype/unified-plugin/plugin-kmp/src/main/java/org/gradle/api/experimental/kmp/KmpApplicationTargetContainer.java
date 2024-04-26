@@ -19,6 +19,7 @@ public abstract class KmpApplicationTargetContainer extends DefaultPolymorphicDo
         super(KmpApplicationTarget.class, instantiator, instantiatorFactory.decorateLenient(services), callbackDecorator);
         registerBinding(KmpApplicationJvmTarget.class, KmpApplicationJvmTarget.class);
         registerBinding(KmpApplicationNodeJsTarget.class, KmpApplicationNodeJsTarget.class);
+        registerBinding(KmpApplicationNativeTarget.class, KmpApplicationNativeTarget.class);
     }
 
     @Adding
@@ -28,8 +29,8 @@ public abstract class KmpApplicationTargetContainer extends DefaultPolymorphicDo
 
     @Configuring
     public void jvm(Action<? super KmpApplicationJvmTarget> action) {
-        KmpApplicationJvmTarget jvm = maybeCreate("jvm", KmpApplicationJvmTarget.class);
-        action.execute(jvm);
+        KmpApplicationJvmTarget target = maybeCreate("jvm", KmpApplicationJvmTarget.class);
+        action.execute(target);
     }
 
     @Adding
@@ -39,7 +40,18 @@ public abstract class KmpApplicationTargetContainer extends DefaultPolymorphicDo
 
     @Configuring
     public void nodeJs(Action<? super KmpApplicationNodeJsTarget> action) {
-        KmpApplicationNodeJsTarget js = maybeCreate("nodeJs", KmpApplicationNodeJsTarget.class);
-        action.execute(js);
+        KmpApplicationNodeJsTarget target = maybeCreate("nodeJs", KmpApplicationNodeJsTarget.class);
+        action.execute(target);
+    }
+
+    @Adding
+    public void macOsArm64() {
+        maybeCreate("macOsArm64", KmpApplicationNativeTarget.class);
+    }
+
+    @Configuring
+    public void macOsArm64(Action<? super KmpApplicationNativeTarget> action) {
+        KmpApplicationNativeTarget target = maybeCreate("macOsArm64", KmpApplicationNativeTarget.class);
+        action.execute(target);
     }
 }

@@ -18,10 +18,30 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
     public void apply(Project project) {
         KmpApplication dslModel = createDslModel(project);
 
+        project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
+
         // Apply the official KMP plugin
         project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
 
         linkDslModelToPluginLazy(project, dslModel);
+    }
+
+    /**
+     * Performs linking actions that must occur within an afterEvaluate block.
+     */
+    private void linkDslModelToPlugin(Project project, KmpApplication dslModel) {
+        KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
+
+        // Link Native targets
+        dslModel.getTargets().withType(KmpApplicationNativeTarget.class).all(target -> {
+            kotlin.macosArm64(target.getName(), kotlinTarget -> {
+                kotlinTarget.binaries(nativeBinaries -> {
+                    nativeBinaries.executable(executable -> {
+                        executable.entryPoint(target.getEntryPoint().get());
+                    });
+                });
+            });
+        });
     }
 
     private KmpApplication createDslModel(Project project) {
@@ -59,5 +79,10 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
             });
         });
 
+        // Link Native targets
+        dslModel.getTargets().withType(KmpApplicationNativeTarget.class).all(target -> {
+            kotlin.macosArm64(target.getName(), kotlinTarget -> {
+            });
+        });
     }
 }

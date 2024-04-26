@@ -6,7 +6,7 @@ class JSPlatform : Platform {
     override val name: String = "JS"
 }
 
-actual fun getPlatform(): Platform {
+actual fun platform(): Platform {
     // Just testing a JS dep here
     val driver: SqlDriver? = null
 

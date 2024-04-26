@@ -1,5 +1,5 @@
 package com.example
 
 fun main() {
-    println("Hello from Kotlin ${KotlinVersion.CURRENT} on ${system()}")
+    println("Hello from Kotlin ${KotlinVersion.CURRENT} on ${platform().name}")
 }
