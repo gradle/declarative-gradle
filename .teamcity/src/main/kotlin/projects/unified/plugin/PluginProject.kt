@@ -1,5 +1,6 @@
 package projects.unified.plugin
 
+import common.addGradleParam
 import common.configuredGradle
 import jetbrains.buildServer.configs.kotlin.*
 
@@ -51,7 +52,7 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
             step(configuredGradle {
                 name = "Publish Plugins"
                 tasks = ":unified-plugin:publishAllPlugins"
-                gradleParams = "-Dgradle.publish.skip.namespace.check=true"
+                addGradleParam("-Dgradle.publish.skip.namespace.check=true")
                 workingDir = "unified-prototype"
             })
         }
