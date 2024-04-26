@@ -107,9 +107,6 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                         kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
                         target.getDependencies()
                 );
-                kotlinTarget.binaries(nativeBinaries -> {
-                    nativeBinaries.sharedLib();
-                });
             });
         });
 
