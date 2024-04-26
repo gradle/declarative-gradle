@@ -1,5 +1,6 @@
 kotlinLibrary {
     dependencies {
+        implementation(project(":kotlin-util"))
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     }
 

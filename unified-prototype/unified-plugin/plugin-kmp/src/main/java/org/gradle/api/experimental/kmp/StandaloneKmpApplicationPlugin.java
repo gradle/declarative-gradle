@@ -3,6 +3,7 @@ package org.gradle.api.experimental.kmp;
 import kotlin.Unit;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
 
@@ -61,6 +62,9 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
      */
     private void linkDslModelToPluginLazy(Project project, KmpApplication dslModel) {
         KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
+
+        // Link common dependencies
+        KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
 
         // Link JVM targets
         dslModel.getTargets().withType(KmpApplicationJvmTarget.class).all(target -> {
