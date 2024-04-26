@@ -40,9 +40,10 @@ To run the application, use:
 > ./gradlew testbed-kotlin-jvm-application:run
 ```
 
-## KMP
+## Kotlin KMP
 
-The sample Kotlin Multiplatform project lives in the `testbed-kmp` directory.
+The sample Kotlin Multiplatform project lives in the `testbed-kotlin-library` and `testbed-kotlin-application` directories.
+
 The `unified-prototype/plugin-kmp` plugin demonstrates creating extensions using the Declarative DSL, and loading the data from those extensions into the KMP project used by KGP.
 
 The sample project demonstrates setting properties, using a common dependencies block, and adding dependencies to specific targets.
@@ -57,28 +58,38 @@ The `StandaloneKmpLibraryPlugin` plugin works by using `project.afterEvaluate` t
 
 ### Limitations
 
-The KMP example is currently limited, and does not support any targets other than `js` and `jvm`.
+The KMP example is currently limited, and does not support any targets other than `nodeJs`, `jvm` and `macOsArm64`.
 
 ### Running
-From the `testbed-kmp` directory, run `build` using the Gradle wrapper in the parent directory:
+
+From the `testbed-kotlin-application` directory, run `jvmRun` using the Gradle wrapper in the parent directory:
 
 ```shell
-cd testbed-kmp
+cd testbed-kotlin-application
+../gradlew jvmRun
+```
+
+### Building
+
+From the `testbed-kotlin-application` directory, run `build` using the Gradle wrapper in the parent directory:
+
+```shell
+cd testbed-kotlin-application
 ../gradlew build
 ```
 
-to build the JS, JVM and KMP metadata jars for the example KMP project build in the `testbed-kmp/build/libs` directory.
+to build the JS, JVM and KMP metadata jars for the example KMP project build in the `testbed-kotlin-application/build/libs` directory.
 
 You can also build the JS and JVM libs separately:
 
 ```shell 
-cd testbed-kmp
-../gradlew :testbed-kmp:jsJar
+cd testbed-kotlin-application
+../gradlew jsJar
 ```
 
 ```shell 
-cd testbed-kmp
-../gradlew :testbed-kmp:jvmJar
+cd testbed-kotlin-application
+../gradlew jvmJar
 ```
 
 ## Android
