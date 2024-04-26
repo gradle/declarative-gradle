@@ -8,9 +8,6 @@ fun configuredGradle(init: GradleBuildStep.() -> Unit) = GradleBuildStep {
     enableStacktrace = true
     gradleParams = "-Porg.gradle.java.installations.paths=%linux.java21.openjdk.64bit%"
 
-    param("env.ANDROID_HOME", "/opt/android/sdk")
-    param("env.ANDROID_SDK_ROOT", "/opt/android/sdk")
-
     init()
 }
 

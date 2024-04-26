@@ -13,6 +13,8 @@ object UnifiedPrototypeProject : Project({
 
     params {
         param("env.JAVA_HOME", "%linux.java17.openjdk.64bit%")
+        param("env.ANDROID_HOME", "/opt/android/sdk")
+        param("env.ANDROID_SDK_ROOT", "/opt/android/sdk")
     }
 
     val buildAndTest = buildType {
