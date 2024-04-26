@@ -9,7 +9,7 @@ fun BuildFeatures.publishBuildStatusToGithub() {
         publisher = github {
             githubUrl = "https://api.github.com"
             authType = personalToken {
-                token = "%github.bot-gradle.token%"
+                token = "%github.bot-gradle.declarative-gradle.token%"
             }
         }
     }
