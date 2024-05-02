@@ -1,5 +1,6 @@
 package org.gradle.api.experimental.kmp;
 
+import kotlin.Unit;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -10,16 +11,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
 
 /**
- * Creates a declarative {@link KmpLibrary} DSL model, applies the official KMP plugin,
+ * Creates a declarative {@link KmpApplication} DSL model, applies the official KMP plugin,
  * and links the declarative model to the official plugin.
  */
-abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name = "kotlinLibrary", modelPublicType = KmpLibrary.class)
-    abstract public KmpLibrary getKmpLibrary();
+abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> {
+    @SoftwareType(name = "kotlinApplication", modelPublicType = KmpApplication.class)
+    abstract public KmpApplication getKmpApplication();
 
     @Override
     public void apply(Project project) {
-        KmpLibrary dslModel = createDslModel(project);
+        KmpApplication dslModel = createDslModel(project);
 
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
 
@@ -29,23 +30,10 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         linkDslModelToPluginLazy(project, dslModel);
     }
 
-    private KmpLibrary createDslModel(Project project) {
-        KmpLibrary dslModel = getKmpLibrary();
-
-        // In order for function extraction from the DependencyCollector on the library deps to work, configurations must exist
-        // Matching the names of the getters on LibraryDependencies
-        project.getConfigurations().dependencyScope("api").get();
-        project.getConfigurations().dependencyScope("implementation").get();
-        project.getConfigurations().dependencyScope("compileOnly").get();
-        project.getConfigurations().dependencyScope("runtimeOnly").get();
-
-        return dslModel;
-    }
-
     /**
      * Performs linking actions that must occur within an afterEvaluate block.
      */
-    private void linkDslModelToPlugin(Project project, KmpLibrary dslModel) {
+    private void linkDslModelToPlugin(Project project, KmpApplication dslModel) {
         KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
 
         // Link common properties
@@ -56,25 +44,41 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
             });
         });
 
-        // TODO - figure out how to get rid of this task
-        project.getTasks().configureEach(task -> {
-            if (task.getName().equals("jvmRun")) {
-                task.setEnabled(false);
-            }
+        // Link Native targets
+        dslModel.getTargets().withType(KmpApplicationNativeTarget.class).all(target -> {
+            kotlin.macosArm64(target.getName(), kotlinTarget -> {
+                kotlinTarget.binaries(nativeBinaries -> {
+                    nativeBinaries.executable(executable -> {
+                        executable.entryPoint(target.getEntryPoint().get());
+                    });
+                });
+            });
         });
+    }
+
+    private KmpApplication createDslModel(Project project) {
+        KmpApplication dslModel = getKmpApplication();
+
+        // In order for function extraction from the DependencyCollector on the library deps to work, configurations must exist
+        // Matching the names of the getters on LibraryDependencies
+        project.getConfigurations().dependencyScope("implementation").get();
+        project.getConfigurations().dependencyScope("compileOnly").get();
+        project.getConfigurations().dependencyScope("runtimeOnly").get();
+
+        return dslModel;
     }
 
     /**
      * Performs linking actions that do not need to occur within an afterEvaluate block.
      */
-    private void linkDslModelToPluginLazy(Project project, KmpLibrary dslModel) {
+    private void linkDslModelToPluginLazy(Project project, KmpApplication dslModel) {
         KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
 
         // Link common dependencies
         KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
 
         // Link JVM targets
-        dslModel.getTargets().withType(KmpLibraryJvmTarget.class).all(target -> {
+        dslModel.getTargets().withType(KmpApplicationJvmTarget.class).all(target -> {
             kotlin.jvm(target.getName(), kotlinTarget -> {
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
@@ -84,11 +88,15 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                 kotlinTarget.getCompilations().configureEach(compilation -> {
                     compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(value -> JvmTarget.Companion.fromTarget(String.valueOf(value))));
                 });
+                kotlinTarget.mainRun(kotlinJvmRunDsl -> {
+                    kotlinJvmRunDsl.getMainClass().set(target.getMainClass());
+                    return Unit.INSTANCE;
+                });
             });
         });
 
         // Link JS targets
-        dslModel.getTargets().withType(KmpLibraryNodeJsTarget.class).all(target -> {
+        dslModel.getTargets().withType(KmpApplicationNodeJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
                 kotlinTarget.nodejs();
                 KotlinPluginSupport.linkSourceSetToDependencies(
@@ -100,7 +108,7 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
 
         // Link Native targets
-        dslModel.getTargets().withType(KmpLibraryNativeTarget.class).all(target -> {
+        dslModel.getTargets().withType(KmpApplicationNativeTarget.class).all(target -> {
             kotlin.macosArm64(target.getName(), kotlinTarget -> {
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
@@ -109,7 +117,6 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                 );
             });
         });
-
     }
 
     private static <T> void ifPresent(Property<T> property, Action<T> action) {
@@ -117,4 +124,5 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
             action.execute(property.get());
         }
     }
+
 }

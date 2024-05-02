@@ -8,7 +8,7 @@ class Library {
         get() {
             // Verify that Guava is available
             val builder = ImmutableList.builder<String>()
-            builder.add("Hello from Kotlin on JVM ${System.getProperty("java.version")}")
+            builder.add("Hello from Kotlin ${KotlinVersion.CURRENT} on JVM ${System.getProperty("java.version")}")
 
             // Verify that the Kotlin JVM library is available
             val utils = Utils()
