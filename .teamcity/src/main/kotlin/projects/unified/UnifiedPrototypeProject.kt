@@ -4,6 +4,8 @@ import common.configuredGradle
 import common.publishBuildStatusToGithub
 import jetbrains.buildServer.configs.kotlin.DslContext
 import jetbrains.buildServer.configs.kotlin.Project
+import jetbrains.buildServer.configs.kotlin.buildFeatures.PullRequests
+import jetbrains.buildServer.configs.kotlin.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
 import projects.unified.plugin.PluginProject
 
@@ -28,6 +30,16 @@ object UnifiedPrototypeProject : Project({
 
         features {
             publishBuildStatusToGithub()
+            // Pull in all PRs, this will not trigger on them but allows manual runs
+            pullRequests {
+                vcsRootExtId = DslContext.settingsRootId.toString()
+                provider = github {
+                    authType = token {
+                        token = "%github.bot-gradle.declarative-gradle.token%"
+                    }
+                    filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+                }
+            }
         }
 
         vcs {
@@ -42,9 +54,10 @@ object UnifiedPrototypeProject : Project({
                     +:.teamcity/**
                 """.trimIndent()
 
+                // Trigger on all branches, specifically not `refs/pull/*` as we only want to run automatically on
+                // our own content.
                 branchFilter = """
-                    +:main
-                    +:pull/*/head
+                    +:refs/heads/*
                 """.trimIndent()
             }
         }
