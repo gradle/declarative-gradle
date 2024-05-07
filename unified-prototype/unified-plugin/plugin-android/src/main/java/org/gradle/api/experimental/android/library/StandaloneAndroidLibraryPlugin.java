@@ -34,11 +34,11 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
-        dslModel.getJacoco().getVersion().convention("0.8.7");
+        dslModel.getTesting().getJacoco().getVersion().convention("0.8.7");
 
         // And Test Options
-        dslModel.getTestOptions().getIncludeAndroidResources().convention(false);
-        dslModel.getTestOptions().getReturnDefaultValues().convention(false);
+        dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
+        dslModel.getTesting().getTestOptions().getReturnDefaultValues().convention(false);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -94,9 +94,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
 
         configureKotlinSerialization(project, dslModel, configurations);
-
-        android.getTestOptions().getUnitTests().setIncludeAndroidResources(dslModel.getTestOptions().getIncludeAndroidResources().get());
-        android.getTestOptions().getUnitTests().setReturnDefaultValues(dslModel.getTestOptions().getReturnDefaultValues().get());
+        configureTesting(dslModel, android);
 
         NiaSupport.configureNia(project, dslModel);
 
@@ -104,6 +102,12 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
             return null;
         });
+    }
+
+    private static void configureTesting(AndroidLibrary dslModel, LibraryExtension android) {
+        TestOptions testOptions = dslModel.getTesting().getTestOptions();
+        android.getTestOptions().getUnitTests().setIncludeAndroidResources(testOptions.getIncludeAndroidResources().get());
+        android.getTestOptions().getUnitTests().setReturnDefaultValues(testOptions.getReturnDefaultValues().get());
     }
 
     private static void configureKotlinSerialization(Project project, AndroidLibrary dslModel, ConfigurationContainer configurations) {

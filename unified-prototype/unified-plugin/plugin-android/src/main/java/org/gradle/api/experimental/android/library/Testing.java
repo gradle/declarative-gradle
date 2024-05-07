@@ -1,0 +1,28 @@
+package org.gradle.api.experimental.android.library;
+
+import org.gradle.api.Action;
+import org.gradle.api.tasks.Nested;
+import org.gradle.declarative.dsl.model.annotations.Configuring;
+import org.gradle.declarative.dsl.model.annotations.Restricted;
+
+@Restricted
+public interface Testing {
+    /**
+     * Whether or not to set up Jacoco support.
+     */
+    @Nested
+    Jacoco getJacoco();
+
+    @Configuring
+    default void jacoco(Action<? super Jacoco> action) {
+        action.execute(getJacoco());
+    }
+
+    @Nested
+    TestOptions getTestOptions();
+
+    @Configuring
+    default void testOptions(Action<? super TestOptions> action) {
+        action.execute(getTestOptions());
+    }
+}

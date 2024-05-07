@@ -62,17 +62,6 @@ public interface AndroidLibrary {
         action.execute(getKotlinSerialization());
     }
 
-    /**
-     * Whether or not to set up Jacoco support.
-     */
-    @Nested
-    Jacoco getJacoco();
-
-    @Configuring
-    default void jacoco(Action<? super Jacoco> action) {
-        action.execute(getJacoco());
-    }
-
     @Nested
     AndroidLibraryDependencies getDependencies();
 
@@ -82,18 +71,19 @@ public interface AndroidLibrary {
     }
 
     @Nested
-    TestOptions getTestOptions();
-
-    @Configuring
-    default void testOptions(Action<? super TestOptions> action) {
-        action.execute(getTestOptions());
-    }
-
-    @Nested
     AndroidLibraryBuildTypes getBuildTypes();
 
     @Configuring
     default void buildTypes(Action<? super AndroidLibraryBuildTypes> action) {
         action.execute(getBuildTypes());
     }
+
+    @Nested
+    Testing getTesting();
+
+    @Configuring
+    default void testing(Action<? super Testing> action) {
+        action.execute(getTesting());
+    }
+
 }
