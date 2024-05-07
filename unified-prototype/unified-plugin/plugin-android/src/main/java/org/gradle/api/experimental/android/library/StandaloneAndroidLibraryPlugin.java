@@ -34,7 +34,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
-        dslModel.getConfigureJacoco().convention(false);
+        dslModel.getJacoco().getVersion().convention("0.8.7");
 
         // And Test Options
         dslModel.getTestOptions().getIncludeAndroidResources().convention(false);

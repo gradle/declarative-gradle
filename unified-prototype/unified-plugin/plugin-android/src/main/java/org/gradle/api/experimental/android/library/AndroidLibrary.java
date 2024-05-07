@@ -65,8 +65,13 @@ public interface AndroidLibrary {
     /**
      * Whether or not to set up Jacoco support.
      */
-    @Restricted
-    Property<Boolean> getConfigureJacoco();
+    @Nested
+    Jacoco getJacoco();
+
+    @Configuring
+    default void jacoco(Action<? super Jacoco> action) {
+        action.execute(getJacoco());
+    }
 
     @Nested
     AndroidLibraryDependencies getDependencies();

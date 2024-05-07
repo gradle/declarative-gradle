@@ -10,7 +10,7 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
- * Extension to manage setting up Kotlin serialization for a Kotlin library.
+ * Extension to manage setting up Kotlin serialization for a Kotlin Android library.
  */
 @SuppressWarnings("UnstableApiUsage")
 @Restricted

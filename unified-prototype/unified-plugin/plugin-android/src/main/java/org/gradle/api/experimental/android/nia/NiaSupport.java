@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.*;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
+import org.gradle.api.experimental.android.library.Jacoco;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.testing.Test;
@@ -50,8 +51,8 @@ public class NiaSupport {
         configureLint(androidLib);
         configurePrintApksTask(project, androidLibComponents);
 
-        if (dslModel.getConfigureJacoco().get()) {
-            configureJacoco(project, androidLib);
+        if (dslModel.getJacoco().getVersion().isPresent()) {
+            configureJacoco(dslModel.getJacoco(), project, androidLib);
         }
     }
 
@@ -232,7 +233,7 @@ public class NiaSupport {
     }
 
     @SuppressWarnings("deprecation")
-    private static void configureJacoco(Project project, LibraryExtension androidLib) {
+    private static void configureJacoco(Jacoco jacocoExtension, Project project, LibraryExtension androidLib) {
         project.getPlugins().apply("jacoco");
 
         androidLib.getBuildTypes().configureEach(buildType -> {
@@ -241,7 +242,7 @@ public class NiaSupport {
         });
 
         JacocoPluginExtension jacocoPluginExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
-        jacocoPluginExtension.setToolVersion("0.8.7");
+        jacocoPluginExtension.setToolVersion(jacocoExtension.getVersion().get());
 
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
         androidLibComponents.onVariants(androidLibComponents.selector().all(), variant -> {
