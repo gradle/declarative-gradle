@@ -54,8 +54,10 @@ object UnifiedPrototypeProject : Project({
                     +:.teamcity/**
                 """.trimIndent()
 
+                // Do not run on `pull/*` as these are untrusted branches
                 branchFilter = """
                     +:*
+                    -:pull/*
                 """.trimIndent()
             }
         }
