@@ -54,10 +54,8 @@ object UnifiedPrototypeProject : Project({
                     +:.teamcity/**
                 """.trimIndent()
 
-                // Trigger on all branches, specifically not `refs/pull/*` as we only want to run automatically on
-                // our own content.
                 branchFilter = """
-                    +:refs/heads/*
+                    +:*
                 """.trimIndent()
             }
         }
