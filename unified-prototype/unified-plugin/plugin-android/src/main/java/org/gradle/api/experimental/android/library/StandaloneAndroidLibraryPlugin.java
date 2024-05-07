@@ -8,6 +8,7 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
@@ -32,7 +33,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
         dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
-        dslModel.getIncludeKotlinSerialization().convention(false);
+        dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
         dslModel.getConfigureJacoco().convention(false);
 
         // And Test Options
@@ -92,10 +93,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
 
-        if (dslModel.getIncludeKotlinSerialization().get()) {
-            project.getPluginManager().apply("kotlinx-serialization");
-            project.getDependencies().add("testImplementation", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3");
-        }
+        configureKotlinSerialization(project, dslModel, configurations);
 
         android.getTestOptions().getUnitTests().setIncludeAndroidResources(dslModel.getTestOptions().getIncludeAndroidResources().get());
         android.getTestOptions().getUnitTests().setReturnDefaultValues(dslModel.getTestOptions().getReturnDefaultValues().get());
@@ -106,6 +104,14 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
             return null;
         });
+    }
+
+    private static void configureKotlinSerialization(Project project, AndroidLibrary dslModel, ConfigurationContainer configurations) {
+        DependencyCollector serializationDependencies = dslModel.getKotlinSerialization().getDependencies().getImplementation();
+        if (!serializationDependencies.getDependencies().get().isEmpty()) {
+            project.getPlugins().apply("org.jetbrains.kotlin.plugin.serialization");
+            configurations.getByName("testImplementation").fromDependencyCollector(serializationDependencies);
+        }
     }
 
     /**

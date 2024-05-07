@@ -51,10 +51,16 @@ public interface AndroidLibrary {
     Property<Integer> getJdkVersion();
 
     /**
-     * Whether or not to set up Kotlin serialization, applying the plugins and adding any necessary dependencies.
+     * Controls whether or not to set up Kotlin serialization, applying the plugins
+     * and adding any necessary dependencies.
      */
-    @Restricted
-    Property<Boolean> getIncludeKotlinSerialization();
+    @Nested
+    KotlinSerialization getKotlinSerialization();
+
+    @Configuring
+    default void kotlinSerialization(Action<? super KotlinSerialization> action) {
+        action.execute(getKotlinSerialization());
+    }
 
     /**
      * Whether or not to set up Jacoco support.
