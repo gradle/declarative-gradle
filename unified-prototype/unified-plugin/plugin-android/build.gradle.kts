@@ -20,16 +20,22 @@ gradlePlugin {
     plugins {
         create("android-library") {
             id = "org.gradle.experimental.android-library"
+            displayName = "Android Library Experimental Declarative Plugin"
+            description = "Experimental declarative plugin for Android libraries"
             implementationClass = "org.gradle.api.experimental.android.library.StandaloneAndroidLibraryPlugin"
             tags = setOf("declarative-gradle", "android")
         }
         create("android-application") {
             id = "org.gradle.experimental.android-application"
+            displayName = "Android Application Experimental Declarative Plugin"
+            description = "Experimental declarative plugin for Android applications"
             implementationClass = "org.gradle.api.experimental.android.application.StandaloneAndroidApplicationPlugin"
             tags = setOf("declarative-gradle", "android")
         }
         create("android-ecosystem") {
             id = "org.gradle.experimental.android-ecosystem"
+            displayName = "Android Ecosystem Experimental Declarative Plugin"
+            description = "Experimental declarative plugin for the Android ecosystem"
             implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemPlugin"
             tags = setOf("declarative-gradle", "android")
         }

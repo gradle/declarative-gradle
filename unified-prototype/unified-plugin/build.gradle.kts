@@ -6,3 +6,12 @@ subprojects {
     group = "org.gradle.experimental"
     version = "0.1.0-SNAPSHOT"
 }
+
+tasks.register("publishAllPlugins") {
+    description = "Publish all plugins in the build"
+    dependsOn(
+        ":plugin-android:publishPlugins",
+        ":plugin-jvm:publishPlugins",
+        ":plugin-kmp:publishPlugins",
+    )
+}

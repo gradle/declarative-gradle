@@ -1,5 +1,4 @@
 import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 plugins {
     id("com.gradle.plugin-publish")
@@ -28,7 +27,7 @@ tasks.shadowJar {
 }
 
 gradlePlugin {
-    website = "https://github.com/gradle/declarative-gradle"
+    website = "https://blog.gradle.org/declarative-gradle"
     vcsUrl = "https://github.com/gradle/declarative-gradle"
 }
 
