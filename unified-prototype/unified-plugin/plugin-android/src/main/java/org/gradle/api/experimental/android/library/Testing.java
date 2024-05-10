@@ -15,7 +15,9 @@ public interface Testing {
 
     @Configuring
     default void jacoco(Action<? super Jacoco> action) {
-        action.execute(getJacoco());
+        Jacoco jacoco = getJacoco();
+        action.execute(jacoco);
+        jacoco.getEnabled().set(true);
     }
 
     @Nested

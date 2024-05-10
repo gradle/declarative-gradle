@@ -8,7 +8,6 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
@@ -33,12 +32,14 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
         dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
+        dslModel.getKotlinSerialization().getEnabled().convention(false);
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
-        dslModel.getTesting().getJacoco().getVersion().convention("0.8.7");
 
         // And Test Options
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
         dslModel.getTesting().getTestOptions().getReturnDefaultValues().convention(false);
+        dslModel.getTesting().getJacoco().getEnabled().convention(false);
+        dslModel.getTesting().getJacoco().getVersion().convention("0.8.7");
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -93,7 +94,9 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
 
-        configureKotlinSerialization(project, dslModel, configurations);
+        if (dslModel.getKotlinSerialization().getEnabled().get()) {
+            configureKotlinSerialization(project, dslModel, configurations);
+        }
         configureTesting(dslModel, android);
 
         NiaSupport.configureNia(project, dslModel);
@@ -111,11 +114,8 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
     }
 
     private static void configureKotlinSerialization(Project project, AndroidLibrary dslModel, ConfigurationContainer configurations) {
-        DependencyCollector serializationDependencies = dslModel.getKotlinSerialization().getDependencies().getImplementation();
-        if (!serializationDependencies.getDependencies().get().isEmpty()) {
-            project.getPlugins().apply("org.jetbrains.kotlin.plugin.serialization");
-            configurations.getByName("testImplementation").fromDependencyCollector(serializationDependencies);
-        }
+        project.getPlugins().apply("org.jetbrains.kotlin.plugin.serialization");
+        configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getKotlinSerialization().getDependencies().getImplementation());
     }
 
     /**

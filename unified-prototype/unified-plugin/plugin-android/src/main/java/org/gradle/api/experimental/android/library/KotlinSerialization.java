@@ -16,6 +16,11 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @Restricted
 public interface KotlinSerialization {
     /**
+     * Internal property purposely not exposed to the DSL.
+     */
+    Property<Boolean> getEnabled();
+
+    /**
      * Kotlin serialization library version to use.
      */
     @Restricted
