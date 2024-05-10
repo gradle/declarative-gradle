@@ -22,12 +22,12 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
         params {
             password(
                 "env.GRADLE_PUBLISH_KEY",
-                "%development.plugin.portal.publish.key%",
+                "%plugin.portal.publish.key%",
                 description = "The Gradle publish key to publish this plugin into"
             )
             password(
                 "env.GRADLE_PUBLISH_SECRET",
-                "%development.plugin.portal.publish.secret%",
+                "%plugin.portal.publish.secret%",
                 description = "The Gradle publish secret to publish this plugin into"
             )
         }
