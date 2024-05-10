@@ -51,7 +51,7 @@ public class NiaSupport {
         configureLint(androidLib);
         configurePrintApksTask(project, androidLibComponents);
 
-        if (dslModel.getTesting().getJacoco().getVersion().isPresent()) {
+        if (dslModel.getTesting().getJacoco().getEnabled().get()) {
             configureJacoco(dslModel.getTesting().getJacoco(), project, androidLib);
         }
     }

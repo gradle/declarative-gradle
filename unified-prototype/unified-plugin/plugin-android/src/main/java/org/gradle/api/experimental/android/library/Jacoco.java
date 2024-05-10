@@ -9,6 +9,11 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @Restricted
 public interface Jacoco {
     /**
+     * Internal property purposely not exposed to the DSL.
+     */
+    Property<Boolean> getEnabled();
+
+    /**
      * Jacoco tool version to use.
      */
     @Restricted

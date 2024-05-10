@@ -59,7 +59,9 @@ public interface AndroidLibrary {
 
     @Configuring
     default void kotlinSerialization(Action<? super KotlinSerialization> action) {
-        action.execute(getKotlinSerialization());
+        KotlinSerialization kotlinSerialization = getKotlinSerialization();
+        action.execute(kotlinSerialization);
+        kotlinSerialization.getEnabled().set(true);
     }
 
     @Nested
