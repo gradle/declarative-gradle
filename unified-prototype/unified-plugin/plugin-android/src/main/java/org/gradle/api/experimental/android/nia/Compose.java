@@ -4,7 +4,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface Feature {
+public interface Compose {
     /**
      * Internal property purposely not exposed to the DSL.
      */
