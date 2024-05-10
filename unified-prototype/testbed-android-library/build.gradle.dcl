@@ -8,6 +8,11 @@ androidLibrary {
         implementation(project(":android-util"))
     }
 
+    kotlinSerialization {
+        version = "1.6.3"
+        json()
+    }
+
     buildTypes {
         release {
             dependencies {

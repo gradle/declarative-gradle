@@ -12,6 +12,7 @@ dependencies {
 
     implementation(libs.ksp.plugin)
     implementation(libs.hilt.android.plugin)
+    implementation(libs.kotlin.serialization.plugin)
 
     implementation(libs.apache.commons.lang)
 }

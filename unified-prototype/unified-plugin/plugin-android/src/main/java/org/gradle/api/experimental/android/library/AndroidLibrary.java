@@ -51,16 +51,16 @@ public interface AndroidLibrary {
     Property<Integer> getJdkVersion();
 
     /**
-     * Whether or not to set up Kotlin serialization, applying the plugins and adding any necessary dependencies.
+     * Controls whether or not to set up Kotlin serialization, applying the plugins
+     * and adding any necessary dependencies.
      */
-    @Restricted
-    Property<Boolean> getIncludeKotlinSerialization();
+    @Nested
+    KotlinSerialization getKotlinSerialization();
 
-    /**
-     * Whether or not to set up Jacoco support.
-     */
-    @Restricted
-    Property<Boolean> getConfigureJacoco();
+    @Configuring
+    default void kotlinSerialization(Action<? super KotlinSerialization> action) {
+        action.execute(getKotlinSerialization());
+    }
 
     @Nested
     AndroidLibraryDependencies getDependencies();
@@ -71,18 +71,19 @@ public interface AndroidLibrary {
     }
 
     @Nested
-    TestOptions getTestOptions();
-
-    @Configuring
-    default void testOptions(Action<? super TestOptions> action) {
-        action.execute(getTestOptions());
-    }
-
-    @Nested
     AndroidLibraryBuildTypes getBuildTypes();
 
     @Configuring
     default void buildTypes(Action<? super AndroidLibraryBuildTypes> action) {
         action.execute(getBuildTypes());
     }
+
+    @Nested
+    Testing getTesting();
+
+    @Configuring
+    default void testing(Action<? super Testing> action) {
+        action.execute(getTesting());
+    }
+
 }
