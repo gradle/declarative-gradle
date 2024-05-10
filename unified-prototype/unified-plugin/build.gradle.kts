@@ -4,7 +4,7 @@ plugins {
 
 subprojects {
     group = "org.gradle.experimental"
-    version = "0.1.0"
+    version = "0.1.1-SNAPSHOT"
 }
 
 tasks.register("publishAllPlugins") {
