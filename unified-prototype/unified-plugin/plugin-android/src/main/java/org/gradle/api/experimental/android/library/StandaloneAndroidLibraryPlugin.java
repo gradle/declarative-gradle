@@ -134,7 +134,9 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
         configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
 
+        // TESTING: TODO: Move these into the Testing block?
         configurations.getByName("testImplementation").fromDependencyCollector(dependencies.getTestImplementation());
+        configurations.getByName("androidTestImplementation").fromDependencyCollector(dependencies.getAndroidTestImplementation());
     }
 
     /**

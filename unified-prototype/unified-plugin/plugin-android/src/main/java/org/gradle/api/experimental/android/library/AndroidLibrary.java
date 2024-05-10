@@ -19,6 +19,7 @@ package org.gradle.api.experimental.android.library;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
+import org.gradle.api.experimental.android.nia.Feature;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -88,4 +89,16 @@ public interface AndroidLibrary {
         action.execute(getTesting());
     }
 
+    @Nested
+    Feature getFeature(); // TODO: accessing this via feature.enabled = true could cause problems
+
+    @Configuring
+    default void feature(Action<? super Feature> action) {
+        Feature feature = getFeature();
+        action.execute(feature);
+
+        // Ensure that the feature is enabled when configured and that this cannot be changed
+        feature.getEnabled().set(true);
+        feature.getEnabled().disallowChanges();
+    }
 }

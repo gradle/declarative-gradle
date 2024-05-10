@@ -54,6 +54,26 @@ public class NiaSupport {
         if (dslModel.getTesting().getJacoco().getEnabled().get()) {
             configureJacoco(dslModel.getTesting().getJacoco(), project, androidLib);
         }
+
+        if (dslModel.getFeature().getEnabled().get()) {
+            configureFeature(project, androidLib);
+        }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static void configureFeature(Project project, LibraryExtension androidLib) {
+        androidLib.getDefaultConfig().setTestInstrumentationRunner("com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner");
+        androidLib.getTestOptions().setAnimationsDisabled(true);
+
+        project.getDependencies().add("implementation", project.project(":core:ui"));
+        project.getDependencies().add("implementation", project.project(":core:designsystem"));
+
+        project.getDependencies().add("implementation", "androidx.navigation:navigation-compose:2.7.4");
+        project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-runtime-compose:2.7.0");
+        project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0");
+        project.getDependencies().add("implementation", "androidx.tracing:tracing-ktx:1.3.0-alpha02");
+
+        project.getDependencies().add("androidTestImplementation", "androidx.lifecycle:lifecycle-runtime-testing:2.7.0");
     }
 
     private static void configureLint(LibraryExtension androidLib) {
