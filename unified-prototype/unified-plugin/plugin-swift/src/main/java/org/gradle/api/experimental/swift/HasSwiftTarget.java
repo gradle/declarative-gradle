@@ -6,5 +6,5 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @Restricted
 public interface HasSwiftTarget {
     @Restricted
-    Property<String> getSwiftVersion();
+    Property<Integer> getSwiftVersion();
 }
