@@ -9,4 +9,8 @@ public interface Compose {
      * Internal property purposely not exposed to the DSL.
      */
     Property<Boolean> getEnabled();
+
+    // TODO: Remove this when empty configuration blocks will cause configuration
+    @Restricted
+    Property<String> getDescription();
 }

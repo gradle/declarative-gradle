@@ -69,21 +69,24 @@ public class NiaSupport {
     @SuppressWarnings("UnstableApiUsage")
     private static void configureCompose(Project project, LibraryExtension androidLib) {
         androidLib.getBuildFeatures().setCompose(true);
+
         androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");
 
         DependencyHandler dependencies = project.getDependencies();
         dependencies.add("implementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
         dependencies.add("androidTestImplementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
-        dependencies.add("implementation", dependencies.platform("androidx.compose.ui:ui-tooling-preview"));
-        dependencies.add("debugImplementation", dependencies.platform("androidx-compose-ui-tooling:ui-tooling"));
+        dependencies.add("implementation", "androidx.compose.ui:ui-tooling-preview");
+        dependencies.add("debugImplementation", "androidx.compose.ui:ui-tooling");
 
         androidLib.getTestOptions().getUnitTests().setIncludeAndroidResources(true); // For Robolectric
 
         project.getTasks().withType(KotlinCompile.class).configureEach(task -> {
             KotlinJvmOptions kotlinOptions = task.getKotlinOptions();
-            kotlinOptions.getFreeCompilerArgs().addAll(buildComposeMetricsParameters(project));
-            kotlinOptions.getFreeCompilerArgs().addAll(stabilityConfiguration(project));
-            kotlinOptions.getFreeCompilerArgs().addAll(strongSkippingConfiguration(project));
+            List<String> freeCompilerArgs = new ArrayList<>();
+            freeCompilerArgs.addAll(buildComposeMetricsParameters(project));
+            freeCompilerArgs.addAll(stabilityConfiguration(project));
+            freeCompilerArgs.addAll(strongSkippingConfiguration());
+            kotlinOptions.setFreeCompilerArgs(freeCompilerArgs);
         });
     }
 
@@ -118,7 +121,7 @@ public class NiaSupport {
         );
     }
 
-    private static List<String> strongSkippingConfiguration(Project project) {
+    private static List<String> strongSkippingConfiguration() {
         return Arrays.asList(
                 "-P",
                 "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true"
@@ -133,7 +136,7 @@ public class NiaSupport {
         project.getDependencies().add("implementation", project.project(":core:ui"));
         project.getDependencies().add("implementation", project.project(":core:designsystem"));
 
-        project.getDependencies().add("implementation", "androidx.navigation:navigation-compose:2.7.4");
+        project.getDependencies().add("implementation", "androidx.hilt:hilt-navigation-compose:1.2.0");
         project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-runtime-compose:2.7.0");
         project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0");
         project.getDependencies().add("implementation", "androidx.tracing:tracing-ktx:1.3.0-alpha02");
@@ -342,9 +345,7 @@ public class NiaSupport {
                 });
 
                 task.getClassDirectories().setFrom(
-                        project.fileTree(project.getBuildDir() + "/tmp/kotlin-classes/" + variant.getName(), tree -> {
-                            tree.exclude(coverageExclusions());
-                        })
+                        project.fileTree(project.getBuildDir() + "/tmp/kotlin-classes/" + variant.getName(), tree -> tree.exclude(coverageExclusions()))
                 );
 
                 task.getSourceDirectories().setFrom(
