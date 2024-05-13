@@ -1,2 +1,3 @@
 swiftApplication {
+    swiftVersion = "5"
 }
