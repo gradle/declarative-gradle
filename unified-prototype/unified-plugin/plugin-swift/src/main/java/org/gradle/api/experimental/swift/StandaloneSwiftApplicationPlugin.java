@@ -23,5 +23,7 @@ public abstract class StandaloneSwiftApplicationPlugin implements Plugin<Project
     private void linkDslModelToPlugin(Project project, SwiftApplication application) {
         SwiftComponent model = project.getExtensions().getByType(SwiftComponent.class);
         SwiftPluginSupport.linkSwiftVersion(application, model);
+
+        model.getImplementationDependencies().getDependencies().addAllLater(application.getDependencies().getImplementation().getDependencies());
     }
 }

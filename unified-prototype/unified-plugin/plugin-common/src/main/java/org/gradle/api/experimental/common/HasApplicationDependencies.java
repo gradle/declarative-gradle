@@ -6,15 +6,15 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
- * Something that has library dependencies.
+ * Something that has application dependencies.
  */
 @Restricted
-public interface HasLibraryDependencies {
+public interface HasApplicationDependencies {
     @Nested
-    LibraryDependencies getDependencies();
+    ApplicationDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super LibraryDependencies> action) {
+    default void dependencies(Action<? super ApplicationDependencies> action) {
         action.execute(getDependencies());
     }
 }

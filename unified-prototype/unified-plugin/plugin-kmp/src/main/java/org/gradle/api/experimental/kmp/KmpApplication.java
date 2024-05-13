@@ -1,7 +1,7 @@
 package org.gradle.api.experimental.kmp;
 
 import org.gradle.api.Action;
-import org.gradle.api.experimental.common.ApplicationDependencies;
+import org.gradle.api.experimental.common.HasApplicationDependencies;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Nested;
@@ -12,17 +12,9 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
  * The public DSL interface for a declarative KMP application.
  */
 @Restricted
-public interface KmpApplication {
+public interface KmpApplication extends HasApplicationDependencies {
     @Input
     Property<String> getLanguageVersion();
-
-    @Nested
-    ApplicationDependencies getDependencies();
-
-    @Configuring
-    default void dependencies(Action<? super ApplicationDependencies> action) {
-        action.execute(getDependencies());
-    }
 
     @Nested
     KmpApplicationTargetContainer getTargets();

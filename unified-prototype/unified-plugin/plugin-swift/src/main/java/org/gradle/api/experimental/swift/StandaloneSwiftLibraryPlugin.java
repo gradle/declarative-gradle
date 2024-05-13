@@ -4,7 +4,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.swift.internal.SwiftPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
-import org.gradle.language.swift.SwiftComponent;
 import org.gradle.language.swift.plugins.SwiftLibraryPlugin;
 
 public abstract class StandaloneSwiftLibraryPlugin implements Plugin<Project> {
@@ -21,9 +20,10 @@ public abstract class StandaloneSwiftLibraryPlugin implements Plugin<Project> {
     }
 
     private void linkDslModelToPlugin(Project project, SwiftLibrary library) {
-        SwiftComponent model = project.getExtensions().getByType(SwiftComponent.class);
+        org.gradle.language.swift.SwiftLibrary model = project.getExtensions().getByType(org.gradle.language.swift.SwiftLibrary.class);
         SwiftPluginSupport.linkSwiftVersion(library, model);
 
         model.getImplementationDependencies().getDependencies().addAllLater(library.getDependencies().getImplementation().getDependencies());
+        model.getApiDependencies().getDependencies().addAllLater(library.getDependencies().getApi().getDependencies());
     }
 }
