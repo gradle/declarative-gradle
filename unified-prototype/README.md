@@ -1,6 +1,6 @@
 # Declarative Gradle - Unified Plugin Prototypes
 
-This directory contains prototypes of plugins for JVM, Android, and KMP projects built using "unified" plugins that all utilize a similar model and are implemented using the Declarative DSL.
+This directory contains prototypes of plugins for JVM, Android, KMP and Swift projects built using "unified" plugins that all utilize a similar model and are implemented using the Declarative DSL.
 
 Currently, these different ecosystems still apply distinct plugins, but those plugins all share a common `plugin-common` dependency, which will gradually grow to contain more functionality.
 
@@ -18,7 +18,7 @@ To run the application, use:
 
 ## JVM
 
-Sample Java projects live in the `testbed-jvm-library` and `testbed-jvm-application` directories.
+Sample JVM projects live in the `testbed-jvm-library` and `testbed-jvm-application` directories.
 
 These samples show the definition of a simple Java application and library that are implemented using a mix of Java 11 and Java 17 source code.
 
@@ -40,9 +40,9 @@ To run the application, use:
 > ./gradlew testbed-kotlin-jvm-application:run
 ```
 
-## Kotlin KMP
+## Kotlin Multiplatform
 
-The sample Kotlin Multiplatform project lives in the `testbed-kotlin-library` and `testbed-kotlin-application` directories.
+The sample Kotlin Multiplatform projects live in the `testbed-kotlin-library` and `testbed-kotlin-application` directories.
 
 The `unified-prototype/plugin-kmp` plugin demonstrates creating extensions using the Declarative DSL, and loading the data from those extensions into the KMP project used by KGP.
 
@@ -130,3 +130,7 @@ gradlew :testbed-android-application:assembleDebug
 ```shell 
 gradlew :testbed-android-application:assembleRelease
 ```
+
+## Swift
+
+The sample Swift projects live in the `testbed-swift-library` and `testbed-swift-application` directories.
