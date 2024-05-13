@@ -6,4 +6,4 @@ dependencies {
     implementation(gradleApi())
 }
 
-description = "Common APIs and implementation classes shared by the Android, JVM, and KMP declarative prototypes"
+description = "Common APIs and implementation classes shared by the declarative prototypes"
