@@ -19,6 +19,8 @@ package org.gradle.api.experimental.android.library;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
+import org.gradle.api.experimental.android.nia.Compose;
+import org.gradle.api.experimental.android.nia.Feature;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -88,4 +90,23 @@ public interface AndroidLibrary {
         action.execute(getTesting());
     }
 
+    @Nested
+    Feature getFeature();
+
+    @Configuring
+    default void feature(Action<? super Feature> action) {
+        Feature feature = getFeature();
+        action.execute(feature);
+        feature.getEnabled().set(true);
+    }
+
+    @Nested
+    Compose getCompose();
+
+    @Configuring
+    default void compose(Action<? super Compose> action) {
+        Compose compose = getCompose();
+        action.execute(compose);
+        compose.getEnabled().set(true);
+    }
 }

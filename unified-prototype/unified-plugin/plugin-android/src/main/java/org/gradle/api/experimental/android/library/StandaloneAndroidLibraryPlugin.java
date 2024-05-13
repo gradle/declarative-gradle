@@ -34,6 +34,8 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getKotlinSerialization().getEnabled().convention(false);
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
+        dslModel.getFeature().getEnabled().convention(false);
+        dslModel.getCompose().getEnabled().convention(false);
 
         // And Test Options
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
@@ -133,8 +135,11 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
         configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
         configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
+        configurations.getByName("debugImplementation").fromDependencyCollector(dependencies.getDebugImplementation());
 
+        // TESTING: TODO: Move these into the Testing block?
         configurations.getByName("testImplementation").fromDependencyCollector(dependencies.getTestImplementation());
+        configurations.getByName("androidTestImplementation").fromDependencyCollector(dependencies.getAndroidTestImplementation());
     }
 
     /**
