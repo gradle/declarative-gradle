@@ -33,6 +33,8 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
         dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
+        dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
+        dslModel.getBuildTypes().getRelease().getMinify().getEnabled().convention(false);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -113,7 +115,7 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
      * Links build types from the model to the android extension.
      */
     private static void linkBuildType(ApplicationBuildType android, AndroidApplicationBuildType model, ConfigurationContainer configurations) {
-        ifPresent(model.getMinifyEnabled(), android::setMinifyEnabled);
+        android.setMinifyEnabled(model.getMinify().getEnabled().get());
         ifPresent(model.getVersionNameSuffix(), android::setVersionNameSuffix);
         ifPresent(model.getApplicationIdSuffix(), android::setApplicationIdSuffix);
         linkBuildTypeDependencies(android, model.getDependencies(), configurations);
