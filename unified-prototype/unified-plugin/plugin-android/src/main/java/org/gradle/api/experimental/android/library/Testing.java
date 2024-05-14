@@ -27,4 +27,12 @@ public interface Testing {
     default void testOptions(Action<? super TestOptions> action) {
         action.execute(getTestOptions());
     }
+
+    @Nested
+    AndroidTestDependencies getDependencies();
+
+    @Configuring
+    default void dependencies(Action<? super AndroidTestDependencies> action) {
+        action.execute(getDependencies());
+    }
 }
