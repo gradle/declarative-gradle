@@ -62,12 +62,12 @@ public class NiaSupport {
         }
 
         if (dslModel.getCompose().getEnabled().get()) {
-            configureCompose(project, androidLib);
+            configureCompose(project, dslModel, androidLib);
         }
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static void configureCompose(Project project, LibraryExtension androidLib) {
+    private static void configureCompose(Project project, AndroidLibrary dslModel, LibraryExtension androidLib) {
         androidLib.getBuildFeatures().setCompose(true);
 
         androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");
@@ -76,7 +76,8 @@ public class NiaSupport {
         dependencies.add("implementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
         dependencies.add("androidTestImplementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
         dependencies.add("implementation", "androidx.compose.ui:ui-tooling-preview");
-        dependencies.add("debugImplementation", "androidx.compose.ui:ui-tooling");
+
+        dslModel.getBuildTypes().getDebug().getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling");
 
         androidLib.getTestOptions().getUnitTests().setIncludeAndroidResources(true); // For Robolectric
 

@@ -144,7 +144,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
         configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
         configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
-        configurations.getByName("debugImplementation").fromDependencyCollector(dependencies.getDebugImplementation());
     }
 
     /**
