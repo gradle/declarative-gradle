@@ -120,8 +120,8 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         unitTestOptions.setReturnDefaultValues(testOptions.getReturnDefaultValues().get());
 
         ConfigurationContainer configurations = project.getConfigurations();
-        configurations.getByName("testImplementation").fromDependencyCollector(testDependencies.getTestImplementation());
-        configurations.getByName("androidTestImplementation").fromDependencyCollector(testDependencies.getAndroidTestImplementation());
+        configurations.getByName("testImplementation").fromDependencyCollector(testDependencies.getImplementation());
+        configurations.getByName("androidTestImplementation").fromDependencyCollector(testDependencies.getAndroidImplementation());
     }
 
     private static void configureKotlinSerialization(Project project, AndroidLibrary dslModel, ConfigurationContainer configurations) {

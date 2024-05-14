@@ -7,6 +7,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @SuppressWarnings("UnstableApiUsage")
 @Restricted
 public interface AndroidTestDependencies extends Dependencies {
-    DependencyCollector getTestImplementation();
-    DependencyCollector getAndroidTestImplementation();
+    DependencyCollector getImplementation();
+    DependencyCollector getAndroidImplementation();
 }

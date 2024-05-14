@@ -44,7 +44,7 @@ public class NiaSupport {
         configureFlavors(androidLib, (flavor, niaFlavor) -> {});
         configureKotlin(project);
 
-        dslModel.getTesting().getDependencies().getTestImplementation().add("org.jetbrains.kotlin:kotlin-test");
+        dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
 
         disableUnnecessaryAndroidTests(project, androidLibComponents);
