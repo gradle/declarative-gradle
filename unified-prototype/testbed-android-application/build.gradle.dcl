@@ -10,7 +10,6 @@ androidApplication {
     dependencies {
         implementation("com.google.guava:guava:32.1.3-jre")
         implementation(project(":android-util"))
-        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     }
 
     buildTypes {

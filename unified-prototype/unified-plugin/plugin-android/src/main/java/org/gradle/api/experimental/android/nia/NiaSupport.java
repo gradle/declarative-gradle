@@ -37,7 +37,6 @@ public class NiaSupport {
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
-        dslModel.getDependencies().getCoreLibraryDesugaring().add("com.android.tools:desugar_jdk_libs:2.0.4");
 
         setTargetSdk(androidLib);
         androidLib.setResourcePrefix(buildResourcePrefix(project));

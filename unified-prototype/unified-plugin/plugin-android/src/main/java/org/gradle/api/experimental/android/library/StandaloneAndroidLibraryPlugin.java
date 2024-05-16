@@ -1,9 +1,6 @@
 package org.gradle.api.experimental.android.library;
 
-import com.android.build.api.dsl.BuildType;
-import com.android.build.api.dsl.LibraryBuildType;
-import com.android.build.api.dsl.LibraryExtension;
-import com.android.build.api.dsl.UnitTestOptions;
+import com.android.build.api.dsl.*;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
@@ -39,6 +36,10 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getCompose().getEnabled().convention(false);
         dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
         dslModel.getBuildTypes().getRelease().getMinify().getEnabled().convention(false);
+
+        // Enable desugaring automatically when JDK > 8 is targeted
+        dslModel.getCoreLibraryDesugaring().getEnabled().convention(project.provider(() -> dslModel.getJdkVersion().get() > 8));
+        dslModel.getCoreLibraryDesugaring().getLibVersion().convention("2.0.4");
 
         // And Test Options
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
@@ -107,9 +108,22 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         NiaSupport.configureNia(project, dslModel);
 
         android.compileOptions(compileOptions -> {
-            compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
+            compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
             return null;
         });
+
+        setupDesugaring(project, dslModel, android);
+    }
+
+    private static void setupDesugaring(Project project, AndroidLibrary dslModel, LibraryExtension android) {
+        android.compileOptions(compileOptions -> {
+            compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
+            return null;
+        });
+
+        if (dslModel.getCoreLibraryDesugaring().getEnabled().get()) {
+            project.getDependencies().addProvider("coreLibraryDesugaring", dslModel.getCoreLibraryDesugaring().getLibVersion().map(version -> "com.android.tools:desugar_jdk_libs:" + version));
+        }
     }
 
     private static void configureTesting(Project project, AndroidLibrary dslModel, LibraryExtension android) {
@@ -145,7 +159,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
         configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
-        configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
     }
 
     /**

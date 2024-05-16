@@ -109,4 +109,14 @@ public interface AndroidLibrary {
         action.execute(compose);
         compose.getEnabled().set(true);
     }
+
+    @Nested
+    CoreLibraryDesugaring getCoreLibraryDesugaring();
+
+    @Configuring
+    default void coreLibraryDesugaring(Action<? super CoreLibraryDesugaring> action) {
+        CoreLibraryDesugaring coreLibraryDesugaring = getCoreLibraryDesugaring();
+        action.execute(coreLibraryDesugaring);
+        coreLibraryDesugaring.getEnabled().set(true);
+    }
 }
