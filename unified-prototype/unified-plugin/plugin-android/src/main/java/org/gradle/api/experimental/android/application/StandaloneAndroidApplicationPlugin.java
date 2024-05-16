@@ -36,6 +36,10 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
         dslModel.getBuildTypes().getRelease().getMinify().getEnabled().convention(false);
 
+        // Enable desugaring automatically when JDK > 8 is targeted
+        dslModel.getCoreLibraryDesugaring().getEnabled().convention(project.provider(() -> dslModel.getJdkVersion().get() > 8));
+        dslModel.getCoreLibraryDesugaring().getLibVersion().convention("2.0.4");
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
@@ -89,10 +93,18 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         // TODO: Maybe there should be an AbstractAndroidPlugin that does this for all Android plugins?
         setContentTypeAttributes(project);
 
+        setupDesugaring(project, dslModel, android);
+    }
+
+    private static void setupDesugaring(Project project, AndroidApplication dslModel, ApplicationExtension android) {
         android.compileOptions(compileOptions -> {
-            compileOptions.setCoreLibraryDesugaringEnabled(!dslModel.getDependencies().getCoreLibraryDesugaring().getDependencies().get().isEmpty());
+            compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
             return null;
         });
+
+        if (dslModel.getCoreLibraryDesugaring().getEnabled().get()) {
+            project.getDependencies().addProvider("coreLibraryDesugaring", dslModel.getCoreLibraryDesugaring().getLibVersion().map(version -> "com.android.tools:desugar_jdk_libs:" + version));
+        }
     }
 
     /**
@@ -108,7 +120,6 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         configurations.getByName("implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
-        configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
     }
 
     /**
