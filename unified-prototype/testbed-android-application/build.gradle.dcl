@@ -19,7 +19,9 @@ androidApplication {
                 implementation("com.squareup.okhttp3:okhttp:4.2.2")
             }
 
-            minifyEnabled = true
+            minify {
+                enabled = true
+            }
         }
         debug {
             applicationIdSuffix = ".debug"

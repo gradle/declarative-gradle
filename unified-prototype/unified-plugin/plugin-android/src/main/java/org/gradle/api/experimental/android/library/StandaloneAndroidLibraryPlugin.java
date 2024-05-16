@@ -37,6 +37,8 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
         dslModel.getFeature().getEnabled().convention(false);
         dslModel.getCompose().getEnabled().convention(false);
+        dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
+        dslModel.getBuildTypes().getRelease().getMinify().getEnabled().convention(false);
 
         // And Test Options
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
@@ -150,7 +152,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
      * Links build types from the model to the android extension.
      */
     private static void linkBuildType(LibraryBuildType buildType, AndroidLibraryBuildType model, ConfigurationContainer configurations) {
-        ifPresent(model.getMinifyEnabled(), buildType::setMinifyEnabled);
+        buildType.setMinifyEnabled(model.getMinify().getEnabled().get());
         linkBuildTypeDependencies(buildType, model.getDependencies(), configurations);
     }
 
