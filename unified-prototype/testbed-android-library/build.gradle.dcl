@@ -22,4 +22,10 @@ androidLibrary {
             minifyEnabled = true
         }
     }
+
+    testing {
+        dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+        }
+    }
 }

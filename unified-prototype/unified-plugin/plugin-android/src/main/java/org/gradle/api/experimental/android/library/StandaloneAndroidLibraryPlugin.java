@@ -3,6 +3,7 @@ package org.gradle.api.experimental.android.library;
 import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.LibraryBuildType;
 import com.android.build.api.dsl.LibraryExtension;
+import com.android.build.api.dsl.UnitTestOptions;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
@@ -99,7 +100,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         if (dslModel.getKotlinSerialization().getEnabled().get()) {
             configureKotlinSerialization(project, dslModel, configurations);
         }
-        configureTesting(dslModel, android);
+        configureTesting(project, dslModel, android);
 
         NiaSupport.configureNia(project, dslModel);
 
@@ -109,10 +110,18 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         });
     }
 
-    private static void configureTesting(AndroidLibrary dslModel, LibraryExtension android) {
-        TestOptions testOptions = dslModel.getTesting().getTestOptions();
-        android.getTestOptions().getUnitTests().setIncludeAndroidResources(testOptions.getIncludeAndroidResources().get());
-        android.getTestOptions().getUnitTests().setReturnDefaultValues(testOptions.getReturnDefaultValues().get());
+    private static void configureTesting(Project project, AndroidLibrary dslModel, LibraryExtension android) {
+        Testing testing = dslModel.getTesting();
+        AndroidTestDependencies testDependencies = testing.getDependencies();
+        TestOptions testOptions = testing.getTestOptions();
+
+        UnitTestOptions unitTestOptions = android.getTestOptions().getUnitTests();
+        unitTestOptions.setIncludeAndroidResources(testOptions.getIncludeAndroidResources().get());
+        unitTestOptions.setReturnDefaultValues(testOptions.getReturnDefaultValues().get());
+
+        ConfigurationContainer configurations = project.getConfigurations();
+        configurations.getByName("testImplementation").fromDependencyCollector(testDependencies.getImplementation());
+        configurations.getByName("androidTestImplementation").fromDependencyCollector(testDependencies.getAndroidImplementation());
     }
 
     private static void configureKotlinSerialization(Project project, AndroidLibrary dslModel, ConfigurationContainer configurations) {
@@ -135,11 +144,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
         configurations.getByName("ksp").fromDependencyCollector(dependencies.getKsp());
         configurations.getByName("coreLibraryDesugaring").fromDependencyCollector(dependencies.getCoreLibraryDesugaring());
-        configurations.getByName("debugImplementation").fromDependencyCollector(dependencies.getDebugImplementation());
-
-        // TESTING: TODO: Move these into the Testing block?
-        configurations.getByName("testImplementation").fromDependencyCollector(dependencies.getTestImplementation());
-        configurations.getByName("androidTestImplementation").fromDependencyCollector(dependencies.getAndroidTestImplementation());
     }
 
     /**
