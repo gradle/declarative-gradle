@@ -1,9 +1,8 @@
 package org.gradle.api.experimental.android.application;
 
 import com.android.build.api.dsl.ApplicationVariantDimension;
-import com.android.build.api.dsl.BuildType;
 import org.gradle.api.Action;
-import org.gradle.api.experimental.android.library.Minify;
+import org.gradle.api.experimental.android.extensions.Minify;
 import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;

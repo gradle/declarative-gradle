@@ -19,6 +19,10 @@ package org.gradle.api.experimental.android.library;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
+import org.gradle.api.experimental.android.extensions.testing.Testing;
+import org.gradle.api.experimental.android.extensions.CoreLibraryDesugaring;
+import org.gradle.api.experimental.android.extensions.Hilt;
+import org.gradle.api.experimental.android.extensions.KotlinSerialization;
 import org.gradle.api.experimental.android.nia.Compose;
 import org.gradle.api.experimental.android.nia.Feature;
 import org.gradle.api.provider.Property;
@@ -118,5 +122,15 @@ public interface AndroidLibrary {
         CoreLibraryDesugaring coreLibraryDesugaring = getCoreLibraryDesugaring();
         action.execute(coreLibraryDesugaring);
         coreLibraryDesugaring.getEnabled().set(true);
+    }
+
+    @Nested
+    Hilt getHilt();
+
+    @Configuring
+    default void hilt(Action<? super Hilt> action) {
+        Hilt hilt = getHilt();
+        action.execute(hilt);
+        hilt.getEnabled().set(true);
     }
 }

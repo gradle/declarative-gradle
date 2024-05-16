@@ -11,7 +11,7 @@ import org.gradle.api.*;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
-import org.gradle.api.experimental.android.library.Jacoco;
+import org.gradle.api.experimental.android.extensions.Jacoco;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.testing.Test;

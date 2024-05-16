@@ -14,7 +14,7 @@ import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
-import static org.gradle.api.experimental.android.AndroidDSLSupport.setContentTypeAttributes;
+import static org.gradle.api.experimental.android.AndroidDSLSupport.configureContentTypeAttributes;
 
 /**
  * Creates a declarative {@link AndroidApplication} DSL model, applies the official Android plugin,
@@ -33,6 +33,7 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
         dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
+
         dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
         dslModel.getBuildTypes().getRelease().getMinify().getEnabled().convention(false);
 
@@ -48,13 +49,14 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         project.getPlugins().apply("com.android.application");
         project.getPlugins().apply("org.jetbrains.kotlin.android");
 
-        linkDslModelToPluginLazy(project, dslModel);
+        // After AGP creates configurations, link deps to the collectors
+        linkCommonDependencies(dslModel.getDependencies(), project.getConfigurations());
     }
 
     /**
      * Performs linking actions that must occur within an afterEvaluate block.
      */
-    public static void linkDslModelToPlugin(Project project, AndroidApplication dslModel) {
+    private void linkDslModelToPlugin(Project project, AndroidApplication dslModel) {
         ApplicationExtension android = project.getExtensions().getByType(ApplicationExtension.class);
         KotlinAndroidProjectExtension kotlin = project.getExtensions().getByType(KotlinAndroidProjectExtension.class);
         ConfigurationContainer configurations = project.getConfigurations();
@@ -83,20 +85,20 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         });
 
         // Link build types
-        NamedDomainObjectContainer<? extends ApplicationBuildType> androidBuildTypes = android.getBuildTypes();
         AndroidApplicationBuildTypes modelBuildType = dslModel.getBuildTypes();
+        NamedDomainObjectContainer<? extends ApplicationBuildType> androidBuildTypes = android.getBuildTypes();
         linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
         linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
 
         // TODO: ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
         // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
         // TODO: Maybe there should be an AbstractAndroidPlugin that does this for all Android plugins?
-        setContentTypeAttributes(project);
+        configureContentTypeAttributes(project);
 
-        setupDesugaring(project, dslModel, android);
+        configureDesugaring(project, dslModel, android);
     }
 
-    private static void setupDesugaring(Project project, AndroidApplication dslModel, ApplicationExtension android) {
+    private void configureDesugaring(Project project, AndroidApplication dslModel, ApplicationExtension android) {
         android.compileOptions(compileOptions -> {
             compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
             return null;
@@ -108,15 +110,9 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
     }
 
     /**
-     * Performs linking actions that do not need to occur within an afterEvaluate block.
+     * Performs common dependency linking actions that do not need to occur within an afterEvaluate block.
      */
-    public static void linkDslModelToPluginLazy(Project project, AndroidApplication dslModel) {
-        ConfigurationContainer configurations = project.getConfigurations();
-        linkCommonDependencies(dslModel.getDependencies(), configurations);
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    private static void linkCommonDependencies(AndroidApplicationDependencies dependencies, ConfigurationContainer configurations) {
+    private void linkCommonDependencies(AndroidApplicationDependencies dependencies, ConfigurationContainer configurations) {
         configurations.getByName("implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
@@ -125,7 +121,7 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
     /**
      * Links build types from the model to the android extension.
      */
-    private static void linkBuildType(ApplicationBuildType android, AndroidApplicationBuildType model, ConfigurationContainer configurations) {
+    private void linkBuildType(ApplicationBuildType android, AndroidApplicationBuildType model, ConfigurationContainer configurations) {
         android.setMinifyEnabled(model.getMinify().getEnabled().get());
         ifPresent(model.getVersionNameSuffix(), android::setVersionNameSuffix);
         ifPresent(model.getApplicationIdSuffix(), android::setApplicationIdSuffix);
@@ -133,7 +129,7 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static void linkBuildTypeDependencies(BuildType buildType, ApplicationDependencies dependencies, ConfigurationContainer configurations) {
+    private void linkBuildTypeDependencies(BuildType buildType, ApplicationDependencies dependencies, ConfigurationContainer configurations) {
         String name = buildType.getName();
         configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName(name + "CompileOnly").fromDependencyCollector(dependencies.getCompileOnly());
