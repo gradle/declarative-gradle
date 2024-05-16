@@ -36,7 +36,7 @@ public class NiaSupport {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
-        dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
+        // dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02"); // Set by convention
         dslModel.getDependencies().getCoreLibraryDesugaring().add("com.android.tools:desugar_jdk_libs:2.0.4");
 
         setTargetSdk(androidLib);
@@ -45,7 +45,6 @@ public class NiaSupport {
         configureKotlin(project);
 
         dslModel.getDependencies().getTestImplementation().add("org.jetbrains.kotlin:kotlin-test");
-        dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
 
         disableUnnecessaryAndroidTests(project, androidLibComponents);
 

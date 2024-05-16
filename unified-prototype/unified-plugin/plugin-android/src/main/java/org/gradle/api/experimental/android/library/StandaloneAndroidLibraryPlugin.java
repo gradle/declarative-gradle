@@ -29,7 +29,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         AndroidLibrary dslModel = getAndroidLibrary();
 
         // Setup Android Library conventions
-        dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
+        // dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK); // Set by NiA convention now
         dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getKotlinSerialization().getEnabled().convention(false);
