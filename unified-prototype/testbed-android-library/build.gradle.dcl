@@ -10,7 +10,7 @@ androidLibrary {
 
     kotlinSerialization {
         version = "1.6.3"
-        json()
+        jsonEnabled = true
     }
 
     buildTypes {

@@ -34,10 +34,8 @@ public interface KotlinSerialization {
         action.execute(getDependencies());
     }
 
-    @Adding
-    default void json() {
-        getDependencies().getImplementation().add("org.jetbrains.kotlinx:kotlinx-serialization-json:" + getVersion().get());
-    }
+    @Restricted
+    Property<Boolean> getJsonEnabled();
 
     @Restricted
     interface SerializationDependencies extends Dependencies {

@@ -32,6 +32,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
         dslModel.getKotlinSerialization().getEnabled().convention(false);
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
+        dslModel.getKotlinSerialization().getJsonEnabled().convention(false);
         dslModel.getFeature().getEnabled().convention(false);
         dslModel.getCompose().getEnabled().convention(false);
         dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
@@ -143,6 +144,10 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
     private static void configureKotlinSerialization(Project project, AndroidLibrary dslModel, ConfigurationContainer configurations) {
         project.getPlugins().apply("org.jetbrains.kotlin.plugin.serialization");
         configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getKotlinSerialization().getDependencies().getImplementation());
+
+        if (dslModel.getKotlinSerialization().getJsonEnabled().get()) {
+            project.getDependencies().addProvider("implementation", dslModel.getKotlinSerialization().getVersion().map(version -> "org.jetbrains.kotlinx:kotlinx-serialization-json:" + version));
+        }
     }
 
     /**
