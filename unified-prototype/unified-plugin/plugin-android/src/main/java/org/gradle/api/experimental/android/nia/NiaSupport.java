@@ -8,7 +8,6 @@ import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.*;
-import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
 import org.gradle.api.experimental.android.extensions.Jacoco;
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -59,73 +57,6 @@ public class NiaSupport {
         if (dslModel.getFeature().getEnabled().get()) {
             configureFeature(project, androidLib);
         }
-
-        if (dslModel.getCompose().getEnabled().get()) {
-            configureCompose(project, dslModel, androidLib);
-        }
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    private static void configureCompose(Project project, AndroidLibrary dslModel, LibraryExtension androidLib) {
-        androidLib.getBuildFeatures().setCompose(true);
-
-        androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");
-
-        DependencyHandler dependencies = project.getDependencies();
-        dependencies.add("implementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
-        dependencies.add("androidTestImplementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
-        dependencies.add("implementation", "androidx.compose.ui:ui-tooling-preview");
-
-        dslModel.getBuildTypes().getDebug().getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling");
-
-        androidLib.getTestOptions().getUnitTests().setIncludeAndroidResources(true); // For Robolectric
-
-        project.getTasks().withType(KotlinCompile.class).configureEach(task -> {
-            KotlinJvmOptions kotlinOptions = task.getKotlinOptions();
-            List<String> freeCompilerArgs = new ArrayList<>();
-            freeCompilerArgs.addAll(buildComposeMetricsParameters(project));
-            freeCompilerArgs.addAll(stabilityConfiguration(project));
-            freeCompilerArgs.addAll(strongSkippingConfiguration());
-            kotlinOptions.setFreeCompilerArgs(freeCompilerArgs);
-        });
-    }
-
-    private static List<String> buildComposeMetricsParameters(Project project) {
-        List<String> metricParameters = new ArrayList<>();
-        Path relativePath = project.getProjectDir().toPath().relativize(project.getRootDir().toPath());
-        File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
-
-        Provider<String> enableMetricsProvider = project.getProviders().gradleProperty("enableComposeCompilerMetrics");
-        boolean enableMetrics = Objects.equals(enableMetricsProvider.getOrNull(), "true");
-        if (enableMetrics) {
-            Path metricsFolder = buildDir.toPath().resolve("compose-metrics").resolve(relativePath);
-            metricParameters.add("-P");
-            metricParameters.add("plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + metricsFolder.toAbsolutePath());
-        }
-
-        Provider<String> enableReportsProvider = project.getProviders().gradleProperty("enableComposeCompilerReports");
-        boolean enableReports = Objects.equals(enableReportsProvider.getOrNull(), "true");
-        if (enableReports) {
-            Path reportsFolder = buildDir.toPath().resolve("compose-reports").resolve(relativePath);
-            metricParameters.add("-P");
-            metricParameters.add("plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + reportsFolder.toAbsolutePath());
-        }
-
-        return metricParameters;
-    }
-
-    private static List<String> stabilityConfiguration(Project project) {
-        return Arrays.asList(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=" + project.getRootDir().getAbsolutePath() + "/compose_compiler_config.conf"
-        );
-    }
-
-    private static List<String> strongSkippingConfiguration() {
-        return Arrays.asList(
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true"
-        );
     }
 
     @SuppressWarnings("UnstableApiUsage")

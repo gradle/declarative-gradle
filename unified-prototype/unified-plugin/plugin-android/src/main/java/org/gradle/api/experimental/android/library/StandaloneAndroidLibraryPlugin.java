@@ -6,13 +6,21 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.experimental.android.DEFAULT_SDKS;
 import org.gradle.api.experimental.android.extensions.testing.AndroidTestDependencies;
 import org.gradle.api.experimental.android.extensions.testing.TestOptions;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.gradle.api.provider.Provider;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 import org.gradle.api.experimental.android.nia.NiaSupport;
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions;
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.*;
 
 import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
 
@@ -106,8 +114,82 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configureKotlinSerialization(project, dslModel);
         configureDesugaring(project, dslModel, android);
         configureHilt(project, dslModel, android);
+        configureCompose(project, dslModel, android);
 
         NiaSupport.configureNia(project, dslModel);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private void configureCompose(Project project, AndroidLibrary dslModel, LibraryExtension androidLib) {
+        if (dslModel.getCompose().getEnabled().get()) {
+            androidLib.getBuildFeatures().setCompose(true);
+
+            androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");
+
+            DependencyHandler dependencies = project.getDependencies();
+            dependencies.add("implementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
+            dependencies.add("androidTestImplementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
+            dependencies.add("implementation", "androidx.compose.ui:ui-tooling-preview");
+
+            dslModel.getBuildTypes().getDebug().getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling");
+
+            androidLib.getTestOptions().getUnitTests().setIncludeAndroidResources(true); // For Robolectric
+
+            project.getTasks().withType(KotlinCompile.class).configureEach(task -> {
+                KotlinJvmOptions kotlinOptions = task.getKotlinOptions();
+                List<String> freeCompilerArgs = new ArrayList<>();
+                freeCompilerArgs.addAll(buildComposeMetricsParameters(project));
+                freeCompilerArgs.addAll(stabilityConfiguration(project, dslModel));
+                freeCompilerArgs.addAll(strongSkippingConfiguration(dslModel));
+                kotlinOptions.setFreeCompilerArgs(freeCompilerArgs);
+            });
+        }
+    }
+
+    private List<String> buildComposeMetricsParameters(Project project) {
+        List<String> metricParameters = new ArrayList<>();
+        Path relativePath = project.getProjectDir().toPath().relativize(project.getRootDir().toPath());
+        File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
+
+        Provider<String> enableMetricsProvider = project.getProviders().gradleProperty("enableComposeCompilerMetrics");
+        boolean enableMetrics = Objects.equals(enableMetricsProvider.getOrNull(), "true");
+        if (enableMetrics) {
+            Path metricsFolder = buildDir.toPath().resolve("compose-metrics").resolve(relativePath);
+            metricParameters.add("-P");
+            metricParameters.add("plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + metricsFolder.toAbsolutePath());
+        }
+
+        Provider<String> enableReportsProvider = project.getProviders().gradleProperty("enableComposeCompilerReports");
+        boolean enableReports = Objects.equals(enableReportsProvider.getOrNull(), "true");
+        if (enableReports) {
+            Path reportsFolder = buildDir.toPath().resolve("compose-reports").resolve(relativePath);
+            metricParameters.add("-P");
+            metricParameters.add("plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + reportsFolder.toAbsolutePath());
+        }
+
+        return metricParameters;
+    }
+
+    private List<String> stabilityConfiguration(Project project, AndroidLibrary dslModel) {
+        if (dslModel.getCompose().getStabilityConfigurationFilePath().isPresent()) {
+            return Arrays.asList(
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=" + project.getRootDir().getAbsolutePath() + dslModel.getCompose().getStabilityConfigurationFilePath().get()
+            );
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private List<String> strongSkippingConfiguration(AndroidLibrary dslModel) {
+        if (dslModel.getCompose().getExperimentalStrongSkipping().isPresent()) {
+            return Arrays.asList(
+                    "-P",
+                    "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=" + dslModel.getCompose().getExperimentalStrongSkipping().get()
+            );
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private void configureHilt(Project project, AndroidLibrary dslModel, LibraryExtension android) {
