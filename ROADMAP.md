@@ -4,19 +4,19 @@ Declarative Gradle is an experimental project under active development.
 Below, you can see the key milestones we anticipate.
 All the dates and the scope are aspirational.
 
-To  discuss the roadmap and the related initiatives, use the
+To discuss the roadmap and the related initiatives, use the
 `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
 
 ## Project Board
 
-We have a [project board](https://github.com/orgs/gradle/projects/96) published on GitHub Project.
-It captures the main initiatives and EPICs in this project.
+We have a [project board](https://github.com/orgs/gradle/projects/96) published on GitHub Projects.
+It captures the main initiatives and epics in this project.
 
 ## Key Milestones
 
 ### First Alpha Release
 
-Scope: Declarative Gradle can be evaluated with limited functionality and with support from the team.
+Scope: Declarative Gradle is available for evaluation with limited functionality and support from the team.
 This includes:
 the alpha release of the Declarative Gradle plugins,
 basic integrations, demos, and documentation.
@@ -43,4 +43,4 @@ a public Beta version in Autumn 2024.
 
 ### Public Release
 
-It is to be scheduled depending on adoption and evaluation feedback.
+To be scheduled depending on adoption and evaluation feedback.
