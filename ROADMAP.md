@@ -30,12 +30,12 @@ as well as Kotlin Multiplatform (KMP).
 ### Public Early Access Release (EAP)
 
 The first version is ready for broad external evaluation and feedback.
-That includes making the Declarative Gradle plugins functional for core use cases and
+That includes making the Declarative Gradle plugins functional for core use cases, while this work is likely to continue after the milestone, and
 having Early-Access IDE Support in Android Studio.
 
 - [Planned Issues (milestone)](https://github.com/gradle/declarative-gradle/milestone/2)
 
-### Public Beta
+### Public Alpha
 
 Should the experiments and the EAP release be successful,
 we intend to address the feedback over the summer and to release
