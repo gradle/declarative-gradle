@@ -82,13 +82,18 @@ theme:
 
 nav:
   - Home: README.md
+  - About:
+      Overview: README.md
+      Getting Started: docs/getting-started/README.md
+      Public Roadmap: ROADMAP.md
   - Getting Started:
       Overview: docs/getting-started/README.md
       Android: docs/android/README.md
   - Documentation:
       Android: docs/android/README.md
       Prototypes: unified-prototype/README.md
-  - Participate: docs/CONTRIBUTING.md
+  - Participate:
+      Contributing: docs/CONTRIBUTING.md
 
 extra_css:
   - docs/assets/css/gradle.css

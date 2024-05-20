@@ -1,6 +1,7 @@
 # Declarative Gradle
 
 [![a](https://img.shields.io/badge/slack-%23declarative_gradle-brightgreen?style=flat&logo=slack)](https://gradle.org/slack-invite)
+[![a](https://img.shields.io/badge/Roadmap-Public-brightgreen?style=flat)](./ROADMAP.md)
 
 At Gradle, part of our vision is to provide an elegant and extensible declarative build language
 that enables expressing any build in a clear and understandable way.
