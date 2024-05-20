@@ -96,6 +96,7 @@ nav:
       Prototypes: unified-prototype/README.md
   - Participate:
       Contributing: docs/CONTRIBUTING.md
+      Code of Conduct: docs/CODE_OF_CONDUCT.md
 
 extra_css:
   - docs/assets/css/gradle.css
