@@ -43,7 +43,7 @@ The `androidApplication` software type can be found [here](https://github.com/gr
 
 [Now in Android](https://github.com/android/nowinandroid) is a fully functional Android app built entirely with Kotlin and Jetpack Compose from the Android team.
 
-We forked Now in Android and updated the build files using the Declarative Gradle DSL. The prototype repository can be found [here](https://github.com/gradle/nowinandroid/tree/main-declarative).
+We forked _Now in Android_ and updated the build files using the Declarative Gradle DSL. The prototype repository can be found [here](https://github.com/gradle/nowinandroid/tree/main-declarative).
 
 The [settings file](settings.gradle.dcl) applies a new "Android ecosystem plugin", which exposes `androidLibrary` and `androidApplication` software types that can be used in subprojects. 
 
@@ -56,7 +56,8 @@ Converted subprojects:
 
 Let’s take a look at a `build.gradle.dcl` file which replaces the common `build.gradle` or `build.gradle.kts` files:
 
-core/common/build.gradle.dcl
+_core/common/build.gradle.dcl_
+
 ```kotlin
 androidLibrary {
     namespace = "com.google.samples.apps.nowinandroid.core.common"

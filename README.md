@@ -1,6 +1,7 @@
 # Declarative Gradle
 
 [![a](https://img.shields.io/badge/slack-%23declarative_gradle-brightgreen?style=flat&logo=slack)](https://gradle.org/slack-invite)
+[![a](https://img.shields.io/badge/Getting-Started-blue?style=flat)](./docs/getting-started/README.md)
 [![a](https://img.shields.io/badge/Roadmap-Public-brightgreen?style=flat)](./ROADMAP.md)
 
 At Gradle, part of our vision is to provide an elegant and extensible declarative build language
@@ -125,6 +126,10 @@ javaLibrary {
 
 </details>
 
+## Get Started
+
+See the [Getting Started Guides](./docs/getting-started/README.md).
+
 ## Prototypes
 
 Here are the experimental prototypes
@@ -142,7 +147,7 @@ All text/documentation content is open source and licensed under the
 Some code samples may be licensed under the Apache License v2.0
 or other permissive OSI-compliant licenses.
 
-## Read More
+## Learn More
 
 - [Initial Declarative Gradle Announcement and Full Manifesto](https://blog.gradle.org/declarative-gradle)
 

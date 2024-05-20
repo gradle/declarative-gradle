@@ -85,6 +85,8 @@ nav:
   - About:
       Overview: README.md
       Getting Started: docs/getting-started/README.md
+      Declarative Gradle for Android: docs/android/README.md
+      Declarative Gradle for Java/Kotlin/JVM: unified-prototype/README.md#java
       Public Roadmap: ROADMAP.md
   - Getting Started:
       Overview: docs/getting-started/README.md
