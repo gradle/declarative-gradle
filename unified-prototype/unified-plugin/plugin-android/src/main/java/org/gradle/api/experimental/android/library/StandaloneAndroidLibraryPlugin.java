@@ -116,7 +116,9 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         configureHilt(project, dslModel, android);
         configureCompose(project, dslModel, android);
 
-        NiaSupport.configureNia(project, dslModel);
+        if (Objects.equals(project.getRootProject().getName(), "nowinandroid")) {
+            NiaSupport.configureNia(project, dslModel);
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")

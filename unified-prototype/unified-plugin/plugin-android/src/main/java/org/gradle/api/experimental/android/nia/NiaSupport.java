@@ -29,20 +29,17 @@ import java.util.stream.Collectors;
 
 public class NiaSupport {
     @SuppressWarnings("UnstableApiUsage")
-    public static void configureNia(Project project,
-                                    @SuppressWarnings("unused") AndroidLibrary dslModel) {
+    public static void configureNia(Project project, AndroidLibrary dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
+        dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
 
         setTargetSdk(androidLib);
         androidLib.setResourcePrefix(buildResourcePrefix(project));
         configureFlavors(androidLib, (flavor, niaFlavor) -> {});
         configureKotlin(project);
-
-        dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
-        dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
 
         disableUnnecessaryAndroidTests(project, androidLibComponents);
 

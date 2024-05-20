@@ -16,6 +16,7 @@ androidApplication {
         release {
             dependencies {
                 implementation("com.squareup.okhttp3:okhttp:4.2.2")
+                implementation("androidx.tracing:tracing-ktx:1.3.0-alpha02") // TODO: Is this necessary for minification(?) If so, this should be included automatically
             }
 
             minify {
