@@ -1,0 +1,45 @@
+
+/* TODO: proper styling */
+:root {
+    /* https://gradle.com/brand/ */
+    --gradle-bg-dark: #010002;
+    --gradle-bg-gray: #F8F8F8;
+    --gradle-bg-white: #FFFFFF;
+    --gradle-blue: #209BC4;
+    --gradle-blue-lite: #4DC9C0;
+
+
+    --md-primary-fg-color:        var(--gradle-bg-dark);
+    --md-primary-fg-color--light: var(--gradle-bg-gray);
+    --md-primary-fg-color--dark:  var(--gradle-bg-dark);
+}
+
+.md-content {
+    --md-typeset-a-color: var(--gradle-blue-lite);
+}
+
+/*
+.md-nav__item--section>.md-nav__link[for] {
+    color: var(--gradle-blue-lite);
+}*/
+
+.md-nav__link--active > span {
+    color: var(--gradle-blue);
+    font-weight: bold;
+}
+
+.md-typeset h1 {
+    color: var(--gradle-blue);
+}
+
+h2 {
+    color: var(--gradle-blue); 
+}
+
+h3 {
+    color: var(--gradle-blue); 
+}
+
+h4 {
+    color: var(--gradle-blue); 
+}
