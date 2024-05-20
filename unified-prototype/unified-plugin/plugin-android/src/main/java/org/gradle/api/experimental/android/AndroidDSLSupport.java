@@ -32,7 +32,7 @@ public final class AndroidDSLSupport {
         }
     }
 
-    public static void setContentTypeAttributes(Project project) {
+    public static void configureContentTypeAttributes(Project project) {
         // These attributes must be set to avoid Ambiguous Variants resolution errors between the
         // demoDebugRuntimeElements and prodDebugRuntimeElements for project dependencies in NiA
         project.getConfigurations().configureEach(c -> {

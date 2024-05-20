@@ -20,8 +20,7 @@ import com.android.build.api.dsl.ApplicationBaseFlavor;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
-import org.gradle.api.experimental.android.library.CoreLibraryDesugaring;
-import org.gradle.api.experimental.common.ApplicationDependencies;
+import org.gradle.api.experimental.android.extensions.CoreLibraryDesugaring;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -29,20 +28,17 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
 public interface AndroidApplication {
-
     /**
      * @see ApplicationBaseFlavor#setVersionName(String)
      */
     @Restricted
     Property<String> getVersionName();
 
-
     /**
      * @see ApplicationBaseFlavor#setVersionCode(Integer)
      */
     @Restricted
     Property<Integer> getVersionCode();
-
 
     /**
      * @see ApplicationBaseFlavor#setApplicationId(String)

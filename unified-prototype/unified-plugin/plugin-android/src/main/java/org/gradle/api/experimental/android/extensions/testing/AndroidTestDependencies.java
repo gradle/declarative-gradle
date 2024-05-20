@@ -1,4 +1,4 @@
-package org.gradle.api.experimental.android.library;
+package org.gradle.api.experimental.android.extensions.testing;
 
 import org.gradle.api.artifacts.dsl.Dependencies;
 import org.gradle.api.artifacts.dsl.DependencyCollector;

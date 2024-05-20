@@ -1,11 +1,10 @@
-package org.gradle.api.experimental.android.library;
+package org.gradle.api.experimental.android.extensions;
 
 import org.gradle.api.Action;
 import org.gradle.api.artifacts.dsl.Dependencies;
 import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Adding;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
@@ -34,10 +33,8 @@ public interface KotlinSerialization {
         action.execute(getDependencies());
     }
 
-    @Adding
-    default void json() {
-        getDependencies().getImplementation().add("org.jetbrains.kotlinx:kotlinx-serialization-json:" + getVersion().get());
-    }
+    @Restricted
+    Property<Boolean> getJsonEnabled();
 
     @Restricted
     interface SerializationDependencies extends Dependencies {
