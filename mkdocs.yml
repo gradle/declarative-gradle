@@ -1,0 +1,147 @@
+####
+# NOTE: This documentation is for the experimental deployment and local development
+# The final documentaiton will be under gradle.org
+####
+site_name: Declarative Gradle. Sub-Site
+site_description: >-
+  Declarative Gradle is a project targeting better isolation of concern
+  and expressing any build in a clear and understandable way
+copyright: >
+  For content - Copyright &copy; 2024 - All contributors to the repository and included components. 
+  The original content licenses and copyrights from the included repositories are preserved,
+  you can find them in the linked repositories.
+
+  The GRADLE trademark is the property of Gradle, Inc.
+  Use of the term GRADLE on this website and any content and/or materials available through this website is
+  for identification purposes only and does not imply sponsorship or endorsement by Gradle, Inc.
+docs_dir: .
+repo_url: https://github.com/gradle/declarative-gradle
+repo_name: Declarative Gradle repo
+edit_uri: edit/main/
+site_url: https://gradle.github.io/declarative-gradle
+
+# Build
+site_dir: _site
+
+# Theme
+theme:
+  name: material
+  highlightjs: true
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    # NOT compatible qith toc.integrate
+    # - navigation.indexes
+    - navigation.path
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
+    - navigation.sections
+    - navigation.expand
+    - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    - toc.integrate
+  palette:
+    - scheme: default
+      media: "(prefers-color-scheme: light)"
+      primary: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - scheme: slate
+      media: "(prefers-color-scheme: dark)"
+      primary: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    # TODO: use the site's scheme
+    # text: Lato Lite
+    code: Roboto Mono
+  favicon: docs/images/logos/gradle.svg
+  logo: docs/images/logos/gradle.svg
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: README.md
+  - About:
+      Overview: README.md
+      Getting Started: docs/getting-started/README.md
+      Declarative Gradle for Android: docs/android/README.md
+      Declarative Gradle for Java/Kotlin/JVM: unified-prototype/README.md#java
+      Public Roadmap: ROADMAP.md
+  - Getting Started:
+      Overview: docs/getting-started/README.md
+      Android: docs/android/README.md
+  - Documentation:
+      Android: docs/android/README.md
+      Prototypes: unified-prototype/README.md
+  - Participate:
+      Contributing: docs/CONTRIBUTING.md
+      Code of Conduct: docs/CODE_OF_CONDUCT.md
+
+extra_css:
+  - docs/assets/css/gradle.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/slack
+      link: https://gradle.org/slack-invite
+      name: Slack
+    - icon: fontawesome/brands/github
+      link: https://github.com/gradle
+      name: GitHub
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/gradle
+      name: Twitter/X
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/gradle
+      name: LinkedIn
+    - icon: fontawesome/brands/mastodon
+      link: https://mastodon.social/@Gradle
+      name: Mastodon
+#  analytics:
+#    provider: google
+#    property: TODO
+
+plugins:
+  - search
+  - autorefs
+# FIXME: Collision on GitHub Actions, to be fixed later
+#  - macros
+  - mkdocs-pdf
+  - social
+  - same-dir
+
+# Markdown
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: '#'
+  - attr_list

@@ -2,6 +2,10 @@
 **/build/
 !src/**/build/
 
+# MkDocs
+.cache
+_site
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
