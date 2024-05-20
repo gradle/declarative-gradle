@@ -133,10 +133,12 @@ See the [Getting Started Guides](./docs/getting-started/README.md).
 ## Prototypes
 
 Here are the experimental prototypes
-currently available for initial review.
-They are not ready for evaluation at the moment:
+currently available for initial review and evaluation:
 
-- [Unified Prototype](./unified-prototype/README.md) - prototypes of plugins for JVM, Android, and KMP projects built using "unified" plugins that all utilize a similar model and implemented using the Declarative DSL
+- [Declarative Gradle Prototype](./unified-prototype/README.md) - prototypes of plugins for JVM, Android, and KMP projects built using "unified" plugins that all utilize a similar model and implemented using the Declarative DSL
+- [Now In Android](https://github.com/gradle/nowinandroid/tree/main-declarative) -
+  a port of a popular Android demo app that showcases the [Support for Android](./docs/android/README.md)
+  in Declarative Gradle.
 - [Other Early prototypes](./early-prototypes/README.md) -
 Initial prototypes were created for feedback and discussion purposes.
 

@@ -22,7 +22,7 @@ the alpha release of the Declarative Gradle plugins,
 basic integrations, demos, and documentation.
 In this release, our primary focus is Android development,
 but we keep in mind classic Java and Kotlin use cases,
-as well as Kotlin Multi Platform (KMP).
+as well as Kotlin Multiplatform (KMP).
 
 - [Planned Issues (milestone)](https://github.com/gradle/declarative-gradle/milestone/1)
 - [Prototypes](./unified-prototype/README.md)
