@@ -103,11 +103,6 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  
         configureDesugaring(project, dslModel, android);
         configureHilt(project, dslModel, android);
         configureCompose(project, dslModel, android);
-
-        // TODO: All this configuration should be moved to the NiA project
-        if (Objects.equals(project.getRootProject().getName(), "nowinandroid")) {
-            NiaSupport.configureNia(project, dslModel);
-        }
     }
 
     protected void configureHilt(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
