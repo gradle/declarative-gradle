@@ -6,11 +6,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
 import org.gradle.api.experimental.android.AndroidSoftware;
-import org.gradle.api.experimental.android.AndroidSoftwareBuildType;
-import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
-
-import java.util.Objects;
 
 /**
  * Creates a declarative {@link AndroidLibrary} DSL model, applies the official Android plugin,
@@ -50,11 +46,6 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
     private void linkDslModelToPlugin(Project project, AndroidLibrary dslModel) {
         LibraryExtension android = project.getExtensions().getByType(LibraryExtension.class);
         super.linkDslModelToPlugin(project, dslModel, android);
-
-        // TODO: All this configuration should be moved to the NiA project
-        if (NiaSupport.isNiaProject(project)) {
-            NiaSupport.configureNiaLibrary(project, dslModel);
-        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -63,16 +54,8 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         configurations.getByName("api").fromDependencyCollector(dependencies.getApi()); // API deps added for libraries
     }
 
-    /**
-     * Links build types from the model to the android extension.
-     */
-    @Override
-    protected void linkBuildType(BuildType buildType, AndroidSoftwareBuildType model, ConfigurationContainer configurations) {
-        super.linkBuildType(buildType, model, configurations);
-        linkApiBuildTypeDependencies(buildType, (AndroidLibraryDependencies) model.getDependencies(), configurations);
-    }
-
-    private void linkApiBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
+    private void linkBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
+        super.linkBuildTypeDependencies(buildType, dependencies, configurations);
         String name = buildType.getName();
         configurations.getByName(name + "Api").fromDependencyCollector(dependencies.getApi());
     }
