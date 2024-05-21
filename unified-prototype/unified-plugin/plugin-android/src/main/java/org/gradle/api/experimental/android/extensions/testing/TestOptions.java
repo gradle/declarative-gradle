@@ -26,4 +26,7 @@ public interface TestOptions {
 
     @Restricted
     Property<Boolean> getReturnDefaultValues();
+
+    @Restricted
+    Property<String> getTestInstrumentationRunner();
 }

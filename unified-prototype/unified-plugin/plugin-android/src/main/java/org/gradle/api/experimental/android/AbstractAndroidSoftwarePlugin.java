@@ -137,7 +137,9 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  
     protected void configureTesting(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         Testing testing = dslModel.getTesting();
         AndroidTestDependencies testDependencies = testing.getDependencies();
+
         TestOptions testOptions = testing.getTestOptions();
+        ifPresent(testOptions.getTestInstrumentationRunner(), android.getDefaultConfig()::setTestInstrumentationRunner);
 
         UnitTestOptions unitTestOptions = android.getTestOptions().getUnitTests();
         unitTestOptions.setIncludeAndroidResources(testOptions.getIncludeAndroidResources().get());
