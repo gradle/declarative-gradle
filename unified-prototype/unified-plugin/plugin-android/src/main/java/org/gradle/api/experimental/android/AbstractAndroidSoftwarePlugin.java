@@ -126,22 +126,24 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  
 
     @SuppressWarnings("UnstableApiUsage")
     protected void configureRoom(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
-        project.getPlugins().apply("androidx.room");
-        project.getPlugins().apply("com.google.devtools.ksp");
+        if (dslModel.getRoom().getEnabled().get()) {
+            project.getPlugins().apply("androidx.room");
+            project.getPlugins().apply("com.google.devtools.ksp");
 
-        KspExtension kspExtension = project.getExtensions().getByType(KspExtension.class);
-        kspExtension.arg("room.generateKotlin", "true");
+            KspExtension kspExtension = project.getExtensions().getByType(KspExtension.class);
+            kspExtension.arg("room.generateKotlin", "true");
 
-        RoomExtension room = project.getExtensions().getByType(RoomExtension.class);
-        // The schemas directory contains a schema file for each version of the Room database.
-        // This is required to enable Room auto migrations.
-        // See https://developer.android.com/reference/kotlin/androidx/room/AutoMigration.
-        ifPresent(dslModel.getRoom().getSchemaDirectory(), room::schemaDirectory);
+            RoomExtension room = project.getExtensions().getByType(RoomExtension.class);
+            // The schemas directory contains a schema file for each version of the Room database.
+            // This is required to enable Room auto migrations.
+            // See https://developer.android.com/reference/kotlin/androidx/room/AutoMigration.
+            ifPresent(dslModel.getRoom().getSchemaDirectory(), room::schemaDirectory);
 
-        String roomVersion = dslModel.getRoom().getVersion().get();
-        dslModel.getDependencies().getImplementation().add("androidx.room:room-runtime:" + roomVersion);
-        dslModel.getDependencies().getImplementation().add("androidx.room:room-ktx:" + roomVersion);
-        project.getDependencies().add("ksp", "androidx.room:room-compiler:" + roomVersion);
+            String roomVersion = dslModel.getRoom().getVersion().get();
+            dslModel.getDependencies().getImplementation().add("androidx.room:room-runtime:" + roomVersion);
+            dslModel.getDependencies().getImplementation().add("androidx.room:room-ktx:" + roomVersion);
+            project.getDependencies().add("ksp", "androidx.room:room-compiler:" + roomVersion);
+        }
     }
 
     protected void configureDesugaring(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
