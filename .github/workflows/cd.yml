@@ -51,15 +51,6 @@ jobs:
           name: github-pages
           path: "_site/"
 
-      - name: Build the docs site for gradle.org
-        run: mkdocs build -f mkdocs-dotorg.yml
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          name: dotorg-site
-          path: "_dotorg_site/"
-
   # Deployment job
   deploy:
     environment:
