@@ -2,7 +2,7 @@
 # NOTE: This documentation is for the experimental deployment and local development
 # The final documentaiton will be under gradle.org
 ####
-site_name: Declarative Gradle. Sub-Site
+site_name: Declarative Gradle
 site_description: >-
   Declarative Gradle is a project targeting better isolation of concern
   and expressing any build in a clear and understandable way
