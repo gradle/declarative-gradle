@@ -1,6 +1,8 @@
 package org.gradle.api.experimental.android;
 
+import androidx.room.gradle.RoomExtension;
 import com.android.build.api.dsl.*;
+import com.google.devtools.ksp.gradle.KspExtension;
 import org.gradle.api.*;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.extensions.testing.AndroidTestDependencies;
@@ -10,6 +12,8 @@ import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
@@ -46,6 +50,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  
         dslModel.getFeature().getEnabled().convention(false);
         dslModel.getCompose().getEnabled().convention(false);
         dslModel.getHilt().getEnabled().convention(false);
+        dslModel.getRoom().getEnabled().convention(false);
+        dslModel.getRoom().getVersion().convention("2.6.1");
 
         // Setup Test Options conventions
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
@@ -103,11 +109,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  
         configureDesugaring(project, dslModel, android);
         configureHilt(project, dslModel, android);
         configureCompose(project, dslModel, android);
-
-        // TODO: All this configuration should be moved to the NiA project
-        if (Objects.equals(project.getRootProject().getName(), "nowinandroid")) {
-            NiaSupport.configureNia(project, dslModel);
-        }
+        configureRoom(project, dslModel, android);
     }
 
     protected void configureHilt(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
@@ -120,6 +122,26 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  
             project.getPlugins().apply("dagger.hilt.android.plugin");
             project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.50");
         }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    protected void configureRoom(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        project.getPlugins().apply("androidx.room");
+        project.getPlugins().apply("com.google.devtools.ksp");
+
+        KspExtension kspExtension = project.getExtensions().getByType(KspExtension.class);
+        kspExtension.arg("room.generateKotlin", "true");
+
+        RoomExtension room = project.getExtensions().getByType(RoomExtension.class);
+        // The schemas directory contains a schema file for each version of the Room database.
+        // This is required to enable Room auto migrations.
+        // See https://developer.android.com/reference/kotlin/androidx/room/AutoMigration.
+        ifPresent(dslModel.getRoom().getSchemaDirectory(), room::schemaDirectory);
+
+        String roomVersion = dslModel.getRoom().getVersion().get();
+        dslModel.getDependencies().getImplementation().add("androidx.room:room-runtime:" + roomVersion);
+        dslModel.getDependencies().getImplementation().add("androidx.room:room-ktx:" + roomVersion);
+        project.getDependencies().add("ksp", "androidx.room:room-compiler:" + roomVersion);
     }
 
     protected void configureDesugaring(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
