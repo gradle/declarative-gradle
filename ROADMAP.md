@@ -1,4 +1,4 @@
-# Declarative Gradle Roadmap
+# Declarative Gradle Roadmap (Preview)
 
 Declarative Gradle is an experimental project under active development.
 Below, you can see the key milestones we anticipate.
@@ -6,6 +6,9 @@ All the dates and the scope are aspirational.
 
 To discuss the roadmap and the related initiatives, use the
 `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
+
+> **DISCLAIMER:** This roadmap is currently under discussion with the the team and key stakeholders,
+> so there may be significant changes to the deliverables and the timeline.
 
 ## Project Board
 
