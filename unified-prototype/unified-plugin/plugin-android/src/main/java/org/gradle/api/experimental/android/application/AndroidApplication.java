@@ -17,17 +17,15 @@
 package org.gradle.api.experimental.android.application;
 
 import com.android.build.api.dsl.ApplicationBaseFlavor;
-import com.android.build.api.dsl.BaseFlavor;
-import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
-import org.gradle.api.experimental.android.extensions.CoreLibraryDesugaring;
+import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface AndroidApplication {
+public interface AndroidApplication extends AndroidSoftware {
     /**
      * @see ApplicationBaseFlavor#setVersionName(String)
      */
@@ -46,30 +44,7 @@ public interface AndroidApplication {
     @Restricted
     Property<String> getApplicationId();
 
-    /**
-     * @see CommonExtension#getCompileSdk()
-     */
-    @Restricted
-    Property<Integer> getCompileSdk();
-
-    /**
-     * @see CommonExtension#getNamespace()
-     */
-    @Restricted
-    Property<String> getNamespace();
-
-    /**
-     * @see BaseFlavor#getMinSdk()
-     */
-    @Restricted
-    Property<Integer> getMinSdk();
-
-    /**
-     * JDK version to use for compilation.
-     */
-    @Restricted
-    Property<Integer> getJdkVersion();
-
+    @Override
     @Nested
     AndroidApplicationDependencies getDependencies();
 
@@ -84,15 +59,5 @@ public interface AndroidApplication {
     @Configuring
     default void buildTypes(Action<? super AndroidApplicationBuildTypes> action) {
         action.execute(getBuildTypes());
-    }
-
-    @Nested
-    CoreLibraryDesugaring getCoreLibraryDesugaring();
-
-    @Configuring
-    default void coreLibraryDesugaring(Action<? super CoreLibraryDesugaring> action) {
-        CoreLibraryDesugaring coreLibraryDesugaring = getCoreLibraryDesugaring();
-        action.execute(coreLibraryDesugaring);
-        coreLibraryDesugaring.getEnabled().set(true);
     }
 }

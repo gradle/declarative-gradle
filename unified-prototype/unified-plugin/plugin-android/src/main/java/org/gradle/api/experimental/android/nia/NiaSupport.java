@@ -8,8 +8,7 @@ import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.*;
-import org.gradle.api.experimental.android.DEFAULT_SDKS;
-import org.gradle.api.experimental.android.library.AndroidLibrary;
+import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.extensions.Jacoco;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
@@ -27,16 +26,24 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-public class NiaSupport {
+// TODO: This class should be moved to the NiA project
+/**
+ * This is a utility class that configures an Android project with conventions
+ * for the Now in Android project.
+ * <p>
+ * This class is not meant to be used by other projects.
+ */
+public final class NiaSupport {
+    private NiaSupport() { /* Not instantiable */ }
+
     @SuppressWarnings("UnstableApiUsage")
-    public static void configureNia(Project project, AndroidLibrary dslModel) {
+    public static void configureNia(Project project, AndroidSoftware dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
         dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
 
-        setTargetSdk(androidLib);
         androidLib.setResourcePrefix(buildResourcePrefix(project));
         configureFlavors(androidLib, (flavor, niaFlavor) -> {});
         configureKotlin(project);
@@ -119,11 +126,6 @@ public class NiaSupport {
         } catch (Exception e) {
             throw new RuntimeException("Failed to call setDimension on flavor: " + flavor + " with: " + name, e);
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void setTargetSdk(LibraryExtension android) {
-        android.getDefaultConfig().setTargetSdk(DEFAULT_SDKS.TARGET_ANDROID_SDK); // Deprecated, but done in NiA
     }
 
     /**
