@@ -6,6 +6,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
 import org.gradle.api.experimental.android.AndroidSoftware;
+import org.gradle.api.experimental.android.AndroidSoftwareBuildType;
 import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 
@@ -62,8 +63,16 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         configurations.getByName("api").fromDependencyCollector(dependencies.getApi()); // API deps added for libraries
     }
 
-    private void linkBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
-        super.linkBuildTypeDependencies(buildType, dependencies, configurations);
+    /**
+     * Links build types from the model to the android extension.
+     */
+    @Override
+    protected void linkBuildType(BuildType buildType, AndroidSoftwareBuildType model, ConfigurationContainer configurations) {
+        super.linkBuildType(buildType, model, configurations);
+        linkApiBuildTypeDependencies(buildType, (AndroidLibraryDependencies) model.getDependencies(), configurations);
+    }
+
+    private void linkApiBuildTypeDependencies(BuildType buildType, AndroidLibraryDependencies dependencies, ConfigurationContainer configurations) {
         String name = buildType.getName();
         configurations.getByName(name + "Api").fromDependencyCollector(dependencies.getApi());
     }
