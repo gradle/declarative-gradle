@@ -11,6 +11,7 @@ include("plugin-android")
 include("plugin-jvm")
 include("plugin-kmp")
 include("plugin-swift")
+include("plugin-cpp")
 include("plugin-common")
 include("internal-testing-utils")
 
