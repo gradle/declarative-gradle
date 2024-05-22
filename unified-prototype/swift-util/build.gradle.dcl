@@ -1,0 +1,3 @@
+swiftLibrary {
+    swiftVersion = 5
+}

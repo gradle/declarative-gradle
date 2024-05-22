@@ -1,16 +1,15 @@
-package org.gradle.api.experimental.jvm;
+package org.gradle.api.experimental.common;
 
 import org.gradle.api.Action;
-import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
- * Represents a library that runs on the JVM.
+ * Something that has library dependencies.
  */
 @Restricted
-public interface HasJvmLibrary {
+public interface HasLibraryDependencies {
     @Nested
     LibraryDependencies getDependencies();
 
