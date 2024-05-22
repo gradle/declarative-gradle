@@ -86,6 +86,7 @@ nav:
       Declarative Gradle for Android: docs/android/README.md
       Declarative Gradle for Java/JVM: docs/java/README.md
       Declarative Gradle for Kotlin: docs/kotlin/README.md
+      Declarative Gradle for Swift: docs/swift/README.md
       Public Roadmap: ROADMAP.md
   - Getting Started:
       Overview: docs/getting-started/README.md

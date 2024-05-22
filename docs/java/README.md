@@ -37,3 +37,4 @@ javaApplication {
 
 - [Declarative Gradle for Kotlin](../kotlin/README.md)
 - [Declarative Gradle for Android](../android/README.md)
+- [Declarative Gradle for Swift](../swift/README.md)

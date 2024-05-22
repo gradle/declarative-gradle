@@ -12,8 +12,8 @@ These samples show the definition of a simple Java application and library that 
 
 To run the application, use:
 
-```
-> ./gradlew testbed-java-application:run
+```shell
+> ./gradlew testbed-java-application:runAll
 ```
 
 ## JVM
@@ -24,8 +24,8 @@ These samples show the definition of a simple Java application and library that 
 
 To run the application, use:
 
-```
-> ./gradlew testbed-java-application:run
+```shell
+> ./gradlew testbed-jvm-application:runAll
 ```
 
 ## Kotlin JVM
@@ -36,8 +36,8 @@ These samples show the definition of a simple Kotlin JVM application and library
 
 To run the application, use:
 
-```
-> ./gradlew testbed-kotlin-jvm-application:run
+```shell
+> ./gradlew testbed-kotlin-jvm-application:runAll
 ```
 
 ## Kotlin Multiplatform
@@ -48,25 +48,16 @@ The `unified-prototype/plugin-kmp` plugin demonstrates creating extensions using
 
 The sample project demonstrates setting properties, using a common dependencies block, and adding dependencies to specific targets.
 
-### Implementation Notes
-
-An Apache Commons dependency is used by the JVM code.
-A SQLDelight dependency is used by the JS code.
-The kotlinx.datetime multiplatform dep is used by common code.
-
-The `StandaloneKmpLibraryPlugin` plugin works by using `project.afterEvaluate` to load data from the Declarative DSL extensions into KGP's model.
-
 ### Limitations
 
 The KMP example is currently limited, and does not support any targets other than `nodeJs`, `jvm` and `macOsArm64`.
 
 ### Running
 
-From the `testbed-kotlin-application` directory, run `jvmRun` using the Gradle wrapper in the parent directory:
+To run the application, use:
 
 ```shell
-cd testbed-kotlin-application
-../gradlew jvmRun
+../gradlew testbed-kotlin-application:runAll
 ```
 
 ### Building
@@ -134,3 +125,9 @@ gradlew :testbed-android-application:assembleRelease
 ## Swift
 
 The sample Swift projects live in the `testbed-swift-library` and `testbed-swift-application` directories.
+
+To run the application, use:
+
+```shell
+../gradlew testbed-swift-application:runAll
+```
