@@ -176,7 +176,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         if (dslModel.getCompose().getStabilityConfigurationFilePath().isPresent()) {
             return Arrays.asList(
                     "-P",
-                    "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=" + project.getLayout().getProjectDirectory().file(dslModel.getCompose().getStabilityConfigurationFilePath()).get().getAsFile().getAbsolutePath()
+                    "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=" + project.getRootProject().getLayout().getProjectDirectory().file(dslModel.getCompose().getStabilityConfigurationFilePath()).get().getAsFile().getAbsolutePath()
             );
         } else {
             return Collections.emptyList();
