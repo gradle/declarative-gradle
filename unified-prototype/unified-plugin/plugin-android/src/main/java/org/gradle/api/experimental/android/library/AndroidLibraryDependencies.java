@@ -16,18 +16,9 @@
 
 package org.gradle.api.experimental.android.library;
 
-import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@SuppressWarnings("UnstableApiUsage")
 @Restricted
 public interface AndroidLibraryDependencies extends LibraryDependencies {
-    DependencyCollector getKsp();
-    DependencyCollector getCoreLibraryDesugaring();
-    DependencyCollector getDebugImplementation();
-
-    // TESTING: TODO: Move these into the Testing block (give it its own dependencies)?
-    DependencyCollector getTestImplementation();
-    DependencyCollector getAndroidTestImplementation();
 }

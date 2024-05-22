@@ -10,16 +10,18 @@ androidApplication {
     dependencies {
         implementation("com.google.guava:guava:32.1.3-jre")
         implementation(project(":android-util"))
-        coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     }
 
     buildTypes {
         release {
             dependencies {
                 implementation("com.squareup.okhttp3:okhttp:4.2.2")
+                implementation("androidx.tracing:tracing-ktx:1.3.0-alpha02") // TODO: Is this necessary for minification(?) If so, this should be included automatically
             }
 
-            minifyEnabled = true
+            minify {
+                enabled = true
+            }
         }
         debug {
             applicationIdSuffix = ".debug"

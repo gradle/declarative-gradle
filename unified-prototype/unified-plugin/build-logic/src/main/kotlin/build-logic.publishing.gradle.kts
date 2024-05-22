@@ -1,29 +1,6 @@
-import java.util.regex.Matcher
-
 plugins {
     id("com.gradle.plugin-publish")
-    id("com.github.johnrengelman.shadow") apply false
     signing
-}
-
-val commonOnlyJarDependencyScope = configurations.dependencyScope("commonOnlyJarDependencyScope")
-val commonOnlyJar = configurations.resolvable("commonOnlyJar") {
-    extendsFrom(commonOnlyJarDependencyScope.get())
-}
-
-dependencies {
-    commonOnlyJarDependencyScope(project(":plugin-common")) {
-        isTransitive = false
-    }
-}
-
-tasks.shadowJar {
-    configurations = listOf(commonOnlyJar.get())
-    archiveClassifier.set("")
-    relocate(
-        "org.gradle.api.experimental.common",
-        Matcher.quoteReplacement("org.gradle.api.experimental.common.0shaded.into.${project.name}"),
-    )
 }
 
 gradlePlugin {

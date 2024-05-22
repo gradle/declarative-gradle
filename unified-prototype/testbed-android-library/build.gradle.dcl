@@ -10,7 +10,7 @@ androidLibrary {
 
     kotlinSerialization {
         version = "1.6.3"
-        json()
+        jsonEnabled = true
     }
 
     buildTypes {
@@ -19,7 +19,15 @@ androidLibrary {
                 implementation("com.squareup.okhttp3:okhttp:4.2.2")
             }
 
-            minifyEnabled = true
+            minify {
+                enabled = true
+            }
+        }
+    }
+
+    testing {
+        dependencies {
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
         }
     }
 }

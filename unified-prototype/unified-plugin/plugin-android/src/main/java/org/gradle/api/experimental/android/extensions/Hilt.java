@@ -1,13 +1,10 @@
-package org.gradle.api.experimental.android.nia;
+package org.gradle.api.experimental.android.extensions;
 
 import org.gradle.api.provider.Property;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-/**
- * This type defines a Conventional Now In Android feature project.
- */
 @Restricted
-public interface Feature {
+public interface Hilt {
     /**
      * Internal property purposely not exposed to the DSL.
      */
