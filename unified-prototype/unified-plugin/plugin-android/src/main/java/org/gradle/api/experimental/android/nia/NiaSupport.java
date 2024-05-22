@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
  * This class is not meant to be used by other projects.
  */
 public final class NiaSupport {
+    public static final String NIA_PROJECT_NAME = "now-in-android";
+
     private NiaSupport() { /* Not instantiable */ }
 
     public static void configureNiaLibrary(Project project, AndroidSoftware dslModel) {

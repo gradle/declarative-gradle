@@ -52,7 +52,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         super.linkDslModelToPlugin(project, dslModel, android);
 
         // TODO: All this configuration should be moved to the NiA project
-        if (Objects.equals(project.getRootProject().getName(), "nowinandroid")) {
+        if (Objects.equals(project.getRootProject().getName(), NiaSupport.NIA_PROJECT_NAME)) {
             NiaSupport.configureNiaLibrary(project, dslModel);
         }
     }
