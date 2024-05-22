@@ -2,6 +2,7 @@ package org.gradle.api.experimental.java;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.ApplicationPlugin;
@@ -19,6 +20,7 @@ abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project>
         JavaApplication dslModel = getApplication();
 
         project.getPlugins().apply(ApplicationPlugin.class);
+        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
 
         linkDslModelToPlugin(project, dslModel);
     }
@@ -27,5 +29,7 @@ abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project>
         JvmPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkApplicationMainClass(project, dslModel);
         JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
+
+        dslModel.getRunTasks().add(project.getTasks().named("run"));
     }
 }

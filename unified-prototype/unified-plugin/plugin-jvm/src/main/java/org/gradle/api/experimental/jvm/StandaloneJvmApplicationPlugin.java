@@ -2,10 +2,13 @@ package org.gradle.api.experimental.jvm;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.ApplicationPlugin;
+import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
 import javax.inject.Inject;
@@ -23,6 +26,7 @@ abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> 
         JvmApplication dslModel = getJvmApplication();
 
         project.getPlugins().apply(ApplicationPlugin.class);
+        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
 
         linkDslModelToPlugin(project, dslModel);
     }
@@ -41,6 +45,13 @@ abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> 
 
             // Link dependencies to DSL
             JvmPluginSupport.linkSourceSetToDependencies(project, sourceSet, target.getDependencies());
+
+            // Create a run task
+            TaskProvider<JavaExec> runTask = project.getTasks().register(sourceSet.getTaskName("run", null), JavaExec.class, task -> {
+                task.getMainClass().set(dslModel.getMainClass());
+                task.setClasspath(sourceSet.getRuntimeClasspath());
+            });
+            dslModel.getRunTasks().add(runTask);
         });
     }
 }
