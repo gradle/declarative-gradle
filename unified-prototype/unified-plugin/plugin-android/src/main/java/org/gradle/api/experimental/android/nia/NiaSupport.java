@@ -36,7 +36,7 @@ public final class NiaSupport {
     private NiaSupport() { /* Not instantiable */ }
 
     public static boolean isNiaProject(Project project) {
-        return Objects.equals(project.getRootProject().getName().replaceAll("\\\\-", ""), NiaSupport.NIA_PROJECT_NAME);
+        return Objects.equals(project.getRootProject().getName().replace("-", ""), NiaSupport.NIA_PROJECT_NAME);
     }
 
     public static void configureNiaLibrary(Project project, AndroidSoftware dslModel) {
