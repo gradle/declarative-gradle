@@ -14,13 +14,6 @@ plugins {
     id("org.gradle.experimental.swift-ecosystem")
 }
 
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-        google()
-    }
-}
-
 // Not currently supported by declarative model
 //rootProject.name = "unified-prototype"
 

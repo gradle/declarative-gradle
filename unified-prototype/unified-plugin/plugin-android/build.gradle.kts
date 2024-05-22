@@ -10,6 +10,7 @@ dependencies {
     api(libs.android.agp.application)
     api(libs.android.kotlin.android)
 
+    implementation(project(":plugin-jvm"))
     implementation(libs.ksp.plugin)
     implementation(libs.hilt.android.plugin)
     implementation(libs.kotlin.serialization.plugin)
