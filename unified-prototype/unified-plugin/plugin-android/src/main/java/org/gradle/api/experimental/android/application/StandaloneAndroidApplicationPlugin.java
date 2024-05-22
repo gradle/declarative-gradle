@@ -59,7 +59,7 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
         });
 
         // TODO: All this configuration should be moved to the NiA project
-        if (Objects.equals(project.getRootProject().getName(), NiaSupport.NIA_PROJECT_NAME)) {
+        if (NiaSupport.isNiaProject(project)) {
             // ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
             // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
             configureContentTypeAttributes(project);

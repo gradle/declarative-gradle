@@ -31,9 +31,13 @@ import java.util.stream.Collectors;
  * This class is not meant to be used by other projects.
  */
 public final class NiaSupport {
-    public static final String NIA_PROJECT_NAME = "now-in-android";
+    public static final String NIA_PROJECT_NAME = "nowinandroid";
 
     private NiaSupport() { /* Not instantiable */ }
+
+    public static boolean isNiaProject(Project project) {
+        return Objects.equals(project.getRootProject().getName().replaceAll("\\\\-", ""), NiaSupport.NIA_PROJECT_NAME);
+    }
 
     public static void configureNiaLibrary(Project project, AndroidSoftware dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
