@@ -21,7 +21,8 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "unified-prototype"
+// Not currently supported by declarative model
+//rootProject.name = "unified-prototype"
 
 include("android-util")
 include("java-util")
