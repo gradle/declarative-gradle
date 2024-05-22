@@ -2,14 +2,10 @@ package org.gradle.api.experimental.android.nia;
 
 import com.android.build.api.artifact.SingleArtifact;
 import com.android.build.api.dsl.*;
-import com.android.build.api.variant.AndroidComponentsExtension;
-import com.android.build.api.variant.BuiltArtifactsLoader;
-import com.android.build.api.variant.HasAndroidTest;
-import com.android.build.api.variant.LibraryAndroidComponentsExtension;
+import com.android.build.api.variant.*;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.*;
-import org.gradle.api.experimental.android.DEFAULT_SDKS;
-import org.gradle.api.experimental.android.library.AndroidLibrary;
+import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.extensions.Jacoco;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
@@ -27,39 +23,65 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-public class NiaSupport {
-    @SuppressWarnings("UnstableApiUsage")
-    public static void configureNia(Project project, AndroidLibrary dslModel) {
+// TODO: This class should be moved to the NiA project
+/**
+ * This is a utility class that configures an Android project with conventions
+ * for the Now in Android project.
+ * <p>
+ * This class is not meant to be used by other projects.
+ */
+public final class NiaSupport {
+    private NiaSupport() { /* Not instantiable */ }
+
+    public static void configureNiaLibrary(Project project, AndroidSoftware dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
-        dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
-        dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
-
-        setTargetSdk(androidLib);
-        androidLib.setResourcePrefix(buildResourcePrefix(project));
-        configureFlavors(androidLib, (flavor, niaFlavor) -> {});
-        configureKotlin(project);
-
+        configureNia(project, dslModel, androidLib, androidLibComponents);
         disableUnnecessaryAndroidTests(project, androidLibComponents);
+    }
 
-        configureGradleManagedDevices(androidLib);
-        configureLint(androidLib);
-        configurePrintApksTask(project, androidLibComponents);
+    public static void configureNiaApplication(Project project, AndroidSoftware dslModel) {
+        ApplicationExtension androidApp = project.getExtensions().getByType(ApplicationExtension.class);
+        ApplicationAndroidComponentsExtension androidAppComponents = project.getExtensions().getByType(ApplicationAndroidComponentsExtension.class);
 
-        if (dslModel.getTesting().getJacoco().getEnabled().get()) {
-            configureJacoco(dslModel.getTesting().getJacoco(), project, androidLib);
-        }
-
-        if (dslModel.getFeature().getEnabled().get()) {
-            configureFeature(project, androidLib);
-        }
+        configureNia(project, dslModel, androidApp, androidAppComponents);
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static void configureFeature(Project project, LibraryExtension androidLib) {
-        androidLib.getDefaultConfig().setTestInstrumentationRunner("com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner");
-        androidLib.getTestOptions().setAnimationsDisabled(true);
+    private static void configureNia(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android, AndroidComponentsExtension<?, ?, ?> androidComponents) {
+        dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
+        dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
+
+        android.setResourcePrefix(buildResourcePrefix(project));
+        configureFlavors(android, (flavor, niaFlavor) -> {});
+        configureKotlin(project);
+
+        configureGradleManagedDevices(android);
+        configureLint(android);
+        configurePrintApksTask(project, androidComponents);
+
+        if (dslModel.getTesting().getJacoco().getEnabled().get()) {
+            configureJacoco(dslModel.getTesting().getJacoco(), project, android);
+        }
+
+        if (dslModel.getFeature().getEnabled().get()) {
+            configureFeature(project, android);
+        }
+    }
+
+
+    @SuppressWarnings("deprecation")
+    private static void disableUnnecessaryAndroidTests(Project project, LibraryAndroidComponentsExtension androidLibComponents) {
+        androidLibComponents.beforeVariants(androidLibComponents.selector().all(), it -> {
+            it.setEnableAndroidTest(it.getEnableAndroidTest() && project.getLayout().getProjectDirectory().file("src/androidTest").getAsFile().exists());
+        });
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static void configureFeature(Project project, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        android.getDefaultConfig().setTestInstrumentationRunner("com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner");
+        android.getTestOptions().setAnimationsDisabled(true);
 
         project.getDependencies().add("implementation", project.project(":core:ui"));
         project.getDependencies().add("implementation", project.project(":core:designsystem"));
@@ -72,21 +94,21 @@ public class NiaSupport {
         project.getDependencies().add("androidTestImplementation", "androidx.lifecycle:lifecycle-runtime-testing:2.7.0");
     }
 
-    private static void configureLint(LibraryExtension androidLib) {
-        androidLib.getLint().setXmlReport(true);
-        androidLib.getLint().setCheckDependencies(true);
+    private static void configureLint(CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        android.getLint().setXmlReport(true);
+        android.getLint().setCheckDependencies(true);
     }
 
     private static void configureFlavors(
-            CommonExtension<?, ?, ?, ?, ?, ?> commonExtension,
+            CommonExtension<?, ?, ?, ?, ?, ?> android,
             BiConsumer<ProductFlavor, NiaFlavor> flavorConfigurationBlock) {
-        commonExtension.getFlavorDimensions().add(FlavorDimension.contentType.name());
+        android.getFlavorDimensions().add(FlavorDimension.contentType.name());
 
-        Arrays.stream(NiaFlavor.values()).forEach(it -> commonExtension.getProductFlavors().create(it.name(), flavor -> {
+        Arrays.stream(NiaFlavor.values()).forEach(it -> android.getProductFlavors().create(it.name(), flavor -> {
             setDimensionReflectively(flavor, it.dimension.name());
             flavorConfigurationBlock.accept(flavor, it);
 
-            if (commonExtension instanceof ApplicationExtension && flavor instanceof ApplicationProductFlavor) {
+            if (android instanceof ApplicationExtension && flavor instanceof ApplicationProductFlavor) {
                 if (it.applicationIdSuffix != null) {
                     ((ApplicationProductFlavor) flavor).setApplicationIdSuffix(it.applicationIdSuffix);
                 }
@@ -119,11 +141,6 @@ public class NiaSupport {
         } catch (Exception e) {
             throw new RuntimeException("Failed to call setDimension on flavor: " + flavor + " with: " + name, e);
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void setTargetSdk(LibraryExtension android) {
-        android.getDefaultConfig().setTargetSdk(DEFAULT_SDKS.TARGET_ANDROID_SDK); // Deprecated, but done in NiA
     }
 
     /**
@@ -166,18 +183,11 @@ public class NiaSupport {
         });
     }
 
-    @SuppressWarnings("deprecation")
-    private static void disableUnnecessaryAndroidTests(Project project, LibraryAndroidComponentsExtension androidComponents) {
-        androidComponents.beforeVariants(androidComponents.selector().all(), it -> {
-            it.setEnableAndroidTest(it.getEnableAndroidTest() && project.getLayout().getProjectDirectory().file("src/androidTest").getAsFile().exists());
-        });
-    }
-
     /**
      * Configure project for Gradle managed devices
      */
     @SuppressWarnings("UnstableApiUsage")
-    private static void configureGradleManagedDevices(CommonExtension<?, ?, ?, ?, ?, ?> commonExtension) {
+    private static void configureGradleManagedDevices(CommonExtension<?, ?, ?, ?, ?, ?> android) {
         DeviceConfig pixel4 = new DeviceConfig("Pixel 4", 30, "aosp-atd");
         DeviceConfig pixel6 = new DeviceConfig("Pixel 6", 31, "aosp");
         DeviceConfig pixelC = new DeviceConfig("Pixel C", 30, "aosp-atd");
@@ -185,7 +195,7 @@ public class NiaSupport {
         List<DeviceConfig> allDevices = Arrays.asList(pixel4, pixel6, pixelC);
         List<DeviceConfig> ciDevices = Arrays.asList(pixel4, pixelC);
 
-        TestOptions testOptions = commonExtension.getTestOptions();
+        TestOptions testOptions = android.getTestOptions();
 
         ExtensiblePolymorphicDomainObjectContainer<Device> devices = testOptions.getManagedDevices().getDevices();
         allDevices.forEach(deviceConfig -> {
@@ -201,8 +211,8 @@ public class NiaSupport {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static void configurePrintApksTask(Project project, AndroidComponentsExtension<?, ?, ?> extension) {
-        extension.onVariants(extension.selector().all(), variant -> {
+    private static void configurePrintApksTask(Project project, AndroidComponentsExtension<?, ?, ?> androidComponents) {
+        androidComponents.onVariants(androidComponents.selector().all(), variant -> {
             if (variant instanceof HasAndroidTest hasAndroidTestVariant) {
                 BuiltArtifactsLoader loader = variant.getArtifacts().getBuiltArtifactsLoader();
                 Provider<Directory> artifact = hasAndroidTestVariant.getAndroidTest() != null ? hasAndroidTestVariant.getAndroidTest().getArtifacts().get(SingleArtifact.APK.INSTANCE) : null;
@@ -249,10 +259,10 @@ public class NiaSupport {
     }
 
     @SuppressWarnings("deprecation")
-    private static void configureJacoco(Jacoco jacocoExtension, Project project, LibraryExtension androidLib) {
+    private static void configureJacoco(Jacoco jacocoExtension, Project project, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         project.getPlugins().apply("jacoco");
 
-        androidLib.getBuildTypes().configureEach(buildType -> {
+        android.getBuildTypes().configureEach(buildType -> {
             buildType.setEnableAndroidTestCoverage(true);
             buildType.setEnableUnitTestCoverage(true);
         });

@@ -1,45 +1,36 @@
 package org.gradle.api.experimental.android.application;
 
-import com.android.build.api.dsl.ApplicationBuildType;
+import com.android.build.api.attributes.ProductFlavorAttr;
 import com.android.build.api.dsl.ApplicationExtension;
-import com.android.build.api.dsl.BuildType;
-import org.gradle.api.JavaVersion;
-import org.gradle.api.NamedDomainObjectContainer;
-import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.android.DEFAULT_SDKS;
-import org.gradle.api.experimental.common.ApplicationDependencies;
+import org.gradle.api.attributes.Attribute;
+import org.gradle.api.attributes.AttributeContainer;
+import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
+import org.gradle.api.experimental.android.AndroidSoftware;
+import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
-import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
-import static org.gradle.api.experimental.android.AndroidDSLSupport.ifPresent;
-import static org.gradle.api.experimental.android.AndroidDSLSupport.configureContentTypeAttributes;
+import java.util.Objects;
 
 /**
  * Creates a declarative {@link AndroidApplication} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings("UnstableApiUsage")
-public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Project> {
+public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroidSoftwarePlugin {
     @SoftwareType(name = "androidApplication", modelPublicType=AndroidApplication.class)
-    abstract public AndroidApplication getAndroidApplication();
+    public abstract AndroidApplication getAndroidApplication();
+
+    @Override
+    protected AndroidSoftware getAndroidSoftware() {
+        return getAndroidApplication();
+    }
 
     @Override
     public void apply(Project project) {
+        super.apply(project);
+
         AndroidApplication dslModel = getAndroidApplication();
-
-        // Setup Android Application conventions
-        dslModel.getJdkVersion().convention(DEFAULT_SDKS.JDK);
-        dslModel.getCompileSdk().convention(DEFAULT_SDKS.TARGET_ANDROID_SDK);
-        dslModel.getMinSdk().convention(DEFAULT_SDKS.MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
-
-        dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
-        dslModel.getBuildTypes().getRelease().getMinify().getEnabled().convention(false);
-
-        // Enable desugaring automatically when JDK > 8 is targeted
-        dslModel.getCoreLibraryDesugaring().getEnabled().convention(project.provider(() -> dslModel.getJdkVersion().get() > 8));
-        dslModel.getCoreLibraryDesugaring().getLibVersion().convention("2.0.4");
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -58,81 +49,51 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
      */
     private void linkDslModelToPlugin(Project project, AndroidApplication dslModel) {
         ApplicationExtension android = project.getExtensions().getByType(ApplicationExtension.class);
-        KotlinAndroidProjectExtension kotlin = project.getExtensions().getByType(KotlinAndroidProjectExtension.class);
-        ConfigurationContainer configurations = project.getConfigurations();
+        linkDslModelToPlugin(project, dslModel, android);
 
-        // Link common properties
-        ifPresent(dslModel.getNamespace(), android::setNamespace);
-        ifPresent(dslModel.getCompileSdk(), android::setCompileSdk);
         android.defaultConfig(defaultConfig -> {
-            ifPresent(dslModel.getMinSdk(), defaultConfig::setMinSdk);
             ifPresent(dslModel.getVersionCode(), defaultConfig::setVersionCode);
             ifPresent(dslModel.getVersionName(), defaultConfig::setVersionName);
             ifPresent(dslModel.getApplicationId(), defaultConfig::setApplicationId);
             return null;
         });
-        android.compileOptions(compileOptions -> {
-            // Up to Java 11 APIs are available through desugaring
-            // https://developer.android.com/studio/write/java11-minimal-support-table
-            compileOptions.setSourceCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
-            compileOptions.setTargetCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
-            return null;
-        });
-        ifPresent(dslModel.getJdkVersion(), jdkVersion -> {
-            kotlin.jvmToolchain(jdkVersion);
-            android.getCompileOptions().setSourceCompatibility(JavaVersion.toVersion(jdkVersion));
-            android.getCompileOptions().setTargetCompatibility(JavaVersion.toVersion(jdkVersion));
-        });
 
-        // Link build types
-        AndroidApplicationBuildTypes modelBuildType = dslModel.getBuildTypes();
-        NamedDomainObjectContainer<? extends ApplicationBuildType> androidBuildTypes = android.getBuildTypes();
-        linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
-        linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
+        if (Objects.equals(project.getRootProject().getName(), "nowinandroid")) {
+            // ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
+            // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
+            configureContentTypeAttributes(project);
+        }
 
-        // TODO: ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
-        // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
-        // TODO: Maybe there should be an AbstractAndroidPlugin that does this for all Android plugins?
-        configureContentTypeAttributes(project);
-
-        configureDesugaring(project, dslModel, android);
-    }
-
-    private void configureDesugaring(Project project, AndroidApplication dslModel, ApplicationExtension android) {
-        android.compileOptions(compileOptions -> {
-            compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
-            return null;
-        });
-
-        if (dslModel.getCoreLibraryDesugaring().getEnabled().get()) {
-            project.getDependencies().addProvider("coreLibraryDesugaring", dslModel.getCoreLibraryDesugaring().getLibVersion().map(version -> "com.android.tools:desugar_jdk_libs:" + version));
+        // TODO: All this configuration should be moved to the NiA project
+        if (Objects.equals(project.getRootProject().getName(), "nowinandroid")) {
+            NiaSupport.configureNiaApplication(project, dslModel);
         }
     }
 
-    /**
-     * Performs common dependency linking actions that do not need to occur within an afterEvaluate block.
-     */
-    private void linkCommonDependencies(AndroidApplicationDependencies dependencies, ConfigurationContainer configurations) {
-        configurations.getByName("implementation").fromDependencyCollector(dependencies.getImplementation());
-        configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
-        configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
-    }
+    private void configureContentTypeAttributes(Project project) {
+        // These attributes must be set to avoid Ambiguous Variants resolution errors between the
+        // demoDebugRuntimeElements and prodDebugRuntimeElements for project dependencies in NiA
+        project.getConfigurations().configureEach(c -> {
+            AttributeContainer attributes = c.getAttributes();
+            String lowerConfName = c.getName().toLowerCase();
 
-    /**
-     * Links build types from the model to the android extension.
-     */
-    private void linkBuildType(ApplicationBuildType android, AndroidApplicationBuildType model, ConfigurationContainer configurations) {
-        android.setMinifyEnabled(model.getMinify().getEnabled().get());
-        ifPresent(model.getVersionNameSuffix(), android::setVersionNameSuffix);
-        ifPresent(model.getApplicationIdSuffix(), android::setApplicationIdSuffix);
-        linkBuildTypeDependencies(android, model.getDependencies(), configurations);
-    }
+            Attribute<ProductFlavorAttr> contentTypeFlavorAttr = ProductFlavorAttr.of("contentType");
+            if (!attributes.contains(contentTypeFlavorAttr)) {
+                if (lowerConfName.contains("debug")) {
+                    attributes.attribute(contentTypeFlavorAttr, project.getObjects().named(ProductFlavorAttr.class, "demo"));
+                } else if (lowerConfName.contains("release")) {
+                    attributes.attribute(contentTypeFlavorAttr, project.getObjects().named(ProductFlavorAttr.class, "prod"));
+                }
+            }
 
-    @SuppressWarnings("UnstableApiUsage")
-    private void linkBuildTypeDependencies(BuildType buildType, ApplicationDependencies dependencies, ConfigurationContainer configurations) {
-        String name = buildType.getName();
-        configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
-        configurations.getByName(name + "CompileOnly").fromDependencyCollector(dependencies.getCompileOnly());
-        configurations.getByName(name + "RuntimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
+            Attribute<String> contentTypeStringAttr = Attribute.of("contentType", String.class);
+            if (!attributes.contains(contentTypeStringAttr)) {
+                if (lowerConfName.contains("debug")) {
+                    attributes.attribute(contentTypeStringAttr, "demo");
+                } else if (lowerConfName.contains("release")) {
+                    attributes.attribute(contentTypeStringAttr, "prod");
+                }
+            }
+        });
     }
 }
