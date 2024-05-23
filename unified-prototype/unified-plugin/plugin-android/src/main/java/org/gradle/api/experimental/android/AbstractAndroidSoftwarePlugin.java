@@ -1,24 +1,25 @@
 package org.gradle.api.experimental.android;
 
 import androidx.room.gradle.RoomExtension;
-import com.android.build.api.dsl.*;
+import com.android.build.api.dsl.BuildType;
+import com.android.build.api.dsl.CommonExtension;
+import com.android.build.api.dsl.UnitTestOptions;
 import com.google.devtools.ksp.gradle.KspExtension;
-import org.gradle.api.*;
+import org.gradle.api.Action;
+import org.gradle.api.JavaVersion;
+import org.gradle.api.NamedDomainObjectContainer;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.extensions.testing.AndroidTestDependencies;
 import org.gradle.api.experimental.android.extensions.testing.TestOptions;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
-import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Objects;
-
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
 
-public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  {
+public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
     protected static final int DEFAULT_JDK = 11;
     protected static final int DEFAULT_TARGET_ANDROID_SDK = 34;
     protected static final int DEFAULT_MIN_ANDROID_SDK = 21;

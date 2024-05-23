@@ -1,10 +1,25 @@
 package org.gradle.api.experimental.android.nia;
 
 import com.android.build.api.artifact.SingleArtifact;
-import com.android.build.api.dsl.*;
-import com.android.build.api.variant.*;
+import com.android.build.api.dsl.ApplicationExtension;
+import com.android.build.api.dsl.ApplicationProductFlavor;
+import com.android.build.api.dsl.CommonExtension;
+import com.android.build.api.dsl.Device;
+import com.android.build.api.dsl.DeviceGroup;
+import com.android.build.api.dsl.LibraryExtension;
+import com.android.build.api.dsl.ProductFlavor;
+import com.android.build.api.dsl.TestOptions;
+import com.android.build.api.variant.AndroidComponentsExtension;
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension;
+import com.android.build.api.variant.BuiltArtifactsLoader;
+import com.android.build.api.variant.HasAndroidTest;
+import com.android.build.api.variant.LibraryAndroidComponentsExtension;
+import com.android.build.gradle.internal.dsl.ManagedVirtualDevice;
 import org.apache.commons.lang3.StringUtils;
-import org.gradle.api.*;
+import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
+import org.gradle.api.JavaVersion;
+import org.gradle.api.NamedDomainObjectContainer;
+import org.gradle.api.Project;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.extensions.Jacoco;
 import org.gradle.api.file.Directory;
@@ -19,7 +34,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
