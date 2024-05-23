@@ -11,6 +11,17 @@ public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project target) {
+        CppLibrary library = getLibrary();
+
         target.getPlugins().apply(CppLibraryPlugin.class);
+
+        linkDslModelToPlugin(target, library);
+    }
+
+    private void linkDslModelToPlugin(Project project, CppLibrary library) {
+        org.gradle.language.cpp.CppLibrary model = project.getExtensions().getByType(org.gradle.language.cpp.CppLibrary.class);
+
+        model.getImplementationDependencies().getDependencies().addAllLater(library.getDependencies().getImplementation().getDependencies());
+        model.getApiDependencies().getDependencies().addAllLater(library.getDependencies().getApi().getDependencies());
     }
 }
