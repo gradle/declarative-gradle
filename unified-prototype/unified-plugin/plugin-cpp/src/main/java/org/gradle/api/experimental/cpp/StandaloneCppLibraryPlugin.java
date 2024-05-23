@@ -3,6 +3,7 @@ package org.gradle.api.experimental.cpp;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.gradle.language.cpp.CppBinary;
 import org.gradle.language.cpp.plugins.CppLibraryPlugin;
 
 public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
@@ -23,5 +24,11 @@ public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
 
         model.getImplementationDependencies().getDependencies().addAllLater(library.getDependencies().getImplementation().getDependencies());
         model.getApiDependencies().getDependencies().addAllLater(library.getDependencies().getApi().getDependencies());
+
+        project.afterEvaluate(p -> {
+            for (CppBinary binary : model.getBinaries().get()) {
+                binary.getCompileTask().get().getCompilerArgs().add(library.getCppVersion().map(v -> "--std=" + v));
+            }
+        });
     }
 }

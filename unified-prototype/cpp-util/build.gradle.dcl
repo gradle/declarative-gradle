@@ -1,3 +1,3 @@
 cppLibrary {
-    cppVersion = "C++20"
+    cppVersion = "c++20"
 }

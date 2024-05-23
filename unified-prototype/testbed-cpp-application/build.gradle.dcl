@@ -1,5 +1,5 @@
 cppApplication {
-    cppVersion = "C++20"
+    cppVersion = "c++20"
 
     dependencies {
         implementation(project(":cpp-util"))
