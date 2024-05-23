@@ -30,16 +30,17 @@ To get started, follow the steps in [this guide](../android/README.md#3-getting-
 
 At the moment, we do not have a detailed guide for other project types.
 They are coming soon.
-For now, you can check out the [Declarative Gradle prototypes](../../early-prototypes/README.md).
+For now, you can check out the [Declarative Gradle prototypes](../../unified-prototypes/README.md).
 They include samples and built-in documentation so that you can try them out.
 It might be too early to adopt them in your projects due to the upcoming compatibility breaking changes,
-but your're welcome to try Declarative Gradle in non-production projects and experimental branches.
+but you're welcome to try Declarative Gradle in non-production projects and experimental branches.
 
 - [Declarative Gradle for Java](../../unified-prototype/README.md#java)
-- [Declarative Gradle for Kotlin](../../unified-prototype/README.md#kotlin-jvm)
+- [Declarative Gradle for Kotlin JVM](../../unified-prototype/README.md#kotlin-jvm)
 - [Declarative Gradle for Kotlin Multiplatform (KMP)](../../unified-prototype/README.md#kotlin-kmp)
+- [Declarative Gradle for Swift](../../unified-prototype/README.md#swift)
 
 ## References
 
 - [Support for Android](../android/README.md)
-- [Other Declarative Gradle prototypes](../../early-prototypes/README.md)
+- [Other Declarative Gradle prototypes](../../unified-prototypes/README.md)
