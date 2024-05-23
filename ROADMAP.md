@@ -7,43 +7,23 @@ All the dates and the scope are aspirational.
 To discuss the roadmap and the related initiatives, use the
 `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
 
-> **DISCLAIMER:** This roadmap is currently under discussion with the the team and key stakeholders,
-> so there may be significant changes to the deliverables and the timeline.
-
-## Project Board
-
-We have a [project board](https://github.com/orgs/gradle/projects/96) published on GitHub Projects.
-It captures the main initiatives and epics in this project.
-
 ## Key Milestones
 
-### First Alpha Release
+### First Early Access Preview (EAP)
 
-Scope: Declarative Gradle is available for evaluation with limited functionality and support from the team.
-This includes:
-the alpha release of the Declarative Gradle plugins,
-basic integrations, demos, and documentation.
-In this release, our primary focus is Android development,
-but we keep in mind classic Java and Kotlin use cases,
-as well as Kotlin Multiplatform (KMP).
+* Summer 2024
+* Early feedback from IDE vendors and plugin integrators
+* Early feedback from software developers and build engineers from the community
+* Demonstrating end to end workflows with [Now In Android](https://github.com/gradle/nowinandroid) sample and [other prototypes](https://github.com/gradle/declarative-gradle)
+  * Declarative Configuration Language (DCL) preview
+  * Software Types support preview
+  * Android Studio DCL support preview
+  * Toolability demonstrations (IDE integration, mutations)
 
-- [Planned Issues (milestone)](https://github.com/gradle/declarative-gradle/milestone/1)
-- [Prototypes](./unified-prototype/README.md)
+### Subsequent Early Access Previews
 
-### Public Early Access Release (EAP)
-
-The first version is ready for broad external evaluation and feedback.
-That includes making the Declarative Gradle plugins functional for core use cases, while this work is likely to continue after the milestone, and
-having Early-Access IDE Support in Android Studio.
-
-- [Planned Issues (milestone)](https://github.com/gradle/declarative-gradle/milestone/2)
-
-### Public Alpha
-
-Should the experiments and the EAP release be successful,
-we intend to address the feedback over the summer and to release
-a public Beta version in Autumn 2024.
-
-### Public Release
-
-To be scheduled depending on adoption and evaluation feedback.
+* 2024-H2
+* More EAPs towards the end of the year
+* More features
+* Addressing collected feedback
+* Further feedback from the community

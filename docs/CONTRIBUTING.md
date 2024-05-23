@@ -19,14 +19,11 @@ initial feedback on DSL and use-cases will be appreciated!
 
 We do not consider Declarative Gradle is ready for wide adoption,
 because there are upcoming breaking changes.
-We plan to make it available in the [Early Access Release](../ROADMAP.md).
 
 ## Adapting Gradle Plugins
 
 We advise against adapting your plugins at this stage
 because we plan many breaking changes.
-Unless you want to experiment and share feedback with us (which is highly appreciated!),
-stay tuned for the [Early Access Release](../ROADMAP.md)!
 
 ## Improving Documentation
 
