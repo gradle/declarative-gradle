@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
 
 public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
-    protected static final int DEFAULT_JDK = 11;
-    protected static final int DEFAULT_TARGET_ANDROID_SDK = 34;
     protected static final int DEFAULT_MIN_ANDROID_SDK = 21;
 
     protected abstract AndroidSoftware getAndroidSoftware();
@@ -30,8 +28,6 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         AndroidSoftware dslModel = getAndroidSoftware();
 
         // Setup Android software conventions
-        dslModel.getJdkVersion().convention(DEFAULT_JDK);
-        dslModel.getCompileSdk().convention(DEFAULT_TARGET_ANDROID_SDK);
         dslModel.getMinSdk().convention(DEFAULT_MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
 
         // Setup minify conventions

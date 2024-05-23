@@ -14,8 +14,26 @@ plugins {
     id("org.gradle.experimental.swift-ecosystem")
 }
 
-// Not currently supported by declarative model
-//rootProject.name = "unified-prototype"
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+
+rootProject.name = "unified-prototype"
+
+conventions {
+    androidLibrary {
+        jdkVersion = 11
+        compileSdk = 34
+    }
+
+    androidApplication {
+        jdkVersion = 11
+        compileSdk = 34
+    }
+}
 
 include("android-util")
 include("java-util")
