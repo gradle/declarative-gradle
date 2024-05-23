@@ -12,22 +12,18 @@ To discuss the roadmap and the related initiatives, use the
 ### First Early Access Preview (EAP)
 
 * Summer 2024
-* Early ecosystem plugins integrator feedback
-* Content
+* Early feedback from IDE vendors and plugin integrators
+* Early feedback from software developers and build engineers from the community
+* Demonstrating end to end workflows with [Now In Android](https://github.com/gradle/nowinandroid) sample and [other prototypes](https://github.com/gradle/declarative-gradle)
   * Declarative Configuration Language (DCL) preview
   * Software Types support preview
   * Android Studio DCL support preview
-  * Demonstrations of tooling integrations
+  * Toolability demonstrations (IDE integration, mutations)
 
 ### Subsequent Early Access Previews
 
 * 2024-H2
 * More EAPs towards the end of the year
-* Early software developers adopters feedback
-
-### First Alphas for some components
-
-* 2024-EOY
-* Declarative Configuration Language Alpha
-* Software Types support Alpha
-* Continued feedback
+* More features
+* Addressing collected feedback
+* Further feedback from the community
