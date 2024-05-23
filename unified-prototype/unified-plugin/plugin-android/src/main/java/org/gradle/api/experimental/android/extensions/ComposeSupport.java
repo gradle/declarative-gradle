@@ -2,7 +2,6 @@ package org.gradle.api.experimental.android.extensions;
 
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.dsl.DependencyHandler;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.provider.Provider;
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions;
@@ -26,10 +25,9 @@ public final class ComposeSupport {
 
             androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");
 
-            DependencyHandler dependencies = project.getDependencies();
-            dependencies.add("implementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
-            dependencies.add("androidTestImplementation", dependencies.platform("androidx.compose:compose-bom:2024.02.02"));
-            dependencies.add("implementation", "androidx.compose.ui:ui-tooling-preview");
+            dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
+            dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
+            dslModel.getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling-preview");
 
             dslModel.getBuildTypes().getDebug().getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling");
 
