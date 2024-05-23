@@ -7,6 +7,7 @@ import org.gradle.api.attributes.Attribute;
 import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
 import org.gradle.api.experimental.android.AndroidSoftware;
+import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 
 import java.util.Objects;
@@ -57,10 +58,13 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
             return null;
         });
 
-        if (Objects.equals(project.getRootProject().getName(), "nowinandroid")) {
+        // TODO: All this configuration should be moved to the NiA project
+        if (NiaSupport.isNiaProject(project)) {
             // ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
             // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
             configureContentTypeAttributes(project);
+
+            NiaSupport.configureNiaApplication(project, dslModel);
         }
     }
 

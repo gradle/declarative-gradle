@@ -202,7 +202,6 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project>  
         configurations.getByName(name + "RuntimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
     }
 
-
     protected <T> void ifPresent(Property<T> property, Action<T> action) {
         if (property.isPresent()) {
             action.execute(property.get());

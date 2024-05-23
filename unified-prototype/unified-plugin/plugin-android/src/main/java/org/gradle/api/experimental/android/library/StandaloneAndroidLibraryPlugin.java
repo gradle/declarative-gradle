@@ -6,6 +6,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
 import org.gradle.api.experimental.android.AndroidSoftware;
+import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 
 /**
@@ -46,6 +47,11 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
     private void linkDslModelToPlugin(Project project, AndroidLibrary dslModel) {
         LibraryExtension android = project.getExtensions().getByType(LibraryExtension.class);
         super.linkDslModelToPlugin(project, dslModel, android);
+
+        // TODO: All this configuration should be moved to the NiA project
+        if (NiaSupport.isNiaProject(project)) {
+            NiaSupport.configureNiaLibrary(project, dslModel);
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
