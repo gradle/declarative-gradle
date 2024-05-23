@@ -9,6 +9,7 @@ import org.gradle.api.experimental.android.extensions.Hilt;
 import org.gradle.api.experimental.android.extensions.KotlinSerialization;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.experimental.android.nia.Feature;
+import org.gradle.api.experimental.android.extensions.Room;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -87,6 +88,16 @@ public interface AndroidSoftware {
         Hilt hilt = getHilt();
         action.execute(hilt);
         hilt.getEnabled().set(true);
+    }
+
+    @Nested
+    Room getRoom();
+
+    @Configuring
+    default void room(Action<? super Room> action) {
+        Room room = getRoom();
+        action.execute(room);
+        room.getEnabled().set(true);
     }
 
     @Nested

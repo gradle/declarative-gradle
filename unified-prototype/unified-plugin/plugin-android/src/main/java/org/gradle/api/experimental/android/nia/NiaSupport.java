@@ -72,7 +72,7 @@ public final class NiaSupport {
         }
 
         if (dslModel.getFeature().getEnabled().get()) {
-            configureFeature(project, android);
+            configureFeature(project, dslModel, android);
         }
     }
 
@@ -85,8 +85,7 @@ public final class NiaSupport {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static void configureFeature(Project project, CommonExtension<?, ?, ?, ?, ?, ?> android) {
-        android.getDefaultConfig().setTestInstrumentationRunner("com.google.samples.apps.nowinandroid.core.testing.NiaTestRunner");
+    private static void configureFeature(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         android.getTestOptions().setAnimationsDisabled(true);
 
         project.getDependencies().add("implementation", project.project(":core:ui"));
