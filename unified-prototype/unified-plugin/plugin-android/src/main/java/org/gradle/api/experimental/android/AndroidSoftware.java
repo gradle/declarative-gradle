@@ -40,14 +40,12 @@ public interface AndroidSoftware {
     @Restricted
     Property<Integer> getJdkVersion();
 
-    @Nested
     AndroidSoftwareBuildTypes getBuildTypes();
 
-    @Nested
     AndroidSoftwareDependencies getDependencies();
 
     /**
-     * Controls whether or not to set up Kotlin serialization, applying the plugins
+     * Controls whether to set up Kotlin serialization, applying the plugins
      * and adding any necessary dependencies.
      */
     @Nested
@@ -121,5 +119,4 @@ public interface AndroidSoftware {
         action.execute(feature);
         feature.getEnabled().set(true);
     }
-
 }
