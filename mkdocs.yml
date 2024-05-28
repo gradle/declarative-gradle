@@ -96,6 +96,11 @@ nav:
   - Participate:
       Contributing: docs/CONTRIBUTING.md
       Code of Conduct: docs/CODE_OF_CONDUCT.md
+  - Resources:
+      Publications:
+        List of Publications: publications/README.md
+        KotlinConf 2024: publications/2024-05-kotlinconf.md
+      Newsletter: publications/newsletter/README.md
 
 extra_css:
   - docs/assets/css/gradle.css

@@ -10,7 +10,7 @@ We are working on _Declarative Gradle_ to realize that part of the vision.
 This is an experimental project, stay tuned for updates!
 
 Learn more in the [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
-blog post.
+blog post and [other publications](./publications/README.md).
 
 ## Key Principles
 
@@ -152,6 +152,7 @@ or other permissive OSI-compliant licenses.
 ## Learn More
 
 - [Initial Declarative Gradle Announcement and Full Manifesto](https://blog.gradle.org/declarative-gradle)
+- [Publications, presentations and interviews about Declarative Gradle](./publications/README.md)
 
 ## Discuss
 
