@@ -38,11 +38,14 @@ template: |
   <!-- Optional: add a release summary here -->
   $CHANGES
 
+replacers:
+  - search: 'NiA'
+    replace: '[Now in Android](https://github.com/gradle/nowinandroid/tree/main-declarative)'
+  - search: 'NIA'
+    replace: '[Now in Android](https://github.com/gradle/nowinandroid/tree/main-declarative)'
 
 autolabeler:
   - label: 'documentation'
-    files:
-      - '*.md'
     branch:
       - '/docs{0,1}\/.+/'
   - label: 'bug'
