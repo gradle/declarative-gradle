@@ -1,8 +1,0 @@
-mkdocs
-mkdocs-material
-mkdocs-autorefs
-mkdocs-pdf
-mkdocs-same-dir
-mkdocs-include-markdown-plugin
-pillow
-cairosvg
