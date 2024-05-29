@@ -19,6 +19,7 @@ package org.gradle.api.experimental.android.library;
 import org.gradle.api.Action;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.provider.Property;
+import org.gradle.api.experimental.android.extensions.Protobuf;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
@@ -46,4 +47,14 @@ public interface AndroidLibrary extends AndroidSoftware {
     // TODO: We really want to model a list of consumer proguard files here, but can't yet
     @Restricted
     Property<String> getConsumerProguardFile();
+
+    @Nested
+    Protobuf getProtobuf();
+
+    @Configuring
+    default void protobuf(Action<? super Protobuf> action) {
+        Protobuf protobuf = getProtobuf();
+        protobuf.getEnabled().set(true);
+        action.execute(protobuf);
+    }
 }

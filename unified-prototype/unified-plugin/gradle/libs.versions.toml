@@ -7,6 +7,7 @@ ksp = "1.9.23-1.0.20"
 android = "8.3.0"
 hilt = "2.50"
 room = "2.6.1"
+protobuf = "0.9.4"
 
 apache-commons = "3.3.1"
 
@@ -23,6 +24,7 @@ android-kotlin-android = { module = "org.jetbrains.kotlin.android:org.jetbrains.
 hilt-android-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"}
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+protobuf-plugin = { module = "com.google.protobuf:protobuf-gradle-plugin", version.ref = "protobuf" }
 room-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room" }
 
 # Other libraries

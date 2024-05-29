@@ -21,6 +21,7 @@ public final class ComposeSupport {
     @SuppressWarnings("UnstableApiUsage")
     public static void configureCompose(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> androidLib) {
         if (dslModel.getCompose().getEnabled().get()) {
+            project.getLogger().info("Compose is enabled in: " + project.getPath());
             androidLib.getBuildFeatures().setCompose(true);
 
             androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");

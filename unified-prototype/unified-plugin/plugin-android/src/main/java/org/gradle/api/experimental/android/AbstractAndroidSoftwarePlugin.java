@@ -17,6 +17,8 @@ import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
+import java.util.Objects;
+
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
 
 public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
