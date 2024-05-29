@@ -53,6 +53,7 @@ public interface AndroidApplication extends AndroidSoftware {
         action.execute(getDependencies());
     }
 
+    @Override
     @Nested
     AndroidApplicationBuildTypes getBuildTypes();
 

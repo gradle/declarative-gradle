@@ -21,7 +21,7 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Project;
 import org.gradle.api.experimental.android.AndroidSoftware;
-import org.gradle.api.experimental.android.extensions.Jacoco;
+import org.gradle.api.experimental.android.extensions.testing.Jacoco;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.testing.Test;
@@ -87,13 +87,9 @@ public final class NiaSupport {
         configureLint(android);
         configurePrintApksTask(project, androidComponents);
 
-        if (dslModel.getTesting().getJacoco().getEnabled().get()) {
-            configureJacoco(dslModel.getTesting().getJacoco(), project, android);
-        }
+        configureJacoco(dslModel.getTesting().getJacoco(), project, android);
 
-        if (dslModel.getFeature().getEnabled().get()) {
-            configureFeature(project, dslModel, android);
-        }
+        configureFeature(project, dslModel, android);
     }
 
 
@@ -106,17 +102,21 @@ public final class NiaSupport {
 
     @SuppressWarnings("UnstableApiUsage")
     private static void configureFeature(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
-        android.getTestOptions().setAnimationsDisabled(true);
+        if (dslModel.getFeature().getEnabled().get()) {
+            project.getLogger().info(project.getPath() + " is a conventional Now In Android Feature project");
 
-        project.getDependencies().add("implementation", project.project(":core:ui"));
-        project.getDependencies().add("implementation", project.project(":core:designsystem"));
+            android.getTestOptions().setAnimationsDisabled(true);
 
-        project.getDependencies().add("implementation", "androidx.hilt:hilt-navigation-compose:1.2.0");
-        project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-runtime-compose:2.7.0");
-        project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0");
-        project.getDependencies().add("implementation", "androidx.tracing:tracing-ktx:1.3.0-alpha02");
+            project.getDependencies().add("implementation", project.project(":core:ui"));
+            project.getDependencies().add("implementation", project.project(":core:designsystem"));
 
-        project.getDependencies().add("androidTestImplementation", "androidx.lifecycle:lifecycle-runtime-testing:2.7.0");
+            project.getDependencies().add("implementation", "androidx.hilt:hilt-navigation-compose:1.2.0");
+            project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-runtime-compose:2.7.0");
+            project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0");
+            project.getDependencies().add("implementation", "androidx.tracing:tracing-ktx:1.3.0-alpha02");
+
+            project.getDependencies().add("androidTestImplementation", "androidx.lifecycle:lifecycle-runtime-testing:2.7.0");
+        }
     }
 
     private static void configureLint(CommonExtension<?, ?, ?, ?, ?, ?> android) {
@@ -285,53 +285,57 @@ public final class NiaSupport {
 
     @SuppressWarnings("deprecation")
     private static void configureJacoco(Jacoco jacocoExtension, Project project, CommonExtension<?, ?, ?, ?, ?, ?> android) {
-        project.getPlugins().apply("jacoco");
+        if (jacocoExtension.getEnabled().get()) {
+            project.getLogger().info("JaCoCo is enabled in: " + project.getPath());
 
-        android.getBuildTypes().configureEach(buildType -> {
-            buildType.setEnableAndroidTestCoverage(true);
-            buildType.setEnableUnitTestCoverage(true);
-        });
+            project.getPlugins().apply("jacoco");
 
-        JacocoPluginExtension jacocoPluginExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
-        jacocoPluginExtension.setToolVersion(jacocoExtension.getVersion().get());
+            android.getBuildTypes().configureEach(buildType -> {
+                buildType.setEnableAndroidTestCoverage(true);
+                buildType.setEnableUnitTestCoverage(true);
+            });
 
-        LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
-        androidLibComponents.onVariants(androidLibComponents.selector().all(), variant -> {
-            final String testTaskName = "test" + StringUtils.capitalize(variant.getName()) + "UnitTest";
-            final File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
-            project.getTasks().register("jacoco" + StringUtils.capitalize(testTaskName) + "Report", JacocoReport.class, task -> {
-                task.dependsOn(testTaskName);
+            JacocoPluginExtension jacocoPluginExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
+            jacocoPluginExtension.setToolVersion(jacocoExtension.getVersion().get());
 
-                task.reports(report -> {
-                    report.getXml().getRequired().set(true);
-                    report.getXml().getRequired().set(true);
-                });
+            LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
+            androidLibComponents.onVariants(androidLibComponents.selector().all(), variant -> {
+                final String testTaskName = "test" + StringUtils.capitalize(variant.getName()) + "UnitTest";
+                final File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
+                project.getTasks().register("jacoco" + StringUtils.capitalize(testTaskName) + "Report", JacocoReport.class, task -> {
+                    task.dependsOn(testTaskName);
 
-                task.getClassDirectories().setFrom(
+                    task.reports(report -> {
+                        report.getXml().getRequired().set(true);
+                        report.getXml().getRequired().set(true);
+                    });
+
+                    task.getClassDirectories().setFrom(
                         project.fileTree(project.getBuildDir() + "/tmp/kotlin-classes/" + variant.getName(), tree -> tree.exclude(coverageExclusions()))
-                );
+                    );
 
-                task.getSourceDirectories().setFrom(
+                    task.getSourceDirectories().setFrom(
                         project.files(project.getProjectDir() + "/src/main/java", project.getProjectDir() + "/src/main/kotlin"
                         ));
 
-                task.getExecutionData().setFrom(
+                    task.getExecutionData().setFrom(
                         project.files(buildDir + "/jacoco/" + testTaskName + ".exec")
-                );
+                    );
+                });
             });
-        });
 
-        project.getTasks().withType(Test.class, test -> {
-            JacocoTaskExtension jacocoTaskExtension = test.getExtensions().getByType(JacocoTaskExtension.class);
+            project.getTasks().withType(Test.class, test -> {
+                JacocoTaskExtension jacocoTaskExtension = test.getExtensions().getByType(JacocoTaskExtension.class);
 
-            // Required for JaCoCo + Robolectric
-            // https://github.com/robolectric/robolectric/issues/2230
-            // Consider removing if not we don't add Robolectric
-            jacocoTaskExtension.setIncludeNoLocationClasses(true);
+                // Required for JaCoCo + Robolectric
+                // https://github.com/robolectric/robolectric/issues/2230
+                // Consider removing if not we don't add Robolectric
+                jacocoTaskExtension.setIncludeNoLocationClasses(true);
 
-            // Required for JDK 11 with the above
-            // https://github.com/gradle/gradle/issues/5184#issuecomment-391982009
-            jacocoTaskExtension.setExcludes(Collections.singletonList("jdk.internal.*"));
-        });
+                // Required for JDK 11 with the above
+                // https://github.com/gradle/gradle/issues/5184#issuecomment-391982009
+                jacocoTaskExtension.setExcludes(Collections.singletonList("jdk.internal.*"));
+            });
+        }
     }
 }

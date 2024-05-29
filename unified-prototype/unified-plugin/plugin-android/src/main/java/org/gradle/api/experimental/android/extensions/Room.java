@@ -5,6 +5,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
 public interface Room {
+    @Restricted
     Property<Boolean> getEnabled();
 
     @Restricted

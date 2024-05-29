@@ -5,9 +5,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
 public interface CoreLibraryDesugaring {
-    /**
-     * Can be enabled manually, or automatically when the TargetJavaVersion is set to 8 or higher.
-     */
     @Restricted
     Property<Boolean> getEnabled();
 

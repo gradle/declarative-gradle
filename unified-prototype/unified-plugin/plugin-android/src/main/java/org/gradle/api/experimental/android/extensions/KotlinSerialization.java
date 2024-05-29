@@ -14,9 +14,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @SuppressWarnings("UnstableApiUsage")
 @Restricted
 public interface KotlinSerialization {
-    /**
-     * Internal property purposely not exposed to the DSL.
-     */
+    @Restricted
     Property<Boolean> getEnabled();
 
     /**
