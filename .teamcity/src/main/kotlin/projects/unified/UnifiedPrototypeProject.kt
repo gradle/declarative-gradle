@@ -17,6 +17,8 @@ object UnifiedPrototypeProject : Project({
         param("env.JAVA_HOME", "%linux.java17.openjdk.64bit%")
         param("env.ANDROID_HOME", "/opt/android/sdk")
         param("env.ANDROID_SDK_ROOT", "/opt/android/sdk")
+        // Add Swift to the path
+        param("env.PATH", "/opt/swift/latest/usr/bin:%env.PATH%")
     }
 
     val buildAndTest = buildType {
