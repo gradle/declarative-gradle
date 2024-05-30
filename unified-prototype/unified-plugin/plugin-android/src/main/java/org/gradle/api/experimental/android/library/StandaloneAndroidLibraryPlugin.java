@@ -52,6 +52,8 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         if (NiaSupport.isNiaProject(project)) {
             NiaSupport.configureNiaLibrary(project, dslModel);
         }
+
+        ifPresent(dslModel.getConsumerProguardFile(), android.getDefaultConfig()::consumerProguardFile);
     }
 
     @SuppressWarnings("UnstableApiUsage")
