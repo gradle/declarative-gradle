@@ -1,6 +1,9 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     `kotlin-dsl`
     id("build-logic.publishing")
+    groovy // For spock testing
 }
 
 description = "Implements the declarative Android DSL prototype"
@@ -18,6 +21,22 @@ dependencies {
     implementation(libs.protobuf.plugin)
 
     implementation(libs.apache.commons.lang)
+}
+
+testing {
+    suites {
+        @Suppress("UnstableApiUsage")
+        val integTest by registering(JvmTestSuite::class) {
+            useSpock("2.2-groovy-3.0")
+
+            dependencies {
+                implementation(project(":internal-testing-utils"))
+                implementation(project())
+            }
+        }
+
+        tasks.getByPath("check").dependsOn(integTest)
+    }
 }
 
 gradlePlugin {
@@ -44,6 +63,8 @@ gradlePlugin {
             tags = setOf("declarative-gradle", "android")
         }
     }
+
+    testSourceSet(sourceSets.getByName("integTest"))
 }
 
 // Compile against Java 17 since Android requires Java 17 at minimum
