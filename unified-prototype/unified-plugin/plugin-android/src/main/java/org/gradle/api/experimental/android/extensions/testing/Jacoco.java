@@ -11,6 +11,7 @@ public interface Jacoco {
     /**
      * Internal property purposely not exposed to the DSL.
      */
+    @Restricted
     Property<Boolean> getEnabled();
 
     /**
