@@ -10,8 +10,6 @@ import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 
-import java.util.Objects;
-
 /**
  * Creates a declarative {@link AndroidApplication} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.

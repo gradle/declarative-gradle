@@ -54,8 +54,8 @@ public interface AndroidSoftware {
     @Configuring
     default void kotlinSerialization(Action<? super KotlinSerialization> action) {
         KotlinSerialization kotlinSerialization = getKotlinSerialization();
-        action.execute(kotlinSerialization);
         kotlinSerialization.getEnabled().set(true);
+        action.execute(kotlinSerialization);
     }
 
     @Nested
@@ -64,8 +64,8 @@ public interface AndroidSoftware {
     @Configuring
     default void compose(Action<? super Compose> action) {
         Compose compose = getCompose();
-        action.execute(compose);
         compose.getEnabled().set(true);
+        action.execute(compose);
     }
 
     @Nested
@@ -74,8 +74,8 @@ public interface AndroidSoftware {
     @Configuring
     default void coreLibraryDesugaring(Action<? super CoreLibraryDesugaring> action) {
         CoreLibraryDesugaring coreLibraryDesugaring = getCoreLibraryDesugaring();
-        action.execute(coreLibraryDesugaring);
         coreLibraryDesugaring.getEnabled().set(true);
+        action.execute(coreLibraryDesugaring);
     }
 
     @Nested
@@ -84,8 +84,8 @@ public interface AndroidSoftware {
     @Configuring
     default void hilt(Action<? super Hilt> action) {
         Hilt hilt = getHilt();
-        action.execute(hilt);
         hilt.getEnabled().set(true);
+        action.execute(hilt);
     }
 
     @Nested
@@ -94,8 +94,8 @@ public interface AndroidSoftware {
     @Configuring
     default void room(Action<? super Room> action) {
         Room room = getRoom();
-        action.execute(room);
         room.getEnabled().set(true);
+        action.execute(room);
     }
 
     @Nested
@@ -116,7 +116,7 @@ public interface AndroidSoftware {
     @Configuring
     default void feature(Action<? super Feature> action) {
         Feature feature = getFeature();
-        action.execute(feature);
         feature.getEnabled().set(true);
+        action.execute(feature);
     }
 }

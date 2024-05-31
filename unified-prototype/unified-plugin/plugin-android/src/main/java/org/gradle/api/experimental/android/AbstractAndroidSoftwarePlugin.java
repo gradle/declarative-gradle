@@ -24,6 +24,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
 
     protected abstract AndroidSoftware getAndroidSoftware();
 
+    @Override
     public void apply(Project project) {
         AndroidSoftware dslModel = getAndroidSoftware();
 
@@ -111,6 +112,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
 
     protected void configureHilt(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         if (dslModel.getHilt().getEnabled().get()) {
+            project.getLogger().info("Hilt is enabled in: " + project.getPath());
+
             // Add support for KSP
             project.getPlugins().apply("com.google.devtools.ksp");
             project.getDependencies().add("ksp", "com.google.dagger:hilt-android-compiler:2.50");
@@ -124,6 +127,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
     @SuppressWarnings("UnstableApiUsage")
     protected void configureRoom(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         if (dslModel.getRoom().getEnabled().get()) {
+            project.getLogger().info("Room is enabled in: " + project.getPath());
+
             project.getPlugins().apply("androidx.room");
             project.getPlugins().apply("com.google.devtools.ksp");
 
@@ -145,6 +150,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
 
     protected void configureDesugaring(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         if (dslModel.getCoreLibraryDesugaring().getEnabled().get()) {
+            project.getLogger().info("Core library desugaring is enabled in: " + project.getPath());
+
             android.compileOptions(compileOptions -> {
                 compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
                 return null;
@@ -174,6 +181,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
     @SuppressWarnings("UnstableApiUsage")
     protected void configureKotlinSerialization(Project project, AndroidSoftware dslModel) {
         if (dslModel.getKotlinSerialization().getEnabled().get()) {
+            project.getLogger().info("Kotlin Serialization is enabled in: " + project.getPath());
+
             project.getPlugins().apply("org.jetbrains.kotlin.plugin.serialization");
             project.getConfigurations().getByName("testImplementation").fromDependencyCollector(dslModel.getKotlinSerialization().getDependencies().getImplementation());
 

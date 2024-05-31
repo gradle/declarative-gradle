@@ -34,6 +34,7 @@ public interface AndroidLibrary extends AndroidSoftware {
         action.execute(getDependencies());
     }
 
+    @Override
     @Nested
     AndroidLibraryBuildTypes getBuildTypes();
 

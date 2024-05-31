@@ -5,9 +5,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
 public interface Compose {
-    /**
-     * Internal property purposely not exposed to the DSL.
-     */
+    @Restricted
     Property<Boolean> getEnabled();
 
     // TODO: This should be a file property, and not assume it's a path from the root project
