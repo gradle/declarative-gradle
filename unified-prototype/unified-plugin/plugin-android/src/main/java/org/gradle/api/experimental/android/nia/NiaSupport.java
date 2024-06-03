@@ -1,5 +1,6 @@
 package org.gradle.api.experimental.android.nia;
 
+import com.android.SdkConstants;
 import com.android.build.api.artifact.SingleArtifact;
 import com.android.build.api.dsl.ApplicationExtension;
 import com.android.build.api.dsl.ApplicationProductFlavor;
@@ -15,15 +16,17 @@ import com.android.build.api.variant.ApplicationAndroidComponentsExtension;
 import com.android.build.api.variant.BuiltArtifactsLoader;
 import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
+import com.android.build.gradle.BaseExtension;
+import com.dropbox.gradle.plugins.dependencyguard.DependencyGuardPluginExtension;
 import org.apache.commons.lang3.StringUtils;
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer;
-import org.gradle.api.JavaVersion;
-import org.gradle.api.NamedDomainObjectContainer;
-import org.gradle.api.Project;
+import org.apache.commons.lang3.text.WordUtils;
+import org.gradle.api.*;
 import org.gradle.api.experimental.android.AndroidSoftware;
-import org.gradle.api.experimental.android.extensions.testing.Jacoco;
+import org.gradle.api.experimental.android.application.AndroidApplication;
+import org.gradle.api.experimental.android.library.AndroidLibrary;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension;
@@ -59,7 +62,7 @@ public final class NiaSupport {
         return Objects.equals(project.getRootProject().getName().replace("-", ""), NiaSupport.NIA_PROJECT_NAME);
     }
 
-    public static void configureNiaLibrary(Project project, AndroidSoftware dslModel) {
+    public static void configureNiaLibrary(Project project, AndroidLibrary dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
@@ -67,11 +70,18 @@ public final class NiaSupport {
         disableUnnecessaryAndroidTests(project, androidLibComponents);
     }
 
-    public static void configureNiaApplication(Project project, AndroidSoftware dslModel) {
+    public static void configureNiaApplication(Project project, AndroidApplication dslModel) {
         ApplicationExtension androidApp = project.getExtensions().getByType(ApplicationExtension.class);
         ApplicationAndroidComponentsExtension androidAppComponents = project.getExtensions().getByType(ApplicationAndroidComponentsExtension.class);
 
         configureNia(project, dslModel, androidApp, androidAppComponents);
+
+        @SuppressWarnings("UnstableApiUsage")
+        TestOptions testOptions = androidApp.getTestOptions();
+        testOptions.setAnimationsDisabled(true);
+
+        configureBadgingTasks(project, androidAppComponents);
+        configureDependencyGuard(project, dslModel, androidApp);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -87,11 +97,44 @@ public final class NiaSupport {
         configureLint(android);
         configurePrintApksTask(project, androidComponents);
 
-        configureJacoco(dslModel.getTesting().getJacoco(), project, android);
+        configureJacoco(project, dslModel, android);
 
         configureFeature(project, dslModel, android);
     }
 
+    private static void configureBadgingTasks(Project project, ApplicationAndroidComponentsExtension androidAppComponents) {
+        BaseExtension baseExtension = project.getExtensions().getByType(BaseExtension.class);
+
+        androidAppComponents.onVariants(androidAppComponents.selector().all(), variant -> {
+            // Registers a new task to verify the app bundle.
+            String capitalizedVariantName = WordUtils.capitalize(variant.getName());
+            String generateBadgingTaskName = "generate" + capitalizedVariantName + "Badging";
+            Provider<GenerateBadgingTask> generateBadging = project.getTasks().register(generateBadgingTaskName, GenerateBadgingTask.class, task -> {
+                @SuppressWarnings("UnstableApiUsage") SingleArtifact.APK_FROM_BUNDLE apkFromBundle = SingleArtifact.APK_FROM_BUNDLE.INSTANCE;
+                task.getApk().set(variant.getArtifacts().get(apkFromBundle));
+
+                task.getAapt2Executable().set(
+                        new File(baseExtension.getSdkDirectory(),
+                                SdkConstants.FD_BUILD_TOOLS + "/" + baseExtension.getBuildToolsVersion() + "/" + SdkConstants.FN_AAPT2));
+
+                task.getBadging().set(project.getLayout().getBuildDirectory().file("outputs/apk_from_bundle/" + variant.getName() + "/" + variant.getName() + "-badging.txt"));
+            });
+
+            String updateBadgingTaskName = "update" + capitalizedVariantName + "Badging";
+            project.getTasks().register(updateBadgingTaskName, Copy.class, task -> {
+                task.from(generateBadging.get().getBadging());
+                task.into(project.getLayout().getProjectDirectory());
+            });
+
+            String checkBadgingTaskName = "check" + capitalizedVariantName + "Badging";
+            project.getTasks().register(checkBadgingTaskName, CheckBadgingTask.class, task -> {
+                task.getGoldenBadging().set(project.getLayout().getProjectDirectory().file(variant.getName() + "-badging.txt"));
+                task.getGoldenBadging().set(generateBadging.get().getBadging());
+                task.getUpdateBadgingTaskName().set(updateBadgingTaskName);
+                task.getOutput().set(project.getLayout().getBuildDirectory().dir("intermediates/" + checkBadgingTaskName));
+            });
+        });
+    }
 
     @SuppressWarnings("deprecation")
     private static void disableUnnecessaryAndroidTests(Project project, LibraryAndroidComponentsExtension androidLibComponents) {
@@ -284,8 +327,8 @@ public final class NiaSupport {
     }
 
     @SuppressWarnings("deprecation")
-    private static void configureJacoco(Jacoco jacocoExtension, Project project, CommonExtension<?, ?, ?, ?, ?, ?> android) {
-        if (jacocoExtension.getEnabled().get()) {
+    private static void configureJacoco(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        if (dslModel.getTesting().getJacoco().getEnabled().get()) {
             project.getLogger().info("JaCoCo is enabled in: " + project.getPath());
 
             project.getPlugins().apply("jacoco");
@@ -296,7 +339,7 @@ public final class NiaSupport {
             });
 
             JacocoPluginExtension jacocoPluginExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
-            jacocoPluginExtension.setToolVersion(jacocoExtension.getVersion().get());
+            jacocoPluginExtension.setToolVersion(dslModel.getTesting().getJacoco().getVersion().get());
 
             LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
             androidLibComponents.onVariants(androidLibComponents.selector().all(), variant -> {
@@ -336,6 +379,16 @@ public final class NiaSupport {
                 // https://github.com/gradle/gradle/issues/5184#issuecomment-391982009
                 jacocoTaskExtension.setExcludes(Collections.singletonList("jdk.internal.*"));
             });
+        }
+    }
+
+    private static void configureDependencyGuard(Project project, AndroidApplication dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        if (dslModel.getDependencyGuard().getEnabled().get()) {
+            // Slight change of behavior here - NiA just applies this plugin to all applications, which seems unnecessary
+            project.getPlugins().apply("com.dropbox.dependency-guard");
+
+            DependencyGuardPluginExtension dependencyGuard = project.getExtensions().getByType(DependencyGuardPluginExtension.class);
+            dependencyGuard.configuration(dslModel.getDependencyGuard().getConfigurationName().get());
         }
     }
 }

@@ -14,6 +14,7 @@ dependencies {
     api(libs.android.kotlin.android)
 
     implementation(project(":plugin-jvm"))
+    implementation(libs.dependency.guard.plugin)
     implementation(libs.ksp.plugin)
     implementation(libs.hilt.android.plugin)
     implementation(libs.kotlin.serialization.plugin)
@@ -21,6 +22,8 @@ dependencies {
     implementation(libs.protobuf.plugin)
 
     implementation(libs.apache.commons.lang)
+    implementation(libs.android.tools.common)
+    implementation(libs.truth)
 }
 
 testing {
