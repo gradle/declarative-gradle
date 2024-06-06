@@ -4,6 +4,8 @@ import androidx.room.gradle.RoomExtension;
 import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.CommonExtension;
 import com.android.build.api.dsl.UnitTestOptions;
+import com.android.build.gradle.BaseExtension;
+import com.android.build.gradle.ProguardFiles;
 import com.google.devtools.ksp.gradle.KspExtension;
 import org.gradle.api.Action;
 import org.gradle.api.JavaVersion;
@@ -17,6 +19,7 @@ import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
+import java.io.File;
 import java.util.Objects;
 
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
@@ -100,8 +103,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         // Link build types
         AndroidSoftwareBuildTypes modelBuildType = dslModel.getBuildTypes();
         NamedDomainObjectContainer<? extends BuildType> androidBuildTypes = android.getBuildTypes();
-        linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
-        linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
+        linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations, android);
+        linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations, android);
 
         configureTesting(project, dslModel, android);
 
@@ -197,9 +200,17 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
     /**
      * Links build types from the model to the android extension.
      */
-    protected void linkBuildType(BuildType buildType, AndroidSoftwareBuildType model, ConfigurationContainer configurations) {
+    protected void linkBuildType(BuildType buildType, AndroidSoftwareBuildType model, ConfigurationContainer configurations, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         buildType.setMinifyEnabled(model.getMinify().getEnabled().get());
         linkBuildTypeDependencies(buildType, model.getDependencies(), configurations);
+
+        model.getDefaultProguardFiles().get().forEach(proguardFile -> {
+            File defaultProguardFile = android.getDefaultProguardFile(proguardFile.getName().get());
+            buildType.proguardFile(defaultProguardFile);
+        });
+        model.getProguardFiles().get().forEach(proguardFile -> {
+            buildType.proguardFile(proguardFile.getName().get());
+        });
     }
 
     @SuppressWarnings("UnstableApiUsage")

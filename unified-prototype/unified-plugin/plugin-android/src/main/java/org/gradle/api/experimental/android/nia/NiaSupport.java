@@ -81,7 +81,7 @@ public final class NiaSupport {
         testOptions.setAnimationsDisabled(true);
 
         configureBadgingTasks(project, androidAppComponents);
-        configureDependencyGuard(project, dslModel, androidApp);
+        configureDependencyGuard(project, dslModel);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -341,8 +341,8 @@ public final class NiaSupport {
             JacocoPluginExtension jacocoPluginExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
             jacocoPluginExtension.setToolVersion(dslModel.getTesting().getJacoco().getVersion().get());
 
-            LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
-            androidLibComponents.onVariants(androidLibComponents.selector().all(), variant -> {
+            AndroidComponentsExtension<?, ?, ?> androidComponentsExtension = project.getExtensions().getByType(AndroidComponentsExtension.class);
+            androidComponentsExtension.onVariants(androidComponentsExtension.selector().all(), variant -> {
                 final String testTaskName = "test" + StringUtils.capitalize(variant.getName()) + "UnitTest";
                 final File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
                 project.getTasks().register("jacoco" + StringUtils.capitalize(testTaskName) + "Report", JacocoReport.class, task -> {
@@ -382,7 +382,7 @@ public final class NiaSupport {
         }
     }
 
-    private static void configureDependencyGuard(Project project, AndroidApplication dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    private static void configureDependencyGuard(Project project, AndroidApplication dslModel) {
         if (dslModel.getDependencyGuard().getEnabled().get()) {
             // Slight change of behavior here - NiA just applies this plugin to all applications, which seems unnecessary
             project.getPlugins().apply("com.dropbox.dependency-guard");
