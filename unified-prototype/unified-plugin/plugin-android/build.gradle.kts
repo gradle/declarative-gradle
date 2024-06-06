@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.kotlin.serialization.plugin)
     implementation(libs.room.plugin)
     implementation(libs.protobuf.plugin)
+    implementation(libs.roborazzi.plugin)
 
     implementation(libs.apache.commons.lang)
     implementation(libs.android.tools.common)

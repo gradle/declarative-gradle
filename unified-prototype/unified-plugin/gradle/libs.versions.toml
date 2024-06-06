@@ -10,6 +10,7 @@ android = "8.3.0"
 androidTools = "31.3.0"
 hilt = "2.50"
 room = "2.6.1"
+roborazzi = "1.7.0"
 
 #Other Libs
 apache-commons = "3.3.1"
@@ -38,3 +39,4 @@ apache-commons-lang = { module = "org.apache.commons:commons-lang3", version.ref
 dependency-guard-plugin = { module = "com.dropbox.dependency-guard:com.dropbox.dependency-guard.gradle.plugin", version.ref = "dependency-guard"}
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 protobuf-plugin = { module = "com.google.protobuf:protobuf-gradle-plugin", version.ref = "protobuf" }
+roborazzi-plugin = { module = "io.github.takahirom.roborazzi:roborazzi-gradle-plugin", version.ref = "roborazzi" }

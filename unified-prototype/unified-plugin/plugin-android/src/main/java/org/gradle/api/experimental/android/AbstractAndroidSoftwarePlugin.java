@@ -4,8 +4,6 @@ import androidx.room.gradle.RoomExtension;
 import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.CommonExtension;
 import com.android.build.api.dsl.UnitTestOptions;
-import com.android.build.gradle.BaseExtension;
-import com.android.build.gradle.ProguardFiles;
 import com.google.devtools.ksp.gradle.KspExtension;
 import org.gradle.api.Action;
 import org.gradle.api.JavaVersion;
@@ -20,7 +18,6 @@ import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
 import java.io.File;
-import java.util.Objects;
 
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
 
@@ -61,6 +58,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         dslModel.getTesting().getTestOptions().getReturnDefaultValues().convention(false);
         dslModel.getTesting().getJacoco().getEnabled().convention(false);
         dslModel.getTesting().getJacoco().getVersion().convention("0.8.7");
+        dslModel.getTesting().getRoborazzi().getEnabled().convention(false);
     }
 
     /**
@@ -126,6 +124,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
             // Add support for Hilt
             project.getPlugins().apply("dagger.hilt.android.plugin");
             project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.50");
+
+            project.getDependencies().add("kspTest", "com.google.dagger:hilt-android-compiler:2.50");
         }
     }
 
@@ -181,6 +181,14 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         ConfigurationContainer configurations = project.getConfigurations();
         configurations.getByName("testImplementation").fromDependencyCollector(testDependencies.getImplementation());
         configurations.getByName("androidTestImplementation").fromDependencyCollector(testDependencies.getAndroidImplementation());
+
+        configureRoborazzi(project, dslModel);
+    }
+
+    protected void configureRoborazzi(Project project, AndroidSoftware dslModel) {
+        if (dslModel.getTesting().getRoborazzi().getEnabled().get()) {
+            project.getPlugins().apply("io.github.takahirom.roborazzi");
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
