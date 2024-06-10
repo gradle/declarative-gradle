@@ -110,7 +110,6 @@ public final class NiaSupport {
         configureKotlin(project);
 
         configureGradleManagedDevices(android);
-        configureLint(android);
         configurePrintApksTask(project, androidComponents);
 
         configureJacoco(project, dslModel, android);
@@ -195,11 +194,6 @@ public final class NiaSupport {
 
             project.getDependencies().add("androidTestImplementation", "androidx.lifecycle:lifecycle-runtime-testing:2.7.0");
         }
-    }
-
-    private static void configureLint(CommonExtension<?, ?, ?, ?, ?, ?> android) {
-        android.getLint().setXmlReport(true);
-        android.getLint().setCheckDependencies(true);
     }
 
     /**

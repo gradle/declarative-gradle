@@ -12,12 +12,14 @@ import org.gradle.api.experimental.android.extensions.Room;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.experimental.android.nia.Feature;
 import org.gradle.api.experimental.android.extensions.Licenses;
+import org.gradle.api.experimental.common.extensions.HasLinting;
+import org.gradle.api.experimental.common.extensions.Lint;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-public interface AndroidSoftware {
+public interface AndroidSoftware extends HasLinting {
     /**
      * @see CommonExtension#getCompileSdk()
      */
@@ -147,5 +149,16 @@ public interface AndroidSoftware {
         BaselineProfile baselineProfile = getBaselineProfile();
         baselineProfile.getEnabled().set(true);
         action.execute(baselineProfile);
+    }
+
+    @Override
+    @Nested
+    Lint getLint();
+
+    @Configuring
+    default void lint(Action<? super Lint> action) {
+        Lint lint = getLint();
+        lint.getEnabled().set(true);
+        action.execute(lint);
     }
 }
