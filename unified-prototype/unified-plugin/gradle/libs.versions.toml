@@ -8,6 +8,7 @@ ksp = "1.9.23-1.0.20"
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
 android = "8.3.0"
 androidTools = "31.3.0"
+baselineProfile = "1.2.2"
 firebaseCrashlytics = "2.9.9"
 firebasePerf = "1.4.2"
 gms = "4.4.1"
@@ -33,6 +34,7 @@ kotlin-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serializat
 android-agp-application = { module = "com.android.application:com.android.application.gradle.plugin", version.ref = "android" }
 android-kotlin-android = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlin" }
 android-tools-common = { module = "com.android.tools:common", version.ref = "androidTools" }
+baseline-profile-plugin = { module = "androidx.baselineprofile:androidx.baselineprofile.gradle.plugin", version.ref = "baselineProfile"}
 firebase-perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerf" }
 firebase-crashlytics-plugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlytics" }
 google-services-plugin = { module = "com.google.gms.google-services:com.google.gms.google-services.gradle.plugin", version.ref = "gms" }

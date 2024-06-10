@@ -8,7 +8,7 @@ public interface Compose {
     @Restricted
     Property<Boolean> getEnabled();
 
-    // TODO: This should be a file property, and not assume it's a path from the root project
+    // TODO:DG This should be a file property, and not assume it's a path from the root project
     @Restricted
     Property<String> getStabilityConfigurationFilePath();
 

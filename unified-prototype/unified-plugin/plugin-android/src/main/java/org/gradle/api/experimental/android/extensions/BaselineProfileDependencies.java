@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.gradle.api.experimental.android.nia;
+package org.gradle.api.experimental.android.extensions;
 
-import org.gradle.api.provider.Property;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
+import org.gradle.api.artifacts.dsl.Dependencies;
+import org.gradle.api.artifacts.dsl.DependencyCollector;
 
-@Restricted
-public interface Licenses {
-    /**
-     * Internal property purposely not exposed to the DSL.
-     */
-    Property<Boolean> getEnabled();
+@SuppressWarnings("UnstableApiUsage")
+public interface BaselineProfileDependencies extends Dependencies {
+    DependencyCollector getProfile();
 }

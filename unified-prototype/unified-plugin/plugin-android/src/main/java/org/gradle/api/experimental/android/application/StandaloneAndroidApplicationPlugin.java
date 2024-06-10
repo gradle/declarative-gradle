@@ -69,7 +69,7 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
             return null;
         });
 
-        // TODO: All this configuration should be moved to the NiA project
+        // TODO:DG All this configuration should be moved to the NiA project
         if (NiaSupport.isNiaProject(project)) {
             NiaSupport.configureNiaApplication(project, dslModel);
         }

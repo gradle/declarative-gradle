@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 
 import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
 
-// TODO: This class should be moved to the NiA project
+// TODO:DG This class should be moved to the NiA project
 /**
  * This is a utility class that configures an Android project with conventions
  * for the Now in Android project.
@@ -112,17 +112,10 @@ public final class NiaSupport {
         configureGradleManagedDevices(android);
         configureLint(android);
         configurePrintApksTask(project, androidComponents);
-        configureLicenses(project, dslModel);
 
         configureJacoco(project, dslModel, android);
 
         configureFeature(project, dslModel, android);
-    }
-
-    private static void configureLicenses(Project project, AndroidSoftware dslModel) {
-        if (dslModel.getLicenses().getEnabled().get()) {
-            project.getPlugins().apply("com.google.android.gms.oss-licenses-plugin");
-        }
     }
 
     @SuppressWarnings("UnstableApiUsage")

@@ -1,6 +1,7 @@
 package org.gradle.api.experimental.android;
 
 import org.gradle.api.Action;
+import org.gradle.api.experimental.android.extensions.BaselineProfile;
 import org.gradle.api.experimental.android.extensions.Minify;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
@@ -49,4 +50,14 @@ public interface AndroidSoftwareBuildType {
 
     @Inject
     ObjectFactory getObjectFactory();
+
+    @Nested
+    BaselineProfile getBaselineProfile();
+
+    @Configuring
+    default void baselineProfile(Action<? super BaselineProfile> action) {
+        BaselineProfile baselineProfile = getBaselineProfile();
+        baselineProfile.getEnabled().set(true);
+        action.execute(baselineProfile);
+    }
 }

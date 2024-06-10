@@ -63,7 +63,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
 
         configureProtobuf(project, dslModel, android);
 
-        // TODO: All this configuration should be moved to the NiA project
+        // TODO:DG All this configuration should be moved to the NiA project
         if (NiaSupport.isNiaProject(project)) {
             NiaSupport.configureNiaLibrary(project, dslModel);
         }
@@ -92,7 +92,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
                 });
 
                 /*
-                 * TODO: We don't want to rely on beforeVariants here, but how to do without hardcoding:
+                 * TODO:DG We don't want to rely on beforeVariants here, but how to do without hardcoding:
                  *  the NiA variants: "demoDebug, demoRelease, prodDebug, prodRelease"?
                  * This would seem to require some sort of ProductFlavor support (and maybe enumerated buildTypes?)
                  * which we don't want to add just yet.
