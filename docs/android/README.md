@@ -5,10 +5,10 @@
 
 Declarative Gradle DSL is currently in alpha.
 
-The Declarative Gradle DSL code is available at https://github.com/gradle/declarative-gradle/tree/main/unified-prototype.
+The Declarative Gradle DSL code is available at <https://github.com/gradle/declarative-gradle/tree/main/unified-prototype>.
 The Declarative Gradle DSL plugin for Android is available at: 
-https://plugins.gradle.org/plugin/org.gradle.experimental.android-library.
-You can find a list of all available plugins [here](https://plugins.gradle.org/search?term=declarative-gradle)
+<https://plugins.gradle.org/plugin/org.gradle.experimental.android-library>.
+You can find a list of all available plugins [here](https://plugins.gradle.org/search?term=declarative-gradle).
 
 Common build files written using the Groovy DSL or Kotlin DSL with the name `build.gradle` and `build.gradle.kts` respectively will be replaced with `build.gradle.dcl`.
 
@@ -50,15 +50,14 @@ The [settings file](settings.gradle.dcl) applies a new "Android ecosystem plugin
 The current prototype is limited to a single `androidLibrary` software type convention, so only a few subprojects have been converted.
 
 Converted subprojects:
+
 - [`:core:common`](core/common/build.gradle.dcl)
 - [`:core:data`](core/data/build.gradle.dcl)
 - [`:core:domain`](core/domain/build.gradle.dcl)
 
 Let’s take a look at a `build.gradle.dcl` file which replaces the common `build.gradle` or `build.gradle.kts` files:
 
-_core/common/build.gradle.dcl_
-
-```kotlin
+```kotlin title="_core/common/build.gradle.dcl_"
 androidLibrary {
     namespace = "com.google.samples.apps.nowinandroid.core.common"
     dependencies {
@@ -79,7 +78,7 @@ The `androidLibrary` software type exposes [several configuration options](https
 
 ### 3.1 Prerequisites
 
-- Make sure to use [JDK 17](https://www.oracle.com/fr/java/technologies/downloads/#java17) and that your JAVA_HOME points to Java 17.
+- Make sure to use [JDK 17](https://www.oracle.com/fr/java/technologies/downloads/#java17) and that your `JAVA_HOME` points to Java 17.
 - Make sure [Android Studio](https://developer.android.com/studio) is installed. Note that syntax highlighting works in [Android Studio nightlies](https://developer.android.com/studio/nightly) only. 
 - Make sure that your [ANDROID_HOME](https://developer.android.com/tools/variables#android_home) path is set.
 
@@ -95,7 +94,7 @@ git clone https://github.com/gradle/declarative-gradle.git
 This should checkout the `main` branch of the [Declarative Gradle prototype plugins](https://github.com/gradle/declarative-gradle) inside the **root** of Gradle's NowInAndroid fork. 
 
 You should have this project structure:
-```
+```shell
 nowinandroid/
     declarative-gradle/
 ```
@@ -123,4 +122,4 @@ You can run tests using the following commands:
 After starting a local Android emulator in Android Studio:
 ```shell
 ./gradlew connectedDemoDebugAndroidTest --daemon
-````
+```
