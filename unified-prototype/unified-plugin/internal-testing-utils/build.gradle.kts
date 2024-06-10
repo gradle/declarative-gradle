@@ -6,7 +6,7 @@ plugins {
     `java-library`
 }
 
-description = "Implements the declarative Android DSL prototype"
+description = "Adds support for writing integration tests in unified-plugin projects using familiar patterns from gradle/gradle."
 
 dependencies {
     api("junit:junit:4.13.2")
