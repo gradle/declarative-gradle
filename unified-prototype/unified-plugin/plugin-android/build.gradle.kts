@@ -21,6 +21,9 @@ dependencies {
     implementation(libs.room.plugin)
     implementation(libs.protobuf.plugin)
     implementation(libs.roborazzi.plugin)
+    implementation(libs.google.services.plugin)
+    implementation(libs.firebase.perf.plugin)
+    implementation(libs.firebase.crashlytics.plugin)
 
     implementation(libs.apache.commons.lang)
     implementation(libs.android.tools.common)

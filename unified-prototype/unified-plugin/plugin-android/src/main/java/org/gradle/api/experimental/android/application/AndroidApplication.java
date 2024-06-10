@@ -20,6 +20,7 @@ import com.android.build.api.dsl.ApplicationBaseFlavor;
 import org.gradle.api.Action;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.extensions.DependencyGuard;
+import org.gradle.api.experimental.android.extensions.Firebase;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -71,5 +72,15 @@ public interface AndroidApplication extends AndroidSoftware {
         DependencyGuard dependencyGuard = getDependencyGuard();
         dependencyGuard.getEnabled().set(true);
         action.execute(dependencyGuard);
+    }
+
+    @Nested
+    Firebase getFirebase();
+
+    @Configuring
+    default void firebase(Action<? super Firebase> action) {
+        Firebase firebase = getFirebase();
+        firebase.getEnabled().set(true);
+        action.execute(firebase);
     }
 }

@@ -33,6 +33,9 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
         // Setup application-specific conventions
         dslModel.getDependencyGuard().getEnabled().convention(false);
 
+        dslModel.getFirebase().getEnabled().convention(false);
+        dslModel.getFirebase().getVersion().convention("32.4.0");
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));

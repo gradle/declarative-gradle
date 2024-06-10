@@ -18,6 +18,7 @@ import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
 import com.android.build.gradle.BaseExtension;
 import com.dropbox.gradle.plugins.dependencyguard.DependencyGuardPluginExtension;
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.gradle.api.*;
@@ -82,6 +83,7 @@ public final class NiaSupport {
 
         configureBadgingTasks(project, androidAppComponents);
         configureDependencyGuard(project, dslModel);
+        configureFirebase(project, dslModel, androidApp);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -100,6 +102,25 @@ public final class NiaSupport {
         configureJacoco(project, dslModel, android);
 
         configureFeature(project, dslModel, android);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static void configureFirebase(Project project, AndroidApplication dslModel, ApplicationExtension androidApp) {
+        if (dslModel.getFirebase().getEnabled().get()) {
+            project.getPlugins().apply("com.google.gms.google-services");
+            project.getPlugins().apply("com.google.firebase.firebase-perf");
+            project.getPlugins().apply("com.google.firebase.crashlytics");
+
+            dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("com.google.firebase:firebase-bom:" + dslModel.getFirebase().getVersion().get()));
+            dslModel.getDependencies().getImplementation().add("com.google.firebase:firebase-analytics-ktx");
+            dslModel.getDependencies().getImplementation().add("com.google.firebase:firebase-perf-ktx");
+            dslModel.getDependencies().getImplementation().add("com.google.firebase:firebase-crashlytics-ktx");
+
+            androidApp.getBuildTypes().configureEach(buildType -> {
+                CrashlyticsExtension crashlyticsExtension = buildType.getExtensions().getByType(CrashlyticsExtension.class);
+                crashlyticsExtension.setMappingFileUploadEnabled(dslModel.getFirebase().getMappingFileUploadEnabled().get());
+            });
+        }
     }
 
     private static void configureBadgingTasks(Project project, ApplicationAndroidComponentsExtension androidAppComponents) {
