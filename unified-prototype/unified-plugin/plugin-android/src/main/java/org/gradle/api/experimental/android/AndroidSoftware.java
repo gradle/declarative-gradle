@@ -10,6 +10,7 @@ import org.gradle.api.experimental.android.extensions.KotlinSerialization;
 import org.gradle.api.experimental.android.extensions.Room;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.experimental.android.nia.Feature;
+import org.gradle.api.experimental.android.nia.Licenses;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -118,5 +119,19 @@ public interface AndroidSoftware {
         Feature feature = getFeature();
         feature.getEnabled().set(true);
         action.execute(feature);
+    }
+
+    /**
+     * Support for NiA projects using the com.google.android.gms.oss-licenses-plugin
+     * TODO: This is a temporary solution until we have a better way of applying plugins
+     */
+    @Nested
+    Licenses getLicenses();
+
+    @Configuring
+    default void licenses(Action<? super Licenses> action) {
+        Licenses licenses = getLicenses();
+        licenses.getEnabled().set(true);
+        action.execute(licenses);
     }
 }

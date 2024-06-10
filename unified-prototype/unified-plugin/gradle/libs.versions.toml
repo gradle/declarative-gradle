@@ -13,13 +13,14 @@ firebasePerf = "1.4.2"
 gms = "4.4.1"
 hilt = "2.50"
 room = "2.6.1"
-roborazzi = "1.7.0"
 
 #Other Libs
 apache-commons = "3.3.1"
 dependency-guard = "0.4.3"
 truth = "1.4.2"
 protobuf = "0.9.4"
+oss-licenses = "0.10.6"
+roborazzi = "1.7.0"
 
 [libraries]
 # Kotlin Libs
@@ -43,6 +44,7 @@ room-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room
 #Other Libs
 apache-commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "apache-commons" }
 dependency-guard-plugin = { module = "com.dropbox.dependency-guard:com.dropbox.dependency-guard.gradle.plugin", version.ref = "dependency-guard"}
-truth = { module = "com.google.truth:truth", version.ref = "truth" }
+oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "oss-licenses" }
 protobuf-plugin = { module = "com.google.protobuf:protobuf-gradle-plugin", version.ref = "protobuf" }
 roborazzi-plugin = { module = "io.github.takahirom.roborazzi:roborazzi-gradle-plugin", version.ref = "roborazzi" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }

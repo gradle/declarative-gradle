@@ -10,6 +10,8 @@ import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 
+import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
+
 /**
  * Creates a declarative {@link AndroidApplication} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.
@@ -35,6 +37,9 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
 
         dslModel.getFirebase().getEnabled().convention(false);
         dslModel.getFirebase().getVersion().convention("32.4.0");
+
+        dslModel.getBuildTypes().getDebug().getApplicationIdSuffix().convention((String) null);
+        dslModel.getBuildTypes().getRelease().getApplicationIdSuffix().convention((String) null);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.

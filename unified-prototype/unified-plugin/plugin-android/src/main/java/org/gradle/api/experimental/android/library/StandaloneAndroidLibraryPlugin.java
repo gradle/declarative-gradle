@@ -17,6 +17,8 @@ import java.io.File;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
+
 /**
  * Creates a declarative {@link AndroidLibrary} DSL model, applies the official Android plugin,
  * and links the declarative model to the official plugin.

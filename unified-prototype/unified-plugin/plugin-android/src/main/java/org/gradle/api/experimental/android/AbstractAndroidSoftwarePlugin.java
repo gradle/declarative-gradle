@@ -5,7 +5,6 @@ import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.CommonExtension;
 import com.android.build.api.dsl.UnitTestOptions;
 import com.google.devtools.ksp.gradle.KspExtension;
-import org.gradle.api.Action;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
@@ -14,11 +13,11 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.extensions.testing.AndroidTestDependencies;
 import org.gradle.api.experimental.android.extensions.testing.TestOptions;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
-import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
 import java.io.File;
 
+import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
 
 public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
@@ -52,6 +51,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         dslModel.getHilt().getEnabled().convention(false);
         dslModel.getRoom().getEnabled().convention(false);
         dslModel.getRoom().getVersion().convention("2.6.1");
+        dslModel.getLicenses().getEnabled().convention(false);
 
         // Setup Test Options conventions
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
@@ -108,12 +108,12 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
 
         configureKotlinSerialization(project, dslModel);
         configureDesugaring(project, dslModel, android);
-        configureHilt(project, dslModel, android);
+        configureHilt(project, dslModel);
         configureCompose(project, dslModel, android);
-        configureRoom(project, dslModel, android);
+        configureRoom(project, dslModel);
     }
 
-    protected void configureHilt(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    protected void configureHilt(Project project, AndroidSoftware dslModel) {
         if (dslModel.getHilt().getEnabled().get()) {
             project.getLogger().info("Hilt is enabled in: " + project.getPath());
 
@@ -130,7 +130,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    protected void configureRoom(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    protected void configureRoom(Project project, AndroidSoftware dslModel) {
         if (dslModel.getRoom().getEnabled().get()) {
             project.getLogger().info("Room is enabled in: " + project.getPath());
 
@@ -227,11 +227,5 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName(name + "CompileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName(name + "RuntimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
-    }
-
-    protected <T> void ifPresent(Property<T> property, Action<T> action) {
-        if (property.isPresent()) {
-            action.execute(property.get());
-        }
     }
 }

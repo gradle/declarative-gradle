@@ -47,6 +47,8 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
+
 // TODO: This class should be moved to the NiA project
 /**
  * This is a utility class that configures an Android project with conventions
@@ -67,6 +69,8 @@ public final class NiaSupport {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
+        androidLib.setResourcePrefix(buildResourcePrefix(project));
+
         configureNia(project, dslModel, androidLib, androidLibComponents);
         disableUnnecessaryAndroidTests(project, androidLibComponents);
     }
@@ -81,7 +85,11 @@ public final class NiaSupport {
         TestOptions testOptions = androidApp.getTestOptions();
         testOptions.setAnimationsDisabled(true);
 
+        ifPresent(dslModel.getBuildTypes().getDebug().getApplicationIdSuffix(), androidApp.getBuildTypes().getByName("debug")::setApplicationIdSuffix);
+        ifPresent(dslModel.getBuildTypes().getRelease().getApplicationIdSuffix(), androidApp.getBuildTypes().getByName("release")::setApplicationIdSuffix);
+
         configureBadgingTasks(project, androidAppComponents);
+
         configureDependencyGuard(project, dslModel);
         configureFirebase(project, dslModel, androidApp);
     }
@@ -91,17 +99,23 @@ public final class NiaSupport {
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
         dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
 
-        android.setResourcePrefix(buildResourcePrefix(project));
         configureFlavors(android, (flavor, niaFlavor) -> {});
         configureKotlin(project);
 
         configureGradleManagedDevices(android);
         configureLint(android);
         configurePrintApksTask(project, androidComponents);
+        configureLicenses(project, dslModel);
 
         configureJacoco(project, dslModel, android);
 
         configureFeature(project, dslModel, android);
+    }
+
+    private static void configureLicenses(Project project, AndroidSoftware dslModel) {
+        if (dslModel.getLicenses().getEnabled().get()) {
+            project.getPlugins().apply("com.google.android.gms.oss-licenses-plugin");
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
