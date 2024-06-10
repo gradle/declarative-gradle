@@ -41,6 +41,8 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
         dslModel.getBuildTypes().getDebug().getApplicationIdSuffix().convention((String) null);
         dslModel.getBuildTypes().getRelease().getApplicationIdSuffix().convention((String) null);
 
+        dslModel.getFlavors().getEnabled().convention(false);
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));

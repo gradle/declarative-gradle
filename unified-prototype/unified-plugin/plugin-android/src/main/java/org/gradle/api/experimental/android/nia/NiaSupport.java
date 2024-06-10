@@ -44,7 +44,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
@@ -69,6 +68,8 @@ public final class NiaSupport {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
+        configureFlavors(androidLib);
+
         androidLib.setResourcePrefix(buildResourcePrefix(project));
 
         configureNia(project, dslModel, androidLib, androidLibComponents);
@@ -78,6 +79,13 @@ public final class NiaSupport {
     public static void configureNiaApplication(Project project, AndroidApplication dslModel) {
         ApplicationExtension androidApp = project.getExtensions().getByType(ApplicationExtension.class);
         ApplicationAndroidComponentsExtension androidAppComponents = project.getExtensions().getByType(ApplicationAndroidComponentsExtension.class);
+
+        if (dslModel.getFlavors().getEnabled().get()) {
+            configureFlavors(androidApp);
+        }
+        if (dslModel.getMissingDimensionStrategy().getName().isPresent()) {
+            androidApp.getDefaultConfig().missingDimensionStrategy(dslModel.getMissingDimensionStrategy().getName().get(), dslModel.getMissingDimensionStrategy().getValue().get());
+        }
 
         configureNia(project, dslModel, androidApp, androidAppComponents);
 
@@ -99,7 +107,6 @@ public final class NiaSupport {
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
         dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
 
-        configureFlavors(android, (flavor, niaFlavor) -> {});
         configureKotlin(project);
 
         configureGradleManagedDevices(android);
@@ -202,14 +209,17 @@ public final class NiaSupport {
         android.getLint().setCheckDependencies(true);
     }
 
-    private static void configureFlavors(
-            CommonExtension<?, ?, ?, ?, ?, ?> android,
-            BiConsumer<ProductFlavor, NiaFlavor> flavorConfigurationBlock) {
+    /**
+     * All NiA Android libraries get flavors, but only NiA Applications that specifically ask
+     * for them will also get flavors.
+     *
+     * @param android the Android extension to configure
+     */
+    private static void configureFlavors(CommonExtension<?, ?, ?, ?, ?, ?> android) {
         android.getFlavorDimensions().add(FlavorDimension.contentType.name());
 
         Arrays.stream(NiaFlavor.values()).forEach(it -> android.getProductFlavors().create(it.name(), flavor -> {
             setDimensionReflectively(flavor, it.dimension.name());
-            flavorConfigurationBlock.accept(flavor, it);
 
             if (android instanceof ApplicationExtension && flavor instanceof ApplicationProductFlavor) {
                 if (it.applicationIdSuffix != null) {
