@@ -14,39 +14,20 @@
  * limitations under the License.
  */
 
-package org.gradle.api.experimental.android.extensions;
+package org.gradle.api.experimental.kotlin.testing;
 
 import org.gradle.api.Action;
-import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface Protobuf {
-    @Restricted
-    Property<Boolean> getEnabled();
-
+public interface Testing {
     @Nested
-    ProtobufDependencies getDependencies();
+    KotlinTestDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super ProtobufDependencies> action) {
+    default void dependencies(Action<? super KotlinTestDependencies> action) {
         action.execute(getDependencies());
     }
-
-    // TODO:DG This is modeled in a very limited manner for now
-    @Restricted
-    Property<String> getOption();
-
-    /**
-     * Protobuf library version to use.
-     */
-    @Restricted
-    Property<String> getVersion();
-
-    // TODO:DG Should be a File based property, when we support these
-    @Restricted
-    Property<String> getGeneratedRootDir();
 }
-

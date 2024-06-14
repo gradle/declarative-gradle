@@ -14,12 +14,18 @@ dependencies {
     api(libs.android.kotlin.android)
 
     implementation(project(":plugin-jvm"))
+    implementation(libs.baseline.profile.plugin)
     implementation(libs.dependency.guard.plugin)
     implementation(libs.ksp.plugin)
     implementation(libs.hilt.android.plugin)
     implementation(libs.kotlin.serialization.plugin)
     implementation(libs.room.plugin)
     implementation(libs.protobuf.plugin)
+    implementation(libs.roborazzi.plugin)
+    implementation(libs.google.services.plugin)
+    implementation(libs.firebase.perf.plugin)
+    implementation(libs.firebase.crashlytics.plugin)
+    implementation(libs.oss.licenses.plugin)
 
     implementation(libs.apache.commons.lang)
     implementation(libs.android.tools.common)

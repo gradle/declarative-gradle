@@ -1,24 +1,25 @@
 package org.gradle.api.experimental.android;
 
+import androidx.baselineprofile.gradle.consumer.BaselineProfileConsumerExtension;
 import androidx.room.gradle.RoomExtension;
 import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.CommonExtension;
 import com.android.build.api.dsl.UnitTestOptions;
 import com.google.devtools.ksp.gradle.KspExtension;
-import org.gradle.api.Action;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
+import org.gradle.api.experimental.android.extensions.BaselineProfile;
 import org.gradle.api.experimental.android.extensions.testing.AndroidTestDependencies;
 import org.gradle.api.experimental.android.extensions.testing.TestOptions;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
-import org.gradle.api.provider.Property;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
-import java.util.Objects;
+import java.io.File;
 
+import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
 import static org.gradle.api.experimental.android.extensions.ComposeSupport.configureCompose;
 
 public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
@@ -32,10 +33,13 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
 
         // Setup Android software conventions
         dslModel.getMinSdk().convention(DEFAULT_MIN_ANDROID_SDK); // https://developer.android.com/build/multidex#mdex-gradle
+        dslModel.getVectorDrawablesUseSupportLibrary().convention(false);
 
         // Setup minify conventions
         dslModel.getBuildTypes().getDebug().getMinify().getEnabled().convention(false);
+        dslModel.getBuildTypes().getDebug().getBaselineProfile().getEnabled().convention(false);
         dslModel.getBuildTypes().getRelease().getMinify().getEnabled().convention(false);
+        dslModel.getBuildTypes().getRelease().getBaselineProfile().getEnabled().convention(false);
 
         // Setup desugaring conventions and desugar automatically when JDK > 8 is targeted
         dslModel.getCoreLibraryDesugaring().getEnabled().convention(project.provider(() -> dslModel.getJdkVersion().get() > 8));
@@ -46,18 +50,26 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
         dslModel.getKotlinSerialization().getJsonEnabled().convention(false);
 
+        // Setup Linting conventions
+        dslModel.getLint().getEnabled().convention(false);
+        dslModel.getLint().getXmlReport().convention(false);
+        dslModel.getLint().getCheckDependencies().convention(false);
+
         // Setup other feature extension conventions
         dslModel.getFeature().getEnabled().convention(false);
         dslModel.getCompose().getEnabled().convention(false);
         dslModel.getHilt().getEnabled().convention(false);
         dslModel.getRoom().getEnabled().convention(false);
         dslModel.getRoom().getVersion().convention("2.6.1");
+        dslModel.getLicenses().getEnabled().convention(false);
+        dslModel.getBaselineProfile().getEnabled().convention(false);
 
         // Setup Test Options conventions
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
         dslModel.getTesting().getTestOptions().getReturnDefaultValues().convention(false);
         dslModel.getTesting().getJacoco().getEnabled().convention(false);
         dslModel.getTesting().getJacoco().getVersion().convention("0.8.7");
+        dslModel.getTesting().getRoborazzi().getEnabled().convention(false);
     }
 
     /**
@@ -75,13 +87,13 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
      */
     protected void linkDslModelToPlugin(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         KotlinAndroidProjectExtension kotlin = project.getExtensions().getByType(KotlinAndroidProjectExtension.class);
-        ConfigurationContainer configurations = project.getConfigurations();
 
         // Link common properties
         ifPresent(dslModel.getNamespace(), android::setNamespace);
         ifPresent(dslModel.getCompileSdk(), android::setCompileSdk);
         android.defaultConfig(defaultConfig -> {
             ifPresent(dslModel.getMinSdk(), defaultConfig::setMinSdk);
+            ifPresent(dslModel.getVectorDrawablesUseSupportLibrary(), defaultConfig.getVectorDrawables()::setUseSupportLibrary);
             return null;
         });
         android.compileOptions(compileOptions -> {
@@ -100,19 +112,31 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         // Link build types
         AndroidSoftwareBuildTypes modelBuildType = dslModel.getBuildTypes();
         NamedDomainObjectContainer<? extends BuildType> androidBuildTypes = android.getBuildTypes();
-        linkBuildType(androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), configurations);
-        linkBuildType(androidBuildTypes.getByName("release"), modelBuildType.getRelease(), configurations);
+        linkBuildType(project, androidBuildTypes.getByName("debug"), modelBuildType.getDebug(), android);
+        linkBuildType(project, androidBuildTypes.getByName("release"), modelBuildType.getRelease(), android);
 
         configureTesting(project, dslModel, android);
 
         configureKotlinSerialization(project, dslModel);
         configureDesugaring(project, dslModel, android);
-        configureHilt(project, dslModel, android);
+        configureHilt(project, dslModel);
         configureCompose(project, dslModel, android);
-        configureRoom(project, dslModel, android);
+        configureRoom(project, dslModel);
+        configureLicenses(project, dslModel);
+
+        if (project.getExtensions().findByName("baselineProfile") != null) {
+            BaselineProfileConsumerExtension baselineProfileExtension = project.getExtensions().getByType(BaselineProfileConsumerExtension.class);
+            configureBaselineProfile(project, dslModel.getBaselineProfile(), baselineProfileExtension);
+        }
     }
 
-    protected void configureHilt(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    private static void configureLicenses(Project project, AndroidSoftware dslModel) {
+        if (dslModel.getLicenses().getEnabled().get()) {
+            project.getPlugins().apply("com.google.android.gms.oss-licenses-plugin");
+        }
+    }
+
+    protected void configureHilt(Project project, AndroidSoftware dslModel) {
         if (dslModel.getHilt().getEnabled().get()) {
             project.getLogger().info("Hilt is enabled in: " + project.getPath());
 
@@ -123,11 +147,13 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
             // Add support for Hilt
             project.getPlugins().apply("dagger.hilt.android.plugin");
             project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.50");
+
+            project.getDependencies().add("kspTest", "com.google.dagger:hilt-android-compiler:2.50");
         }
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    protected void configureRoom(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    protected void configureRoom(Project project, AndroidSoftware dslModel) {
         if (dslModel.getRoom().getEnabled().get()) {
             project.getLogger().info("Room is enabled in: " + project.getPath());
 
@@ -178,6 +204,14 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         ConfigurationContainer configurations = project.getConfigurations();
         configurations.getByName("testImplementation").fromDependencyCollector(testDependencies.getImplementation());
         configurations.getByName("androidTestImplementation").fromDependencyCollector(testDependencies.getAndroidImplementation());
+
+        configureRoborazzi(project, dslModel);
+    }
+
+    protected void configureRoborazzi(Project project, AndroidSoftware dslModel) {
+        if (dslModel.getTesting().getRoborazzi().getEnabled().get()) {
+            project.getPlugins().apply("io.github.takahirom.roborazzi");
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -194,12 +228,36 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
+    private static void configureBaselineProfile(Project project, BaselineProfile baselineProfile, BaselineProfileConsumerExtension baselineProfileExtension) {
+        if (baselineProfile.getEnabled().get()) {
+            project.getPlugins().apply("androidx.baselineprofile");
+
+            baselineProfileExtension.setAutomaticGenerationDuringBuild(baselineProfile.getAutomaticGenerationDuringBuild().get());
+
+            project.getConfigurations().getByName("baselineProfile").fromDependencyCollector(baselineProfile.getDependencies().getProfile());
+        }
+    }
+
     /**
      * Links build types from the model to the android extension.
      */
-    protected void linkBuildType(BuildType buildType, AndroidSoftwareBuildType model, ConfigurationContainer configurations) {
+    protected void linkBuildType(Project project, BuildType buildType, AndroidSoftwareBuildType model, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         buildType.setMinifyEnabled(model.getMinify().getEnabled().get());
-        linkBuildTypeDependencies(buildType, model.getDependencies(), configurations);
+        linkBuildTypeDependencies(buildType, model.getDependencies(), project.getConfigurations());
+
+        model.getDefaultProguardFiles().get().forEach(proguardFile -> {
+            File defaultProguardFile = android.getDefaultProguardFile(proguardFile.getName().get());
+            buildType.proguardFile(defaultProguardFile);
+        });
+        model.getProguardFiles().get().forEach(proguardFile -> {
+            buildType.proguardFile(proguardFile.getName().get());
+        });
+
+        if (buildType.getExtensions().findByName("baselineProfile") != null) {
+            BaselineProfileConsumerExtension baselineProfileExtension = buildType.getExtensions().getByType(BaselineProfileConsumerExtension.class);
+            configureBaselineProfile(project, model.getBaselineProfile(), baselineProfileExtension);
+        }
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -208,11 +266,5 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         configurations.getByName(name + "Implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName(name + "CompileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName(name + "RuntimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
-    }
-
-    protected <T> void ifPresent(Property<T> property, Action<T> action) {
-        if (property.isPresent()) {
-            action.execute(property.get());
-        }
     }
 }

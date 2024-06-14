@@ -5,10 +5,8 @@ import com.android.build.api.dsl.LibraryExtension;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
 import com.google.protobuf.gradle.ProtobufExtension;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.nia.NiaSupport;
@@ -18,6 +16,8 @@ import org.jetbrains.kotlin.com.google.common.base.Preconditions;
 import java.io.File;
 import java.util.Objects;
 import java.util.Set;
+
+import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
 
 /**
  * Creates a declarative {@link AndroidLibrary} DSL model, applies the official Android plugin,
@@ -63,7 +63,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
 
         configureProtobuf(project, dslModel, android);
 
-        // TODO: All this configuration should be moved to the NiA project
+        // TODO:DG All this configuration should be moved to the NiA project
         if (NiaSupport.isNiaProject(project)) {
             NiaSupport.configureNiaLibrary(project, dslModel);
         }
@@ -92,7 +92,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
                 });
 
                 /*
-                 * TODO: We don't want to rely on beforeVariants here, but how to do without hardcoding:
+                 * TODO:DG We don't want to rely on beforeVariants here, but how to do without hardcoding:
                  *  the NiA variants: "demoDebug, demoRelease, prodDebug, prodRelease"?
                  * This would seem to require some sort of ProductFlavor support (and maybe enumerated buildTypes?)
                  * which we don't want to add just yet.
@@ -116,19 +116,6 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         Preconditions.checkState(protocDeps.size() == 1, "Should have a single dependency, but had: " + protocDeps.size());
         Dependency protocDep = protocDeps.iterator().next();
         return protocDep.getGroup() + ":" + protocDep.getName() + ":" + protocDep.getVersion();
-    }
-
-    private File resolveSingleDependency(Project project, DependencyCollector dependencyCollector) {
-        Configuration resolver = project.getConfigurations().detachedConfiguration();
-        resolver.setCanBeResolved(true);
-        resolver.fromDependencyCollector(dependencyCollector);
-
-        Set<Dependency> deps = dependencyCollector.getDependencies().get();
-        Preconditions.checkState(deps.size() == 1, "Should have a single dependency, but had: " + deps.size());
-
-        Set<File> files = resolver.resolve();
-        Preconditions.checkState(files.size() == 1, "Should have resolved a single file, but resolved: " + files.size());
-        return files.iterator().next();
     }
 
     @SuppressWarnings("UnstableApiUsage")

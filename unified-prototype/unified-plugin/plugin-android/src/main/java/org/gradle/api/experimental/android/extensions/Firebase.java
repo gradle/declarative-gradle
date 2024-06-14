@@ -16,37 +16,17 @@
 
 package org.gradle.api.experimental.android.extensions;
 
-import org.gradle.api.Action;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface Protobuf {
+public interface Firebase {
     @Restricted
     Property<Boolean> getEnabled();
 
-    @Nested
-    ProtobufDependencies getDependencies();
-
-    @Configuring
-    default void dependencies(Action<? super ProtobufDependencies> action) {
-        action.execute(getDependencies());
-    }
-
-    // TODO:DG This is modeled in a very limited manner for now
-    @Restricted
-    Property<String> getOption();
-
-    /**
-     * Protobuf library version to use.
-     */
     @Restricted
     Property<String> getVersion();
 
-    // TODO:DG Should be a File based property, when we support these
     @Restricted
-    Property<String> getGeneratedRootDir();
+    Property<Boolean> getMappingFileUploadEnabled();
 }
-

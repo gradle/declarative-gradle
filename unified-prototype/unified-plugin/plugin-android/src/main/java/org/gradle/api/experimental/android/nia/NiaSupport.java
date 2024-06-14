@@ -18,6 +18,7 @@ import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
 import com.android.build.gradle.BaseExtension;
 import com.dropbox.gradle.plugins.dependencyguard.DependencyGuardPluginExtension;
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.gradle.api.*;
@@ -43,10 +44,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-// TODO: This class should be moved to the NiA project
+import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
+
+// TODO:DG This class should be moved to the NiA project
 /**
  * This is a utility class that configures an Android project with conventions
  * for the Now in Android project.
@@ -66,6 +68,10 @@ public final class NiaSupport {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
+        configureFlavors(androidLib);
+
+        androidLib.setResourcePrefix(buildResourcePrefix(project));
+
         configureNia(project, dslModel, androidLib, androidLibComponents);
         disableUnnecessaryAndroidTests(project, androidLibComponents);
     }
@@ -74,14 +80,26 @@ public final class NiaSupport {
         ApplicationExtension androidApp = project.getExtensions().getByType(ApplicationExtension.class);
         ApplicationAndroidComponentsExtension androidAppComponents = project.getExtensions().getByType(ApplicationAndroidComponentsExtension.class);
 
+        if (dslModel.getFlavors().getEnabled().get()) {
+            configureFlavors(androidApp);
+        }
+        if (dslModel.getMissingDimensionStrategy().getName().isPresent()) {
+            androidApp.getDefaultConfig().missingDimensionStrategy(dslModel.getMissingDimensionStrategy().getName().get(), dslModel.getMissingDimensionStrategy().getValue().get());
+        }
+
         configureNia(project, dslModel, androidApp, androidAppComponents);
 
         @SuppressWarnings("UnstableApiUsage")
         TestOptions testOptions = androidApp.getTestOptions();
         testOptions.setAnimationsDisabled(true);
 
+        ifPresent(dslModel.getBuildTypes().getDebug().getApplicationIdSuffix(), androidApp.getBuildTypes().getByName("debug")::setApplicationIdSuffix);
+        ifPresent(dslModel.getBuildTypes().getRelease().getApplicationIdSuffix(), androidApp.getBuildTypes().getByName("release")::setApplicationIdSuffix);
+
         configureBadgingTasks(project, androidAppComponents);
-        configureDependencyGuard(project, dslModel, androidApp);
+
+        configureDependencyGuard(project, dslModel);
+        configureFirebase(project, dslModel, androidApp);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -89,17 +107,33 @@ public final class NiaSupport {
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
         dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
 
-        android.setResourcePrefix(buildResourcePrefix(project));
-        configureFlavors(android, (flavor, niaFlavor) -> {});
         configureKotlin(project);
 
         configureGradleManagedDevices(android);
-        configureLint(android);
         configurePrintApksTask(project, androidComponents);
 
         configureJacoco(project, dslModel, android);
 
         configureFeature(project, dslModel, android);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private static void configureFirebase(Project project, AndroidApplication dslModel, ApplicationExtension androidApp) {
+        if (dslModel.getFirebase().getEnabled().get()) {
+            project.getPlugins().apply("com.google.gms.google-services");
+            project.getPlugins().apply("com.google.firebase.firebase-perf");
+            project.getPlugins().apply("com.google.firebase.crashlytics");
+
+            dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("com.google.firebase:firebase-bom:" + dslModel.getFirebase().getVersion().get()));
+            dslModel.getDependencies().getImplementation().add("com.google.firebase:firebase-analytics-ktx");
+            dslModel.getDependencies().getImplementation().add("com.google.firebase:firebase-perf-ktx");
+            dslModel.getDependencies().getImplementation().add("com.google.firebase:firebase-crashlytics-ktx");
+
+            androidApp.getBuildTypes().configureEach(buildType -> {
+                CrashlyticsExtension crashlyticsExtension = buildType.getExtensions().getByType(CrashlyticsExtension.class);
+                crashlyticsExtension.setMappingFileUploadEnabled(dslModel.getFirebase().getMappingFileUploadEnabled().get());
+            });
+        }
     }
 
     private static void configureBadgingTasks(Project project, ApplicationAndroidComponentsExtension androidAppComponents) {
@@ -162,19 +196,17 @@ public final class NiaSupport {
         }
     }
 
-    private static void configureLint(CommonExtension<?, ?, ?, ?, ?, ?> android) {
-        android.getLint().setXmlReport(true);
-        android.getLint().setCheckDependencies(true);
-    }
-
-    private static void configureFlavors(
-            CommonExtension<?, ?, ?, ?, ?, ?> android,
-            BiConsumer<ProductFlavor, NiaFlavor> flavorConfigurationBlock) {
+    /**
+     * All NiA Android libraries get flavors, but only NiA Applications that specifically ask
+     * for them will also get flavors.
+     *
+     * @param android the Android extension to configure
+     */
+    private static void configureFlavors(CommonExtension<?, ?, ?, ?, ?, ?> android) {
         android.getFlavorDimensions().add(FlavorDimension.contentType.name());
 
         Arrays.stream(NiaFlavor.values()).forEach(it -> android.getProductFlavors().create(it.name(), flavor -> {
             setDimensionReflectively(flavor, it.dimension.name());
-            flavorConfigurationBlock.accept(flavor, it);
 
             if (android instanceof ApplicationExtension && flavor instanceof ApplicationProductFlavor) {
                 if (it.applicationIdSuffix != null) {
@@ -341,8 +373,8 @@ public final class NiaSupport {
             JacocoPluginExtension jacocoPluginExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
             jacocoPluginExtension.setToolVersion(dslModel.getTesting().getJacoco().getVersion().get());
 
-            LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
-            androidLibComponents.onVariants(androidLibComponents.selector().all(), variant -> {
+            AndroidComponentsExtension<?, ?, ?> androidComponentsExtension = project.getExtensions().getByType(AndroidComponentsExtension.class);
+            androidComponentsExtension.onVariants(androidComponentsExtension.selector().all(), variant -> {
                 final String testTaskName = "test" + StringUtils.capitalize(variant.getName()) + "UnitTest";
                 final File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
                 project.getTasks().register("jacoco" + StringUtils.capitalize(testTaskName) + "Report", JacocoReport.class, task -> {
@@ -382,7 +414,7 @@ public final class NiaSupport {
         }
     }
 
-    private static void configureDependencyGuard(Project project, AndroidApplication dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    private static void configureDependencyGuard(Project project, AndroidApplication dslModel) {
         if (dslModel.getDependencyGuard().getEnabled().get()) {
             // Slight change of behavior here - NiA just applies this plugin to all applications, which seems unnecessary
             project.getPlugins().apply("com.dropbox.dependency-guard");

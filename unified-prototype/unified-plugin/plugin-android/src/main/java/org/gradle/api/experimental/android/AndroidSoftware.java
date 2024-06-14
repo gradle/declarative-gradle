@@ -3,6 +3,7 @@ package org.gradle.api.experimental.android;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
+import org.gradle.api.experimental.android.extensions.BaselineProfile;
 import org.gradle.api.experimental.android.extensions.Compose;
 import org.gradle.api.experimental.android.extensions.CoreLibraryDesugaring;
 import org.gradle.api.experimental.android.extensions.Hilt;
@@ -10,12 +11,15 @@ import org.gradle.api.experimental.android.extensions.KotlinSerialization;
 import org.gradle.api.experimental.android.extensions.Room;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.experimental.android.nia.Feature;
+import org.gradle.api.experimental.android.extensions.Licenses;
+import org.gradle.api.experimental.common.extensions.HasLinting;
+import org.gradle.api.experimental.common.extensions.Lint;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-public interface AndroidSoftware {
+public interface AndroidSoftware extends HasLinting {
     /**
      * @see CommonExtension#getCompileSdk()
      */
@@ -39,6 +43,9 @@ public interface AndroidSoftware {
      */
     @Restricted
     Property<Integer> getJdkVersion();
+
+    @Restricted
+    Property<Boolean> getVectorDrawablesUseSupportLibrary();
 
     AndroidSoftwareBuildTypes getBuildTypes();
 
@@ -108,7 +115,7 @@ public interface AndroidSoftware {
 
     /**
      * Support for NiA convention projects defining features.
-     * TODO: This is a temporary solution until we have a proper feature model.
+     * TODO:DG This is a temporary solution until we have a proper feature model.
      */
     @Nested
     Feature getFeature();
@@ -118,5 +125,40 @@ public interface AndroidSoftware {
         Feature feature = getFeature();
         feature.getEnabled().set(true);
         action.execute(feature);
+    }
+
+    /**
+     * Support for NiA projects using the com.google.android.gms.oss-licenses-plugin
+     * TODO:DG This is a temporary solution until we have a better way of applying plugins
+     */
+    @Nested
+    Licenses getLicenses();
+
+    @Configuring
+    default void licenses(Action<? super Licenses> action) {
+        Licenses licenses = getLicenses();
+        licenses.getEnabled().set(true);
+        action.execute(licenses);
+    }
+
+    @Nested
+    BaselineProfile getBaselineProfile();
+
+    @Configuring
+    default void baselineProfile(Action<? super BaselineProfile> action) {
+        BaselineProfile baselineProfile = getBaselineProfile();
+        baselineProfile.getEnabled().set(true);
+        action.execute(baselineProfile);
+    }
+
+    @Override
+    @Nested
+    Lint getLint();
+
+    @Configuring
+    default void lint(Action<? super Lint> action) {
+        Lint lint = getLint();
+        lint.getEnabled().set(true);
+        action.execute(lint);
     }
 }

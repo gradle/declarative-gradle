@@ -16,37 +16,13 @@
 
 package org.gradle.api.experimental.android.extensions;
 
-import org.gradle.api.Action;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface Protobuf {
-    @Restricted
-    Property<Boolean> getEnabled();
-
-    @Nested
-    ProtobufDependencies getDependencies();
-
-    @Configuring
-    default void dependencies(Action<? super ProtobufDependencies> action) {
-        action.execute(getDependencies());
-    }
-
-    // TODO:DG This is modeled in a very limited manner for now
-    @Restricted
-    Property<String> getOption();
-
+public interface Licenses {
     /**
-     * Protobuf library version to use.
+     * Internal property purposely not exposed to the DSL.
      */
-    @Restricted
-    Property<String> getVersion();
-
-    // TODO:DG Should be a File based property, when we support these
-    @Restricted
-    Property<String> getGeneratedRootDir();
+    Property<Boolean> getEnabled();
 }
-

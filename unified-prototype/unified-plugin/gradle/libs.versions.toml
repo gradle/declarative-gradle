@@ -8,6 +8,10 @@ ksp = "1.9.23-1.0.20"
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
 android = "8.3.0"
 androidTools = "31.3.0"
+baselineProfile = "1.2.2"
+firebaseCrashlytics = "2.9.9"
+firebasePerf = "1.4.2"
+gms = "4.4.1"
 hilt = "2.50"
 room = "2.6.1"
 
@@ -16,6 +20,8 @@ apache-commons = "3.3.1"
 dependency-guard = "0.4.3"
 truth = "1.4.2"
 protobuf = "0.9.4"
+oss-licenses = "0.10.6"
+roborazzi = "1.7.0"
 
 [libraries]
 # Kotlin Libs
@@ -28,6 +34,10 @@ kotlin-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serializat
 android-agp-application = { module = "com.android.application:com.android.application.gradle.plugin", version.ref = "android" }
 android-kotlin-android = { module = "org.jetbrains.kotlin.android:org.jetbrains.kotlin.android.gradle.plugin", version.ref = "kotlin" }
 android-tools-common = { module = "com.android.tools:common", version.ref = "androidTools" }
+baseline-profile-plugin = { module = "androidx.baselineprofile:androidx.baselineprofile.gradle.plugin", version.ref = "baselineProfile"}
+firebase-perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerf" }
+firebase-crashlytics-plugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlytics" }
+google-services-plugin = { module = "com.google.gms.google-services:com.google.gms.google-services.gradle.plugin", version.ref = "gms" }
 hilt-android-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"}
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
@@ -36,5 +46,7 @@ room-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room
 #Other Libs
 apache-commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "apache-commons" }
 dependency-guard-plugin = { module = "com.dropbox.dependency-guard:com.dropbox.dependency-guard.gradle.plugin", version.ref = "dependency-guard"}
-truth = { module = "com.google.truth:truth", version.ref = "truth" }
+oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "oss-licenses" }
 protobuf-plugin = { module = "com.google.protobuf:protobuf-gradle-plugin", version.ref = "protobuf" }
+roborazzi-plugin = { module = "io.github.takahirom.roborazzi:roborazzi-gradle-plugin", version.ref = "roborazzi" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
