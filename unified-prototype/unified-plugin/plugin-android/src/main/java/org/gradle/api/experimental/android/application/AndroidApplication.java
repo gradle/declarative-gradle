@@ -19,6 +19,7 @@ package org.gradle.api.experimental.android.application;
 import com.android.build.api.dsl.ApplicationBaseFlavor;
 import org.gradle.api.Action;
 import org.gradle.api.experimental.android.AndroidSoftware;
+import org.gradle.api.experimental.android.extensions.DependencyGuard;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -60,5 +61,15 @@ public interface AndroidApplication extends AndroidSoftware {
     @Configuring
     default void buildTypes(Action<? super AndroidApplicationBuildTypes> action) {
         action.execute(getBuildTypes());
+    }
+
+    @Nested
+    DependencyGuard getDependencyGuard();
+
+    @Configuring
+    default void dependencyGuard(Action<? super DependencyGuard> action) {
+        DependencyGuard dependencyGuard = getDependencyGuard();
+        dependencyGuard.getEnabled().set(true);
+        action.execute(dependencyGuard);
     }
 }

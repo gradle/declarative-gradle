@@ -30,6 +30,9 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
 
         AndroidApplication dslModel = getAndroidApplication();
 
+        // Setup application-specific conventions
+        dslModel.getDependencyGuard().getEnabled().convention(false);
+
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
@@ -58,38 +61,7 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
 
         // TODO: All this configuration should be moved to the NiA project
         if (NiaSupport.isNiaProject(project)) {
-            // ProductFlavors are automatically added by the LIBRARY plugin via NiA support only, ATM, so we
-            // need to make sure any Android APPLICATION projects have the necessary attributes for project deps to work.
-            configureContentTypeAttributes(project);
-
             NiaSupport.configureNiaApplication(project, dslModel);
         }
-    }
-
-    private void configureContentTypeAttributes(Project project) {
-        // These attributes must be set to avoid Ambiguous Variants resolution errors between the
-        // demoDebugRuntimeElements and prodDebugRuntimeElements for project dependencies in NiA
-        project.getConfigurations().configureEach(c -> {
-            AttributeContainer attributes = c.getAttributes();
-            String lowerConfName = c.getName().toLowerCase();
-
-            Attribute<ProductFlavorAttr> contentTypeFlavorAttr = ProductFlavorAttr.of("contentType");
-            if (!attributes.contains(contentTypeFlavorAttr)) {
-                if (lowerConfName.contains("debug")) {
-                    attributes.attribute(contentTypeFlavorAttr, project.getObjects().named(ProductFlavorAttr.class, "demo"));
-                } else if (lowerConfName.contains("release")) {
-                    attributes.attribute(contentTypeFlavorAttr, project.getObjects().named(ProductFlavorAttr.class, "prod"));
-                }
-            }
-
-            Attribute<String> contentTypeStringAttr = Attribute.of("contentType", String.class);
-            if (!attributes.contains(contentTypeStringAttr)) {
-                if (lowerConfName.contains("debug")) {
-                    attributes.attribute(contentTypeStringAttr, "demo");
-                } else if (lowerConfName.contains("release")) {
-                    attributes.attribute(contentTypeStringAttr, "prod");
-                }
-            }
-        });
     }
 }
