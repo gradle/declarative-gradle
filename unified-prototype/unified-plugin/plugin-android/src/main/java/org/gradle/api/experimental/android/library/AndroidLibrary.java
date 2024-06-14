@@ -44,7 +44,7 @@ public interface AndroidLibrary extends AndroidSoftware {
         action.execute(getBuildTypes());
     }
 
-    // TODO: We really want to model a list of consumer proguard files here, but can't yet
+    // TODO:DG We really want to model a list of consumer proguard files here, but can't yet
     @Restricted
     Property<String> getConsumerProguardFile();
 

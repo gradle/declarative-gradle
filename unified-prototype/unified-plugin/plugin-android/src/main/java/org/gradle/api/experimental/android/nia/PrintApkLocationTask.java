@@ -36,7 +36,7 @@ import org.gradle.work.DisableCachingByDefault;
 import java.io.File;
 import java.nio.file.Path;
 
-@DisableCachingByDefault(because = "Prints output") // TODO: Not converted
+@DisableCachingByDefault(because = "Prints output")
 public abstract class PrintApkLocationTask extends DefaultTask {
     @PathSensitive(PathSensitivity.RELATIVE)
     @InputDirectory

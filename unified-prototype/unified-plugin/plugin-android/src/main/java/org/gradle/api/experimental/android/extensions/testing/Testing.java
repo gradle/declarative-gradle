@@ -21,6 +21,16 @@ public interface Testing {
     }
 
     @Nested
+    Roborazzi getRoborazzi();
+
+    @Configuring
+    default void roborazzi(Action<? super Roborazzi> action) {
+        Roborazzi roborazzi = getRoborazzi();
+        roborazzi.getEnabled().set(true);
+        action.execute(roborazzi);
+    }
+
+    @Nested
     TestOptions getTestOptions();
 
     @Configuring

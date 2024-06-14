@@ -22,31 +22,20 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
-public interface Protobuf {
-    @Restricted
+public interface BaselineProfile {
+    /**
+     * Internal property purposely not exposed to the DSL.
+     */
     Property<Boolean> getEnabled();
 
+    @Restricted
+    Property<Boolean> getAutomaticGenerationDuringBuild();
+
     @Nested
-    ProtobufDependencies getDependencies();
+    BaselineProfileDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super ProtobufDependencies> action) {
+    default void dependencies(Action<? super BaselineProfileDependencies> action) {
         action.execute(getDependencies());
     }
-
-    // TODO:DG This is modeled in a very limited manner for now
-    @Restricted
-    Property<String> getOption();
-
-    /**
-     * Protobuf library version to use.
-     */
-    @Restricted
-    Property<String> getVersion();
-
-    // TODO:DG Should be a File based property, when we support these
-    @Restricted
-    Property<String> getGeneratedRootDir();
 }
-
