@@ -56,8 +56,6 @@ public interface AndroidSoftwareBuildType {
 
     @Configuring
     default void baselineProfile(Action<? super BaselineProfile> action) {
-        BaselineProfile baselineProfile = getBaselineProfile();
-        baselineProfile.getEnabled().set(true);
-        action.execute(baselineProfile);
+        action.execute(getBaselineProfile());
     }
 }

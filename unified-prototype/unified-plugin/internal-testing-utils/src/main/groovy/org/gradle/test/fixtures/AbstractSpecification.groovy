@@ -8,6 +8,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Specification
 
+import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class AbstractSpecification extends Specification {
@@ -47,6 +48,17 @@ class AbstractSpecification extends Specification {
                 .build()
         tasks.each { task ->
             assert result.task(task).outcome == SUCCESS
+        }
+    }
+
+    def fails(String... tasks) {
+        result = GradleRunner.create()
+                .withProjectDir(getTestDirectory())
+                .withArguments(tasks)
+                .withPluginClasspath()
+                .run()
+        tasks.each { task ->
+            assert result.task(task).outcome == FAILED
         }
     }
 }
