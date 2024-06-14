@@ -51,9 +51,9 @@ The current prototype is limited to a single `androidLibrary` software type conv
 
 Converted subprojects:
 
-- [`:core:common`](core/common/build.gradle.dcl)
-- [`:core:data`](core/data/build.gradle.dcl)
-- [`:core:domain`](core/domain/build.gradle.dcl)
+- [`:core:common`](https://github.com/gradle/nowinandroid/blob/main-declarative/core/common/build.gradle.dcl)
+- [`:core:data`](https://github.com/gradle/nowinandroid/blob/main-declarative/core/data/build.gradle.dcl)
+- [`:core:domain`](https://github.com/gradle/nowinandroid/blob/main-declarative/core/domain/build.gradle.dcl)
 
 Let’s take a look at a `build.gradle.dcl` file which replaces the common `build.gradle` or `build.gradle.kts` files:
 
