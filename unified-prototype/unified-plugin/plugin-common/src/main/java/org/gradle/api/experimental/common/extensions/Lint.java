@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package org.gradle.api.experimental.android;
+package org.gradle.api.experimental.common.extensions;
 
-import org.gradle.api.Action;
 import org.gradle.api.provider.Property;
+import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-/**
- * Static util class containing common methods.
- */
-public final class AndroidSupport {
-    private AndroidSupport() { /* not instantiable */ }
+@Restricted
+public interface Lint {
+    /**
+     * Internal property purposely not exposed to the DSL.
+     */
+    Property<Boolean> getEnabled();
 
-    public static <T> void ifPresent(Property<T> property, Action<T> action) {
-        if (property.isPresent()) {
-            action.execute(property.get());
-        }
-    }
+    @Restricted
+    Property<Boolean> getXmlReport();
+
+    @Restricted
+    Property<Boolean> getCheckDependencies();
 }

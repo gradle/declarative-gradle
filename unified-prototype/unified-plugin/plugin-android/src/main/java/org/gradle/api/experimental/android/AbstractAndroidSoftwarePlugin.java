@@ -50,6 +50,11 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         dslModel.getKotlinSerialization().getVersion().convention("1.6.3");
         dslModel.getKotlinSerialization().getJsonEnabled().convention(false);
 
+        // Setup Linting conventions
+        dslModel.getLint().getEnabled().convention(false);
+        dslModel.getLint().getXmlReport().convention(false);
+        dslModel.getLint().getCheckDependencies().convention(false);
+
         // Setup other feature extension conventions
         dslModel.getFeature().getEnabled().convention(false);
         dslModel.getCompose().getEnabled().convention(false);

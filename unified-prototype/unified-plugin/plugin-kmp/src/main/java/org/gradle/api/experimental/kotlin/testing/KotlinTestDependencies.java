@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package org.gradle.api.experimental.android;
+package org.gradle.api.experimental.kotlin.testing;
 
-import org.gradle.api.Action;
-import org.gradle.api.provider.Property;
+import org.gradle.api.artifacts.dsl.Dependencies;
+import org.gradle.api.artifacts.dsl.DependencyCollector;
+import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-/**
- * Static util class containing common methods.
- */
-public final class AndroidSupport {
-    private AndroidSupport() { /* not instantiable */ }
-
-    public static <T> void ifPresent(Property<T> property, Action<T> action) {
-        if (property.isPresent()) {
-            action.execute(property.get());
-        }
-    }
+@SuppressWarnings("UnstableApiUsage")
+@Restricted
+public interface KotlinTestDependencies extends Dependencies {
+    DependencyCollector getImplementation();
 }
