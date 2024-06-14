@@ -21,9 +21,7 @@ public interface KotlinJvmLibrary extends HasJavaTarget, HasLibraryDependencies,
 
     @Configuring
     default void lint(Action<? super Lint> action) {
-        Lint lint = getLint();
-        lint.getEnabled().set(true);
-        action.execute(lint);
+        action.execute(getLint());
     }
 
     @Nested

@@ -53,8 +53,6 @@ public interface AndroidLibrary extends AndroidSoftware {
 
     @Configuring
     default void protobuf(Action<? super Protobuf> action) {
-        Protobuf protobuf = getProtobuf();
-        protobuf.getEnabled().set(true);
-        action.execute(protobuf);
+        action.execute(getProtobuf());
     }
 }

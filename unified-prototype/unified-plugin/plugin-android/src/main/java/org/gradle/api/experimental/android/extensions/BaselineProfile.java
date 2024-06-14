@@ -22,10 +22,9 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
+@Restricted
 public interface BaselineProfile {
-    /**
-     * Internal property purposely not exposed to the DSL.
-     */
+    @Restricted
     Property<Boolean> getEnabled();
 
     @Restricted

@@ -71,9 +71,7 @@ public interface AndroidApplication extends AndroidSoftware {
 
     @Configuring
     default void dependencyGuard(Action<? super DependencyGuard> action) {
-        DependencyGuard dependencyGuard = getDependencyGuard();
-        dependencyGuard.getEnabled().set(true);
-        action.execute(dependencyGuard);
+        action.execute(getDependencyGuard());
     }
 
     @Nested
@@ -81,9 +79,7 @@ public interface AndroidApplication extends AndroidSoftware {
 
     @Configuring
     default void firebase(Action<? super Firebase> action) {
-        Firebase firebase = getFirebase();
-        firebase.getEnabled().set(true);
-        action.execute(firebase);
+        action.execute(getFirebase());
     }
 
     @Nested
@@ -91,9 +87,7 @@ public interface AndroidApplication extends AndroidSoftware {
 
     @Configuring
     default void flavors(Action<? super Flavors> action) {
-        Flavors flavors = getFlavors();
-        flavors.getEnabled().set(true);
-        action.execute(flavors);
+        action.execute(getFlavors());
     }
 
     @Nested

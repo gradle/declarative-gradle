@@ -21,8 +21,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
 public interface Licenses {
-    /**
-     * Internal property purposely not exposed to the DSL.
-     */
+    @Restricted
     Property<Boolean> getEnabled();
 }

@@ -60,9 +60,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void kotlinSerialization(Action<? super KotlinSerialization> action) {
-        KotlinSerialization kotlinSerialization = getKotlinSerialization();
-        kotlinSerialization.getEnabled().set(true);
-        action.execute(kotlinSerialization);
+        action.execute(getKotlinSerialization());
     }
 
     @Nested
@@ -70,9 +68,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void compose(Action<? super Compose> action) {
-        Compose compose = getCompose();
-        compose.getEnabled().set(true);
-        action.execute(compose);
+        action.execute(getCompose());
     }
 
     @Nested
@@ -80,9 +76,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void coreLibraryDesugaring(Action<? super CoreLibraryDesugaring> action) {
-        CoreLibraryDesugaring coreLibraryDesugaring = getCoreLibraryDesugaring();
-        coreLibraryDesugaring.getEnabled().set(true);
-        action.execute(coreLibraryDesugaring);
+        action.execute(getCoreLibraryDesugaring());
     }
 
     @Nested
@@ -90,9 +84,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void hilt(Action<? super Hilt> action) {
-        Hilt hilt = getHilt();
-        hilt.getEnabled().set(true);
-        action.execute(hilt);
+        action.execute(getHilt());
     }
 
     @Nested
@@ -100,9 +92,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void room(Action<? super Room> action) {
-        Room room = getRoom();
-        room.getEnabled().set(true);
-        action.execute(room);
+        action.execute(getRoom());
     }
 
     @Nested
@@ -122,9 +112,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void feature(Action<? super Feature> action) {
-        Feature feature = getFeature();
-        feature.getEnabled().set(true);
-        action.execute(feature);
+        action.execute(getFeature());
     }
 
     /**
@@ -136,9 +124,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void licenses(Action<? super Licenses> action) {
-        Licenses licenses = getLicenses();
-        licenses.getEnabled().set(true);
-        action.execute(licenses);
+        action.execute(getLicenses());
     }
 
     @Nested
@@ -146,9 +132,7 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void baselineProfile(Action<? super BaselineProfile> action) {
-        BaselineProfile baselineProfile = getBaselineProfile();
-        baselineProfile.getEnabled().set(true);
-        action.execute(baselineProfile);
+        action.execute(getBaselineProfile());
     }
 
     @Override
@@ -157,8 +141,6 @@ public interface AndroidSoftware extends HasLinting {
 
     @Configuring
     default void lint(Action<? super Lint> action) {
-        Lint lint = getLint();
-        lint.getEnabled().set(true);
-        action.execute(lint);
+        action.execute(getLint());
     }
 }

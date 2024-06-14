@@ -15,9 +15,7 @@ public interface Testing {
 
     @Configuring
     default void jacoco(Action<? super Jacoco> action) {
-        Jacoco jacoco = getJacoco();
-        action.execute(jacoco);
-        jacoco.getEnabled().set(true);
+        action.execute(getJacoco());
     }
 
     @Nested
@@ -25,9 +23,7 @@ public interface Testing {
 
     @Configuring
     default void roborazzi(Action<? super Roborazzi> action) {
-        Roborazzi roborazzi = getRoborazzi();
-        roborazzi.getEnabled().set(true);
-        action.execute(roborazzi);
+        action.execute(getRoborazzi());
     }
 
     @Nested
