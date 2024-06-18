@@ -143,6 +143,7 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+  - pymdownx.details
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
@@ -150,5 +151,6 @@ markdown_extensions:
       alternate_style: true
   - toc:
       permalink: '#'
+  - admonition
   - attr_list
   - mdx_truly_sane_lists
