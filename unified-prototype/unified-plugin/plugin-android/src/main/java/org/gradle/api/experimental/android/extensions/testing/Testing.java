@@ -1,7 +1,6 @@
 package org.gradle.api.experimental.android.extensions.testing;
 
 import org.gradle.api.Action;
-import org.gradle.api.experimental.android.extensions.Jacoco;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
@@ -16,9 +15,15 @@ public interface Testing {
 
     @Configuring
     default void jacoco(Action<? super Jacoco> action) {
-        Jacoco jacoco = getJacoco();
-        action.execute(jacoco);
-        jacoco.getEnabled().set(true);
+        action.execute(getJacoco());
+    }
+
+    @Nested
+    Roborazzi getRoborazzi();
+
+    @Configuring
+    default void roborazzi(Action<? super Roborazzi> action) {
+        action.execute(getRoborazzi());
     }
 
     @Nested

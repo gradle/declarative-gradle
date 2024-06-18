@@ -1,13 +1,14 @@
 package org.gradle.api.experimental.android.application;
 
 import org.gradle.api.Action;
+import org.gradle.api.experimental.android.AndroidSoftwareBuildTypes;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface AndroidApplicationBuildTypes {
-
+public interface AndroidApplicationBuildTypes extends AndroidSoftwareBuildTypes {
+    @Override
     @Nested
     AndroidApplicationBuildType getDebug();
 
@@ -16,6 +17,7 @@ public interface AndroidApplicationBuildTypes {
         action.execute(getDebug());
     }
 
+    @Override
     @Nested
     AndroidApplicationBuildType getRelease();
 

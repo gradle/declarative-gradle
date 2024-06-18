@@ -23,6 +23,18 @@ dependencyResolutionManagement {
 
 rootProject.name = "unified-prototype"
 
+conventions {
+    androidLibrary {
+        jdkVersion = 11
+        compileSdk = 34
+    }
+
+    androidApplication {
+        jdkVersion = 11
+        compileSdk = 34
+    }
+}
+
 include("android-util")
 include("java-util")
 include("kotlin-jvm-util")

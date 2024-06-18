@@ -4,9 +4,12 @@ import kotlin.Unit;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.AbstractExecTask;
+import org.gradle.api.tasks.TaskProvider;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
 
@@ -26,6 +29,7 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
 
         // Apply the official KMP plugin
         project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
+        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
 
         linkDslModelToPluginLazy(project, dslModel);
     }
@@ -50,6 +54,10 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                 kotlinTarget.binaries(nativeBinaries -> {
                     nativeBinaries.executable(executable -> {
                         executable.entryPoint(target.getEntryPoint().get());
+                        TaskProvider<AbstractExecTask<?>> runTask = executable.getRunTaskProvider();
+                        if (runTask != null) {
+                            dslModel.getRunTasks().add(runTask);
+                        }
                     });
                 });
             });
@@ -90,6 +98,9 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                 });
                 kotlinTarget.mainRun(kotlinJvmRunDsl -> {
                     kotlinJvmRunDsl.getMainClass().set(target.getMainClass());
+                    // The task is not registered until this block of code runs, but the block is deferred until some arbitrary point in time
+                    // So, wire up the task when this block runs
+                    dslModel.getRunTasks().add(project.getTasks().named(target.getName() + "Run"));
                     return Unit.INSTANCE;
                 });
             });

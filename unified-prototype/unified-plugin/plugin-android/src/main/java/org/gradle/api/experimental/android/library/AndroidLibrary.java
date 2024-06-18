@@ -16,60 +16,17 @@
 
 package org.gradle.api.experimental.android.library;
 
-import com.android.build.api.dsl.BaseFlavor;
-import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
-import org.gradle.api.experimental.android.extensions.testing.Testing;
-import org.gradle.api.experimental.android.extensions.CoreLibraryDesugaring;
-import org.gradle.api.experimental.android.extensions.Hilt;
-import org.gradle.api.experimental.android.extensions.KotlinSerialization;
-import org.gradle.api.experimental.android.extensions.Compose;
-import org.gradle.api.experimental.android.nia.Feature;
+import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.provider.Property;
+import org.gradle.api.experimental.android.extensions.Protobuf;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface AndroidLibrary {
-    /**
-     * @see CommonExtension#getCompileSdk()
-     */
-    @Restricted
-    Property<Integer> getCompileSdk();
-
-    /**
-     * @see CommonExtension#getNamespace()
-     */
-    @Restricted
-    Property<String> getNamespace();
-
-    /**
-     * @see BaseFlavor#getMinSdk()
-     */
-    @Restricted
-    Property<Integer> getMinSdk();
-
-    /**
-     * JDK version to use for compilation.
-     */
-    @Restricted
-    Property<Integer> getJdkVersion();
-
-    /**
-     * Controls whether or not to set up Kotlin serialization, applying the plugins
-     * and adding any necessary dependencies.
-     */
-    @Nested
-    KotlinSerialization getKotlinSerialization();
-
-    @Configuring
-    default void kotlinSerialization(Action<? super KotlinSerialization> action) {
-        KotlinSerialization kotlinSerialization = getKotlinSerialization();
-        action.execute(kotlinSerialization);
-        kotlinSerialization.getEnabled().set(true);
-    }
-
+public interface AndroidLibrary extends AndroidSoftware {
+    @Override
     @Nested
     AndroidLibraryDependencies getDependencies();
 
@@ -78,6 +35,7 @@ public interface AndroidLibrary {
         action.execute(getDependencies());
     }
 
+    @Override
     @Nested
     AndroidLibraryBuildTypes getBuildTypes();
 
@@ -86,51 +44,15 @@ public interface AndroidLibrary {
         action.execute(getBuildTypes());
     }
 
-    @Nested
-    Testing getTesting();
-
-    @Configuring
-    default void testing(Action<? super Testing> action) {
-        action.execute(getTesting());
-    }
+    // TODO:DG We really want to model a list of consumer proguard files here, but can't yet
+    @Restricted
+    Property<String> getConsumerProguardFile();
 
     @Nested
-    Feature getFeature();
+    Protobuf getProtobuf();
 
     @Configuring
-    default void feature(Action<? super Feature> action) {
-        Feature feature = getFeature();
-        action.execute(feature);
-        feature.getEnabled().set(true);
-    }
-
-    @Nested
-    Compose getCompose();
-
-    @Configuring
-    default void compose(Action<? super Compose> action) {
-        Compose compose = getCompose();
-        action.execute(compose);
-        compose.getEnabled().set(true);
-    }
-
-    @Nested
-    CoreLibraryDesugaring getCoreLibraryDesugaring();
-
-    @Configuring
-    default void coreLibraryDesugaring(Action<? super CoreLibraryDesugaring> action) {
-        CoreLibraryDesugaring coreLibraryDesugaring = getCoreLibraryDesugaring();
-        action.execute(coreLibraryDesugaring);
-        coreLibraryDesugaring.getEnabled().set(true);
-    }
-
-    @Nested
-    Hilt getHilt();
-
-    @Configuring
-    default void hilt(Action<? super Hilt> action) {
-        Hilt hilt = getHilt();
-        action.execute(hilt);
-        hilt.getEnabled().set(true);
+    default void protobuf(Action<? super Protobuf> action) {
+        action.execute(getProtobuf());
     }
 }

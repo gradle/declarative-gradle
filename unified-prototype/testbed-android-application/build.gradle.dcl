@@ -1,7 +1,4 @@
 androidApplication {
-    jdkVersion = 11
-    compileSdk = 34
-
     versionCode = 8
     versionName = "0.1.2"
     applicationId = "org.gradle.experimental.android.application"

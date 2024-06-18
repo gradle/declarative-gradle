@@ -23,14 +23,20 @@ import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
+import org.gradle.api.tasks.TaskAction;
 import org.gradle.internal.impldep.com.google.common.collect.Iterables;
 import org.gradle.work.DisableCachingByDefault;
 
 import java.io.File;
 import java.nio.file.Path;
 
-@DisableCachingByDefault(because = "Prints output") // TODO: Not converted
+@DisableCachingByDefault(because = "Prints output")
 public abstract class PrintApkLocationTask extends DefaultTask {
     @PathSensitive(PathSensitivity.RELATIVE)
     @InputDirectory

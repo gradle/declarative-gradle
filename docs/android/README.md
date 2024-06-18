@@ -13,6 +13,16 @@ and also Kotlin Multiplatform projects.
 
 ## Key Features
 
+The Declarative Gradle DSL code is available at <https://github.com/gradle/declarative-gradle/tree/main/unified-prototype>.
+The Declarative Gradle DSL plugin for Android is available at: 
+<https://plugins.gradle.org/plugin/org.gradle.experimental.android-library>.
+You can find a list of all available plugins [here](https://plugins.gradle.org/search?term=declarative-gradle).
+
+Common build files written using the Groovy DSL or Kotlin DSL with the name `build.gradle` and `build.gradle.kts` respectively will be replaced with `build.gradle.dcl`.
+
+`.dcl` files are written in Kotlin in a fully declarative way. 
+
+
 The restricted DSL allows a limited set of constructs. Generic control flow and calls to arbitrary methods are not allowed.
 For Android development, we provide the following software types:
 
@@ -78,11 +88,10 @@ Some of the converted subprojects:
 [`:core:data`](https://github.com/gradle/nowinandroid/blob/main-declarative/ccore/data/build.gradle.dcl),
 [`:core:domain`](https://github.com/gradle/nowinandroid/blob/main-declarative/ccore/domain/build.gradle.dcl).
 
+
 Let’s take a look at a `build.gradle.dcl` file which replaces the common `build.gradle` or `build.gradle.kts` files:
 
-_core/common/build.gradle.dcl_
-
-```kotlin
+```kotlin title="_core/common/build.gradle.dcl_"
 androidLibrary {
     namespace = "com.google.samples.apps.nowinandroid.core.common"
     dependencies {
@@ -105,6 +114,8 @@ The `androidLibrary` software type exposes [several configuration options](https
 
 **Step 1.** Setup the Android development environment as documented above
 
+**Step 2.** Checkout the repositories
+
 ```shell
 git clone https://github.com/gradle/nowinandroid.git
 cd nowinandroid
@@ -112,12 +123,10 @@ git checkout main-declarative
 git clone https://github.com/gradle/declarative-gradle.git
 ```
 
-**Step 2.** Checkout the repositories
-
 This should checkout the `main` branch of the [Declarative Gradle prototype plugins](https://github.com/gradle/declarative-gradle) inside the **root** of Gradle's NowInAndroid fork. 
 
 You should have this project structure:
-```
+```shell
 nowinandroid/
     declarative-gradle/
 ```

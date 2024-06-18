@@ -16,9 +16,10 @@
 
 package org.gradle.api.experimental.android.application;
 
+import org.gradle.api.experimental.android.AndroidSoftwareDependencies;
 import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface AndroidApplicationDependencies extends ApplicationDependencies {
+public interface AndroidApplicationDependencies extends ApplicationDependencies, AndroidSoftwareDependencies {
 }

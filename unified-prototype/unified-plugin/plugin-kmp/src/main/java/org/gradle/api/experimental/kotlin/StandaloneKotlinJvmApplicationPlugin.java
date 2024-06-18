@@ -2,6 +2,7 @@ package org.gradle.api.experimental.kotlin;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
@@ -21,6 +22,7 @@ abstract public class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
 
         project.getPlugins().apply(ApplicationPlugin.class);
         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
+        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
 
         linkDslModelToPlugin(project, dslModel);
     }
@@ -29,5 +31,7 @@ abstract public class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
         KotlinPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkApplicationMainClass(project, dslModel);
         JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
+
+        dslModel.getRunTasks().add(project.getTasks().named("run"));
     }
 }

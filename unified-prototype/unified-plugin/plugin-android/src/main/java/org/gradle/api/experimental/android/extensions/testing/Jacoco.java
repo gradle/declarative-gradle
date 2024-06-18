@@ -1,4 +1,4 @@
-package org.gradle.api.experimental.android.extensions;
+package org.gradle.api.experimental.android.extensions.testing;
 
 import org.gradle.api.provider.Property;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
@@ -8,9 +8,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
  */
 @Restricted
 public interface Jacoco {
-    /**
-     * Internal property purposely not exposed to the DSL.
-     */
+    @Restricted
     Property<Boolean> getEnabled();
 
     /**

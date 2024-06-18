@@ -4,14 +4,27 @@ plugins {
 
 subprojects {
     group = "org.gradle.experimental"
-    version = "0.1.2-SNAPSHOT"
+    version = "0.1.3-SNAPSHOT"
 }
 
-tasks.register("publishAllPlugins") {
+val publishAllPlugins = tasks.register("publishAllPlugins") {
     description = "Publish all plugins in the build"
-    dependsOn(
-        ":plugin-android:publishPlugins",
-        ":plugin-jvm:publishPlugins",
-        ":plugin-kmp:publishPlugins",
-    )
+}
+subprojects {
+    plugins.withId("build-logic.publishing") {
+        publishAllPlugins.configure {
+            dependsOn(tasks.named("publishPlugins"))
+        }
+    }
+}
+
+val publishAllPluginsToMavenLocal = tasks.register("publishAllPluginsToMavenLocal") {
+    description = "Publish all plugins in the build to the Maven Local repository"
+}
+subprojects {
+    plugins.withId("build-logic.publishing") {
+        publishAllPluginsToMavenLocal.configure {
+            dependsOn(tasks.named("publishToMavenLocal"))
+        }
+    }
 }

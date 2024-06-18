@@ -12,8 +12,6 @@ copyright: >
   you can find them in the linked repositories.
 
   The GRADLE trademark is the property of Gradle, Inc.
-  Use of the term GRADLE on this website and any content and/or materials available through this website is
-  for identification purposes only and does not imply sponsorship or endorsement by Gradle, Inc.
 docs_dir: .
 repo_url: https://github.com/gradle/declarative-gradle
 repo_name: Declarative Gradle repo
@@ -86,7 +84,9 @@ nav:
       Overview: README.md
       Getting Started: docs/getting-started/README.md
       Declarative Gradle for Android: docs/android/README.md
-      Declarative Gradle for Java/Kotlin/JVM: unified-prototype/README.md#java
+      Declarative Gradle for Java/JVM: docs/java/README.md
+      Declarative Gradle for Kotlin: docs/kotlin/README.md
+      Declarative Gradle for Swift: docs/swift/README.md
       Public Roadmap: ROADMAP.md
   - Getting Started:
       Overview: docs/getting-started/README.md
@@ -97,6 +97,11 @@ nav:
   - Participate:
       Contributing: docs/CONTRIBUTING.md
       Code of Conduct: docs/CODE_OF_CONDUCT.md
+  - Resources:
+      Publications:
+        List of Publications: publications/README.md
+        KotlinConf 2024: publications/2024-05-kotlinconf.md
+      Newsletter: publications/newsletter/README.md
 
 extra_css:
   - docs/assets/css/gradle.css
@@ -130,6 +135,7 @@ plugins:
   - mkdocs-pdf
   - social
   - same-dir
+  - include-markdown
 
 # Markdown
 markdown_extensions:
@@ -147,3 +153,4 @@ markdown_extensions:
       permalink: '#'
   - admonition
   - attr_list
+  - mdx_truly_sane_lists
