@@ -151,3 +151,4 @@ markdown_extensions:
   - toc:
       permalink: '#'
   - attr_list
+  - mdx_truly_sane_lists
