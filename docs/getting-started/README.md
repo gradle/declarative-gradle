@@ -12,10 +12,8 @@ so your mileage may vary.
   so for them, no extra steps are needed
 - Make sure to use [JDK 17](https://www.oracle.com/fr/java/technologies/downloads/#java17) and
   that your `JAVA_HOME` points to Java 17.
-- For Android projects:
-  - Make sure [Android Studio](https://developer.android.com/studio) is installed.
-    Note that syntax highlighting works in [Android Studio nightlies](https://developer.android.com/studio/nightly) only.
-  - Make sure that your [ANDROID_HOME](https://developer.android.com/tools/variables#android_home) path is set.
+- For specific project types and IDEs, for example Android projects, extra installation steps.
+  See the guidelines on the respective documentation pages.
 
 ## Getting Started with Android development
 
@@ -24,7 +22,7 @@ To help with getting started,
 we updated the popular _Now in Android_ demo to use Declarative Gradle DSL and its DSL in the build definitions.
 You can find the repository [here](https://github.com/gradle/nowinandroid/tree/main-declarative).
 
-To get started, follow the steps in [this guide](../android/README.md#3-getting-started-with-nowinandroid)
+To get started, follow the steps in [this guide](../android/README.md#3-getting-started-with-nowinandroid).
 
 ## Getting started for other project types
 

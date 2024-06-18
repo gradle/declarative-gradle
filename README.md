@@ -12,6 +12,16 @@ This is an experimental project, stay tuned for updates!
 Learn more in the [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
 blog post.
 
+## Disclaimer
+
+!!! info
+    _Declarative Gradle_ is an experimental project.
+    Currently, no compatibility is guaranteed, and there is no commitment to the DSL syntax
+    and available features.
+    More information will be released soon.
+    Any feedback is welcome!
+    See more on the [Contributor Guide](./docs/CONTRIBUTING.md).
+
 ## Key Principles
 
 - **Ease of use** for regular software developers.
@@ -28,15 +38,6 @@ We implement those principles through a _declarative DSL_ which is, at the momen
 The [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
 outlines more details about the project and the new
 Declarative DSL we are building.
-
-## Disclaimer
-
-_Declarative Gradle_ is an experimental project.
-Currently, no compatibility is guaranteed, and there is no commitment to the DSL syntax
-and available features.
-More information will be released soon.
-Any feedback is welcome!
-See more on the [Contributor Guide](./docs/CONTRIBUTING.md).
 
 <!-- TODO: Add project manifesto -->
 

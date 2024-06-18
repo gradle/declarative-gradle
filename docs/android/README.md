@@ -1,31 +1,28 @@
 
 # Declarative Gradle for Android
 
-## 1. Summary
+Support for Android is our main priority in the first alpha releases.
+We target the classic Android applications and libraries,
+and also Kotlin Multiplatform projects.
 
-Declarative Gradle DSL is currently in alpha.
+!!! info
+    _Declarative Gradle_ is an experimental project.
+    Currently, no compatibility is guaranteed, and there is no commitment to the DSL syntax
+    and available features.
+    More information will be released soon.
 
-The Declarative Gradle DSL code is available at https://github.com/gradle/declarative-gradle/tree/main/unified-prototype.
-The Declarative Gradle DSL plugin for Android is available at: 
-https://plugins.gradle.org/plugin/org.gradle.experimental.android-library.
-You can find a list of all available plugins [here](https://plugins.gradle.org/search?term=declarative-gradle)
-
-Common build files written using the Groovy DSL or Kotlin DSL with the name `build.gradle` and `build.gradle.kts` respectively will be replaced with `build.gradle.dcl`.
-
-`.dcl` files are written in Kotlin in a fully declarative way. 
-
-## 2. Key features / Syntax examples
+## Key Features
 
 The restricted DSL allows a limited set of constructs. Generic control flow and calls to arbitrary methods are not allowed.
+For Android development, we provide the following software types:
 
-For Android, the `androidLibrary` and `androidApplication` software types are used. For other applications, there are `jvmLibrary` and `kmpLibrary` types available as well. Therefore, your `build.gradle.dcl` files begin with:
+- `androidApplication` - Android Application
+- `androidLibrary` - Android Library
+- `jvmLibrary` - Generic library for a JVM-compatible virtual machine
+- `kmpLibrary` - A kotlin multi-platform library
 
-```kotlin
-androidLibrary {
-}
-```
-
-The `androidLibrary` software type exposes [several configuration options](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/unified-plugin/plugin-android/src/main/java/org/gradle/api/experimental/android/library/AndroidLibrary.java) and dependencies. 
+The `androidLibrary` software type exposes [several configuration options](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/unified-plugin/plugin-android/src/main/java/org/gradle/api/experimental/android/library/AndroidLibrary.java) and dependencies.
+As you can see, there is no imperative logic here:
 
 ```kotlin
 androidLibrary {
@@ -35,24 +32,51 @@ androidLibrary {
 }
 ```
 
-As you can see, there is no imperative logic here.
+The `androidApplication` software type example can be found [here](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/unified-plugin/plugin-jvm/src/main/java/org/gradle/api/experimental/java/JavaApplication.java).
 
-The `androidApplication` software type can be found [here](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/unified-plugin/plugin-jvm/src/main/java/org/gradle/api/experimental/java/JavaApplication.java).
+## Setting Up
 
-## 3. Getting Started with NowInAndroid
+### Environment
+
+- Make sure to use [JDK 17](https://www.oracle.com/fr/java/technologies/downloads/#java17) and that your JAVA_HOME points to Java 17.
+
+### Gradle Plugins
+
+The experiimental Declarative Gradle DSL plugin for Android is available on the Gradle Plugin Portal:
+[`org.gradle.experimental.android-library`](https://plugins.gradle.org/plugin/org.gradle.experimental.android-library).
+The location **will** change before the final release.
+
+You can find a list of all available Declarative Gradle plugins [here](https://plugins.gradle.org/search?term=declarative-gradle).
+
+### Android Studio
+
+The latest [Android Studio 2024.1.2 Nightly](https://developer.android.com/studio/nightly)
+supports code completion and syntax highlighting for Declarative Gradle files (*.dcl).
+Some features work out of the box on this version,
+others require additional configuration.
+
+- Make sure the recent [Android Studio Nigthly](https://developer.android.com/studio/nightly) is installed.
+- Set [`ANDROID_HOME`](https://developer.android.com/tools/variables#android_home) path to the location of the Android Studio Nigthly installation.
+- Enable semantic assistance (completion and error highlighting) for Declarative Gradle
+  1. Open _Help -> Open Custom Vm Options_
+  2. Add text `-Didea.is.internal=true`
+  3. Restart the IDE
+  4. Open _Tools -> Internal Actions -> Android -> Edit Studio Flags_ and type _"Gradle Declarative"_ in the search window
+  5. Switch on the _Studio support for declarative files_ flag.
+
+## Getting Started with NowInAndroid
 
 [Now in Android](https://github.com/android/nowinandroid) is a fully functional Android app built entirely with Kotlin and Jetpack Compose from the Android team.
+To help you with getting started,
+we forked _Now in Android_ and updated the build files using the Declarative Gradle DSL. The prototype repository can be found [here](https://github.com/gradle/nowinandroid/tree/main-declarative).
 
-We forked _Now in Android_ and updated the build files using the Declarative Gradle DSL. The prototype repository can be found [here](https://github.com/gradle/nowinandroid/tree/main-declarative).
+The [settings file](settings.gradle.dcl) applies a new "Android ecosystem plugin", which exposes `androidLibrary` and `androidApplication` software types that can be used in subprojects.
 
-The [settings file](settings.gradle.dcl) applies a new "Android ecosystem plugin", which exposes `androidLibrary` and `androidApplication` software types that can be used in subprojects. 
-
-The current prototype is limited to a single `androidLibrary` software type convention, so only a few subprojects have been converted.
-
-Converted subprojects:
-- [`:core:common`](core/common/build.gradle.dcl)
-- [`:core:data`](core/data/build.gradle.dcl)
-- [`:core:domain`](core/domain/build.gradle.dcl)
+The migration to Declarative Gradle is in proghress, not all subprojects have been migrated yet.
+Some of the converted subprojects:
+[`:core:common`](https://github.com/gradle/nowinandroid/blob/main-declarative/ccore/common/build.gradle.dcl),
+[`:core:data`](https://github.com/gradle/nowinandroid/blob/main-declarative/ccore/data/build.gradle.dcl),
+[`:core:domain`](https://github.com/gradle/nowinandroid/blob/main-declarative/ccore/domain/build.gradle.dcl).
 
 Let’s take a look at a `build.gradle.dcl` file which replaces the common `build.gradle` or `build.gradle.kts` files:
 
@@ -77,13 +101,9 @@ androidLibrary {
 
 The `androidLibrary` software type exposes [several configuration options](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/unified-plugin/plugin-android/src/main/java/org/gradle/api/experimental/android/library/AndroidLibrary.java) and dependencies. 
 
-### 3.1 Prerequisites
+### Setup
 
-- Make sure to use [JDK 17](https://www.oracle.com/fr/java/technologies/downloads/#java17) and that your JAVA_HOME points to Java 17.
-- Make sure [Android Studio](https://developer.android.com/studio) is installed. Note that syntax highlighting works in [Android Studio nightlies](https://developer.android.com/studio/nightly) only. 
-- Make sure that your [ANDROID_HOME](https://developer.android.com/tools/variables#android_home) path is set.
-
-### 3.2 Setup
+**Step 1.** Setup the Android development environment as documented above
 
 ```shell
 git clone https://github.com/gradle/nowinandroid.git
@@ -91,6 +111,8 @@ cd nowinandroid
 git checkout main-declarative
 git clone https://github.com/gradle/declarative-gradle.git
 ```
+
+**Step 2.** Checkout the repositories
 
 This should checkout the `main` branch of the [Declarative Gradle prototype plugins](https://github.com/gradle/declarative-gradle) inside the **root** of Gradle's NowInAndroid fork. 
 
@@ -100,7 +122,7 @@ nowinandroid/
     declarative-gradle/
 ```
 
-### 3.3 Building
+### Building
 
 You can assemble the project with the following command:
 
@@ -108,7 +130,7 @@ You can assemble the project with the following command:
 ./gradlew buildDemoDebug
 ```
 
-### 3.4 Testing
+### Testing
 
 You can run tests using the following commands:
 
@@ -121,6 +143,7 @@ You can run tests using the following commands:
 ```
 
 After starting a local Android emulator in Android Studio:
+
 ```shell
 ./gradlew connectedDemoDebugAndroidTest --daemon
-````
+```
