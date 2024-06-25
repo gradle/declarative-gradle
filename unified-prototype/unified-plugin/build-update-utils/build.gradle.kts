@@ -4,7 +4,7 @@ val ciUpdateTasks = "CI Update Tasks"
 
 val versionFile = rootProject.file("version.txt")
 
-class ExecOperationsHelper @Inject constructor(val execOperations: ExecOperations) {
+open class ExecOperationsHelper @Inject constructor(val execOperations: ExecOperations) {
 }
 
 val execOperations = project.objects.newInstance<ExecOperationsHelper>().execOperations
