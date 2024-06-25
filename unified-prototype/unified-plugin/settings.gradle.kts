@@ -13,5 +13,6 @@ include("plugin-kmp")
 include("plugin-swift")
 include("plugin-common")
 include("internal-testing-utils")
+include("build-update-utils")
 
 rootProject.name = "unified-plugin"
