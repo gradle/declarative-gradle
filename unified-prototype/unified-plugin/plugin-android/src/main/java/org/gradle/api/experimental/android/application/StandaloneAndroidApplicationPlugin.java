@@ -1,10 +1,7 @@
 package org.gradle.api.experimental.android.application;
 
-import com.android.build.api.attributes.ProductFlavorAttr;
 import com.android.build.api.dsl.ApplicationExtension;
 import org.gradle.api.Project;
-import org.gradle.api.attributes.Attribute;
-import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.nia.NiaSupport;
@@ -18,7 +15,10 @@ import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
  */
 @SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroidSoftwarePlugin {
-    @SoftwareType(name = "androidApplication", modelPublicType=AndroidApplication.class)
+
+    public static final String ANDROID_APPLICATION = "androidApplication";
+
+    @SoftwareType(name = ANDROID_APPLICATION, modelPublicType=AndroidApplication.class)
     public abstract AndroidApplication getAndroidApplication();
 
     @Override
@@ -31,6 +31,7 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
         super.apply(project);
 
         AndroidApplication dslModel = getAndroidApplication();
+        project.getExtensions().add(ANDROID_APPLICATION, dslModel);
 
         // Setup application-specific conventions
         dslModel.getDependencyGuard().getEnabled().convention(false);

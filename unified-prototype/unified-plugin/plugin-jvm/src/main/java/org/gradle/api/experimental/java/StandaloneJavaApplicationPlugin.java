@@ -12,12 +12,16 @@ import org.gradle.api.plugins.ApplicationPlugin;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project> {
-    @SoftwareType(name = "javaApplication", modelPublicType = JavaApplication.class)
+
+    public static final String JAVA_APPLICATION = "javaApplication";
+
+    @SoftwareType(name = JAVA_APPLICATION, modelPublicType = JavaApplication.class)
     abstract public JavaApplication getApplication();
 
     @Override
     public void apply(Project project) {
         JavaApplication dslModel = getApplication();
+        project.getExtensions().add(JAVA_APPLICATION, dslModel);
 
         project.getPlugins().apply(ApplicationPlugin.class);
         project.getPlugins().apply(CliApplicationConventionsPlugin.class);

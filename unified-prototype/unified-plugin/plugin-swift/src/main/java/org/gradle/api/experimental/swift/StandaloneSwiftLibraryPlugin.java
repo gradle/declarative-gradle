@@ -7,12 +7,16 @@ import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.language.swift.plugins.SwiftLibraryPlugin;
 
 public abstract class StandaloneSwiftLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name = "swiftLibrary", modelPublicType = SwiftLibrary.class)
+
+    public static final String SWIFT_LIBRARY = "swiftLibrary";
+
+    @SoftwareType(name = SWIFT_LIBRARY, modelPublicType = SwiftLibrary.class)
     abstract public SwiftLibrary getLibrary();
 
     @Override
     public void apply(Project project) {
         SwiftLibrary library = getLibrary();
+        project.getExtensions().add(SWIFT_LIBRARY, library);
 
         project.getPlugins().apply(SwiftLibraryPlugin.class);
 

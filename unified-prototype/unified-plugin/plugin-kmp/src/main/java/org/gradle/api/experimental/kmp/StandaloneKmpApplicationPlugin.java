@@ -18,12 +18,16 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> {
-    @SoftwareType(name = "kotlinApplication", modelPublicType = KmpApplication.class)
+
+    public static final String KOTLIN_APPLICATION = "kotlinApplication";
+
+    @SoftwareType(name = KOTLIN_APPLICATION, modelPublicType = KmpApplication.class)
     abstract public KmpApplication getKmpApplication();
 
     @Override
     public void apply(Project project) {
         KmpApplication dslModel = createDslModel(project);
+        project.getExtensions().add(KOTLIN_APPLICATION, dslModel);
 
         project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
 

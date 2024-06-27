@@ -13,12 +13,16 @@ import org.gradle.api.plugins.ApplicationPlugin;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneKotlinJvmApplicationPlugin implements Plugin<Project> {
-    @SoftwareType(name = "kotlinJvmApplication", modelPublicType = KotlinJvmApplication.class)
+
+    public static final String KOTLIN_JVM_APPLICATION = "kotlinJvmApplication";
+
+    @SoftwareType(name = KOTLIN_JVM_APPLICATION, modelPublicType = KotlinJvmApplication.class)
     abstract public KotlinJvmApplication getApplication();
 
     @Override
     public void apply(Project project) {
         KotlinJvmApplication dslModel = getApplication();
+        project.getExtensions().add(KOTLIN_JVM_APPLICATION, dslModel);
 
         project.getPlugins().apply(ApplicationPlugin.class);
         project.getPlugins().apply("org.jetbrains.kotlin.jvm");

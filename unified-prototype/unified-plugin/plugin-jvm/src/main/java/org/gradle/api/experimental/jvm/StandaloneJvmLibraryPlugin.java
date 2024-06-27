@@ -15,12 +15,16 @@ import javax.inject.Inject;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name = "jvmLibrary", modelPublicType = JvmLibrary.class)
+
+    public static final String JVM_LIBRARY = "jvmLibrary";
+
+    @SoftwareType(name = JVM_LIBRARY, modelPublicType = JvmLibrary.class)
     abstract public JvmLibrary getJvmLibrary();
 
     @Override
     public void apply(Project project) {
         JvmLibrary dslModel = getJvmLibrary();
+        project.getExtensions().add(JVM_LIBRARY, dslModel);
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 

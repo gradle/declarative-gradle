@@ -18,12 +18,16 @@ import javax.inject.Inject;
  * and links the declarative model to the official plugin.
  */
 abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> {
-    @SoftwareType(name = "jvmApplication", modelPublicType = JvmApplication.class)
+
+    public static final String JVM_APPLICATION = "jvmApplication";
+
+    @SoftwareType(name = JVM_APPLICATION, modelPublicType = JvmApplication.class)
     abstract public JvmApplication getJvmApplication();
 
     @Override
     public void apply(Project project) {
         JvmApplication dslModel = getJvmApplication();
+        project.getExtensions().add(JVM_APPLICATION, dslModel);
 
         project.getPlugins().apply(ApplicationPlugin.class);
         project.getPlugins().apply(CliApplicationConventionsPlugin.class);

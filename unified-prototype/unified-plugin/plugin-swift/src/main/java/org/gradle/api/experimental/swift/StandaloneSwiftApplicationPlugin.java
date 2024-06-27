@@ -16,12 +16,16 @@ import org.gradle.language.swift.plugins.SwiftApplicationPlugin;
 import org.gradle.util.internal.TextUtil;
 
 public abstract class StandaloneSwiftApplicationPlugin implements Plugin<Project> {
-    @SoftwareType(name = "swiftApplication", modelPublicType = SwiftApplication.class)
+
+    public static final String SWIFT_APPLICATION = "swiftApplication";
+
+    @SoftwareType(name = SWIFT_APPLICATION, modelPublicType = SwiftApplication.class)
     abstract public SwiftApplication getApplication();
 
     @Override
     public void apply(Project project) {
         SwiftApplication application = getApplication();
+        project.getExtensions().add(SWIFT_APPLICATION, application);
 
         project.getPlugins().apply(SwiftApplicationPlugin.class);
         project.getPlugins().apply(CliApplicationConventionsPlugin.class);

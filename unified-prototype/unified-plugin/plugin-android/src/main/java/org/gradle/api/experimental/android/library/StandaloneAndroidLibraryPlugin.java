@@ -25,7 +25,10 @@ import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
  */
 @SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoftwarePlugin {
-    @SoftwareType(name = "androidLibrary", modelPublicType=AndroidLibrary.class)
+
+    public static final String ANDROID_LIBRARY = "androidLibrary";
+
+    @SoftwareType(name = ANDROID_LIBRARY, modelPublicType=AndroidLibrary.class)
     public abstract AndroidLibrary getAndroidLibrary();
 
     @Override
@@ -38,6 +41,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         super.apply(project);
 
         AndroidLibrary dslModel = getAndroidLibrary();
+        project.getExtensions().add(ANDROID_LIBRARY, dslModel);
 
         // Setup library-specific conventions
         dslModel.getProtobuf().getEnabled().convention(false);
