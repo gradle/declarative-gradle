@@ -158,6 +158,5 @@ or other permissive OSI-compliant licenses.
 ## Discuss
 
 - `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
-- [Dedicated category](https://discuss.gradle.org/c/help-discuss/declarative-gradle/38) Gradle Forums
 
 See [Gradle Community Resources](https://gradle.org/resources/) for the links to the channels.

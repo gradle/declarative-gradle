@@ -13,7 +13,6 @@ While the project is in early stages,
 initial feedback on DSL and use-cases will be appreciated!
 
 - `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
-- [Dedicated category](https://discuss.gradle.org/c/help-discuss/declarative-gradle/38) Gradle Forums
 
 ## Adopting Declarative Gradle in your projects
 
