@@ -15,12 +15,15 @@ import org.gradle.language.cpp.plugins.CppApplicationPlugin;
 import org.gradle.util.internal.TextUtil;
 
 public abstract class StandaloneCppApplicationPlugin implements Plugin<Project> {
-    @SoftwareType(name = "cppApplication", modelPublicType = CppApplication.class)
+    public static final String CPP_APPLICATION = "cppApplication";
+
+    @SoftwareType(name = CPP_APPLICATION)
     abstract public CppApplication getApplication();
 
     @Override
     public void apply(Project target) {
         CppApplication application = getApplication();
+        target.getExtensions().add(CPP_APPLICATION, application);
 
         target.getPlugins().apply(CppApplicationPlugin.class);
         target.getPlugins().apply(CliApplicationConventionsPlugin.class);
@@ -33,8 +36,8 @@ public abstract class StandaloneCppApplicationPlugin implements Plugin<Project> 
 
         model.getImplementationDependencies().getDependencies().addAllLater(application.getDependencies().getImplementation().getDependencies());
 
-        project.afterEvaluate(p -> {
-            for (CppBinary binary : model.getBinaries().get()) {
+        project.getComponents().withType(org.gradle.language.cpp.CppApplication.class).configureEach(applicationComponent ->
+            applicationComponent.getBinaries().configureEach(binary -> {
                 binary.getCompileTask().get().getCompilerArgs().add(application.getCppVersion().map(v -> "--std=" + v));
                 if (binary instanceof CppExecutable) {
                     Provider<RegularFile> executable = ((CppExecutable) binary).getDebuggerExecutableFile();
@@ -44,7 +47,7 @@ public abstract class StandaloneCppApplicationPlugin implements Plugin<Project> 
                     });
                     application.getRunTasks().add(runTask);
                 }
-            }
-        });
+            })
+        );
     }
 }

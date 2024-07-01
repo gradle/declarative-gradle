@@ -21,7 +21,7 @@ gradlePlugin {
             implementationClass = "org.gradle.api.experimental.cpp.StandaloneCppApplicationPlugin"
             tags = setOf("declarative-gradle")
         }
-        create("swift-ecosystem") {
+        create("cpp-ecosystem") {
             id = "org.gradle.experimental.cpp-ecosystem"
             implementationClass = "org.gradle.api.experimental.cpp.CppEcosystemPlugin"
             tags = setOf("declarative-gradle")

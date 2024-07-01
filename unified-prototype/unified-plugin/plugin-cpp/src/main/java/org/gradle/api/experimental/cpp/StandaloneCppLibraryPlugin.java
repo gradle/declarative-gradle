@@ -7,12 +7,15 @@ import org.gradle.language.cpp.CppBinary;
 import org.gradle.language.cpp.plugins.CppLibraryPlugin;
 
 public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name = "cppLibrary", modelPublicType = CppLibrary.class)
+    public static final String CPP_LIBRARY = "cppLibrary";
+
+    @SoftwareType(name = CPP_LIBRARY)
     abstract public CppLibrary getLibrary();
 
     @Override
     public void apply(Project target) {
         CppLibrary library = getLibrary();
+        target.getExtensions().add(CPP_LIBRARY, library);
 
         target.getPlugins().apply(CppLibraryPlugin.class);
 
@@ -25,10 +28,10 @@ public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
         model.getImplementationDependencies().getDependencies().addAllLater(library.getDependencies().getImplementation().getDependencies());
         model.getApiDependencies().getDependencies().addAllLater(library.getDependencies().getApi().getDependencies());
 
-        project.afterEvaluate(p -> {
-            for (CppBinary binary : model.getBinaries().get()) {
+        project.getComponents().withType(org.gradle.language.cpp.CppLibrary.class).configureEach(libraryComponent ->
+            libraryComponent.getBinaries().configureEach(binary -> {
                 binary.getCompileTask().get().getCompilerArgs().add(library.getCppVersion().map(v -> "--std=" + v));
-            }
-        });
+            })
+        );
     }
 }

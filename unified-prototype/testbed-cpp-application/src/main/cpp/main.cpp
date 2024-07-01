@@ -17,7 +17,7 @@ string os() {
 #ifdef __MACH__
     return "macOS";
 #else
-    return "unknown OS"
+    return "unknown OS";
 #endif
 }
 
