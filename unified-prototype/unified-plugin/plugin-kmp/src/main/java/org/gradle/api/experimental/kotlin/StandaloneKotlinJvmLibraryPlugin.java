@@ -14,12 +14,16 @@ import org.gradle.api.internal.plugins.software.SoftwareType;
  */
 @SuppressWarnings("UnstableApiUsage")
 abstract public class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name = "kotlinJvmLibrary", modelPublicType = KotlinJvmLibrary.class)
+
+    public static final String KOTLIN_JVM_LIBRARY = "kotlinJvmLibrary";
+
+    @SoftwareType(name = KOTLIN_JVM_LIBRARY, modelPublicType = KotlinJvmLibrary.class)
     abstract public KotlinJvmLibrary getLibrary();
 
     @Override
     public void apply(Project project) {
         KotlinJvmLibrary dslModel = getLibrary();
+        project.getExtensions().add(KOTLIN_JVM_LIBRARY, dslModel);
 
         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
 

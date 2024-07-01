@@ -11,12 +11,15 @@ import org.gradle.api.plugins.JavaLibraryPlugin;
  * and links the declarative model to the official plugin.
  */
 public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
-    @SoftwareType(name = "javaLibrary", modelPublicType = JavaLibrary.class)
+    public static final String JAVA_LIBRARY = "javaLibrary";
+
+    @SoftwareType(name = JAVA_LIBRARY, modelPublicType = JavaLibrary.class)
     abstract public JavaLibrary getLibrary();
 
     @Override
     public void apply(Project project) {
         JavaLibrary dslModel = getLibrary();
+        project.getExtensions().add(JAVA_LIBRARY, dslModel);
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 
