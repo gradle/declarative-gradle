@@ -131,3 +131,13 @@ To run the application, use:
 ```shell
 ../gradlew testbed-swift-application:runAll
 ```
+
+## C++
+
+The sample C++ projects live in the `testbed-cpp-library` and `testbed-cpp-application` directories.
+
+To run the application, use:
+
+```shell
+../gradlew testbed-cpp-application:runAll
+```

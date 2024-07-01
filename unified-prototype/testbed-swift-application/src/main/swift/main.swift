@@ -1,5 +1,9 @@
 import Foundation
 import SwiftUtil
 
-print("Hello from Swift")
+#if swift(>=5.0)
+print("Hello from Swift >=5.0")
+#else
+print("Hello from unknown Swift version")
+#endif
 print(Utils().welcome)

@@ -3,7 +3,7 @@ plugins {
     id("build-logic.publishing")
 }
 
-description = "Common APIs and implementation classes shared by the Android, JVM, and KMP declarative prototypes"
+description = "Common APIs and implementation classes shared by the ecosystem specific declarative prototypes"
 
 dependencies {
     implementation(libs.android.agp.application)
