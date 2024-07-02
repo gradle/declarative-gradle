@@ -1,6 +1,5 @@
 package org.gradle.api.experimental.common;
 
-import org.gradle.api.artifacts.dsl.Dependencies;
 import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
@@ -9,11 +8,8 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
  */
 @SuppressWarnings("UnstableApiUsage")
 @Restricted
-public interface LibraryDependencies extends Dependencies {
+public interface LibraryDependencies extends BasicDependencies {
     DependencyCollector getApi();
-    DependencyCollector getImplementation();
-    DependencyCollector getRuntimeOnly();
-    DependencyCollector getCompileOnly();
 
     // CompileOnlyApi is not included here, since both Android and KMP do not support it.
     // Does that mean we should also reconsider if we should support it? Or, should we

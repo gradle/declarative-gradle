@@ -18,6 +18,7 @@ abstract public class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
     public static final String JVM_LIBRARY = "jvmLibrary";
 
+    @SuppressWarnings("UnstableApiUsage")
     @SoftwareType(name = JVM_LIBRARY, modelPublicType = JvmLibrary.class)
     abstract public JvmLibrary getJvmLibrary();
 

@@ -29,5 +29,6 @@ public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
     private void linkDslModelToPlugin(Project project, JavaLibrary dslModel) {
         JvmPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
+        JvmPluginSupport.linkTestSourceSourceSetDependencies(project, dslModel.getTesting().getDependencies());
     }
 }
