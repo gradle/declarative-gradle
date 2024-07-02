@@ -33,6 +33,7 @@ abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project>
         JvmPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkApplicationMainClass(project, dslModel);
         JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
+        JvmPluginSupport.linkTestSourceSourceSetDependencies(project, dslModel.getTesting().getDependencies());
 
         dslModel.getRunTasks().add(project.getTasks().named("run"));
     }

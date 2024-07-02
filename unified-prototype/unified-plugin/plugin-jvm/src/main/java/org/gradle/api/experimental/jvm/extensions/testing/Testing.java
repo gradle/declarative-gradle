@@ -8,10 +8,10 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @Restricted
 public interface Testing {
     @Nested
-    JvmTestDependencies getDependencies();
+    TestDependencies getDependencies();
 
     @Configuring
-    default void dependencies(Action<? super JvmTestDependencies> action) {
+    default void dependencies(Action<? super TestDependencies> action) {
         action.execute(getDependencies());
     }
 }

@@ -21,6 +21,7 @@ abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> 
 
     public static final String JVM_APPLICATION = "jvmApplication";
 
+    @SuppressWarnings("UnstableApiUsage")
     @SoftwareType(name = JVM_APPLICATION, modelPublicType = JvmApplication.class)
     abstract public JvmApplication getJvmApplication();
 

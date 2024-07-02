@@ -2,11 +2,13 @@ package org.gradle.api.experimental.jvm.internal;
 
 import org.gradle.api.Project;
 import org.gradle.api.experimental.common.ApplicationDependencies;
+import org.gradle.api.experimental.common.BasicDependencies;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.experimental.jvm.HasJavaTarget;
 import org.gradle.api.experimental.jvm.HasJavaTargets;
 import org.gradle.api.experimental.jvm.HasJvmApplication;
 import org.gradle.api.experimental.jvm.JavaTarget;
+import org.gradle.api.experimental.jvm.extensions.testing.TestDependencies;
 import org.gradle.api.file.Directory;
 import org.gradle.api.plugins.JavaApplication;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -19,26 +21,6 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 import java.util.Collections;
 
 public class JvmPluginSupport {
-    public static void linkSourceSetToDependencies(Project project, SourceSet sourceSet, LibraryDependencies dependencies) {
-        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-                .getDependencies().addAllLater(dependencies.getImplementation().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-                .getDependencies().addAllLater(dependencies.getCompileOnly().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-                .getDependencies().addAllLater(dependencies.getRuntimeOnly().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
-                .getDependencies().addAllLater(dependencies.getApi().getDependencies());
-    }
-
-    public static void linkSourceSetToDependencies(Project project, SourceSet sourceSet, ApplicationDependencies dependencies) {
-        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-                .getDependencies().addAllLater(dependencies.getImplementation().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
-                .getDependencies().addAllLater(dependencies.getCompileOnly().getDependencies());
-        project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
-                .getDependencies().addAllLater(dependencies.getRuntimeOnly().getDependencies());
-    }
-
     public static void linkMainSourceSourceSetDependencies(Project project, LibraryDependencies dependencies) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
         linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dependencies);
@@ -49,11 +31,34 @@ public class JvmPluginSupport {
         linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dependencies);
     }
 
+    public static void linkTestSourceSourceSetDependencies(Project project, TestDependencies dependencies) {
+        JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
+        linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dependencies);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static void linkSourceSetToDependencies(Project project, SourceSet sourceSet, BasicDependencies dependencies) {
+        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
+            .getDependencies().addAllLater(dependencies.getImplementation().getDependencies());
+        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
+            .getDependencies().addAllLater(dependencies.getCompileOnly().getDependencies());
+        project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
+            .getDependencies().addAllLater(dependencies.getRuntimeOnly().getDependencies());
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static void linkSourceSetToDependencies(Project project, SourceSet sourceSet, LibraryDependencies dependencies) {
+        linkSourceSetToDependencies(project, sourceSet, (BasicDependencies) dependencies);
+        project.getConfigurations().getByName(sourceSet.getApiConfigurationName())
+            .getDependencies().addAllLater(dependencies.getApi().getDependencies());
+    }
+
     public static void linkJavaVersion(Project project, HasJavaTarget dslModel) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
         java.getToolchain().getLanguageVersion().set(dslModel.getJavaVersion().map(JavaLanguageVersion::of));
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static void linkJavaVersion(Project project, HasJavaTargets dslModel) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
         java.getToolchain().getLanguageVersion().set(project.provider(() ->
