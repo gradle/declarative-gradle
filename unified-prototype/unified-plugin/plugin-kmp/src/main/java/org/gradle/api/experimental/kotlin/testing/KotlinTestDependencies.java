@@ -24,4 +24,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @Restricted
 public interface KotlinTestDependencies extends Dependencies {
     DependencyCollector getImplementation();
+    DependencyCollector getCompileOnly();
+    DependencyCollector getRuntimeOnly();
 }

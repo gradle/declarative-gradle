@@ -46,5 +46,7 @@ abstract public class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project
     private void configureTesting(Project project, KotlinJvmLibrary dslModel) {
         ConfigurationContainer configurations = project.getConfigurations();
         configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getTesting().getDependencies().getImplementation());
+        configurations.getByName("testCompileOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getCompileOnly());
+        configurations.getByName("testRuntimeOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getRuntimeOnly());
     }
 }
