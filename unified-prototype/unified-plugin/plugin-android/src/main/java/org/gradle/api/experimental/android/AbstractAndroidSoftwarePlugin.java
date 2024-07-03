@@ -203,6 +203,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
 
         ConfigurationContainer configurations = project.getConfigurations();
         configurations.getByName("testImplementation").fromDependencyCollector(testDependencies.getImplementation());
+        configurations.getByName("testCompileOnly").fromDependencyCollector(testDependencies.getCompileOnly());
+        configurations.getByName("testRuntimeOnly").fromDependencyCollector(testDependencies.getRuntimeOnly());
         configurations.getByName("androidTestImplementation").fromDependencyCollector(testDependencies.getAndroidImplementation());
 
         configureRoborazzi(project, dslModel);
