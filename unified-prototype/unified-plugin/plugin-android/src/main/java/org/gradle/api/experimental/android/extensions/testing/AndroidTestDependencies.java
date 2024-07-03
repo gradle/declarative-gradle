@@ -8,5 +8,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @Restricted
 public interface AndroidTestDependencies extends Dependencies {
     DependencyCollector getImplementation();
+    DependencyCollector getCompileOnly();
+    DependencyCollector getRuntimeOnly();
     DependencyCollector getAndroidImplementation();
 }
