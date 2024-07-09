@@ -32,9 +32,3 @@ javaApplication {
 - [Java Library](../../unified-prototype/testbed-java-library/)
 - [Java Application for multiple JVMs](../../unified-prototype/testbed-jvm-application/)
 - [Java Library for multiple JVMs](../../unified-prototype/testbed-jvm-library/)
-
-## Related resources
-
-- [Declarative Gradle for Kotlin](../kotlin/README.md)
-- [Declarative Gradle for Android](../android/README.md)
-- [Declarative Gradle for Swift](../swift/README.md)
