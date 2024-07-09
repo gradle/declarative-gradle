@@ -81,21 +81,22 @@ theme:
 nav:
   - Home: README.md
   - Getting Started:
-      Overview: docs/getting-started/README.md
-      Android: docs/android/README.md
-      Java/JVM: docs/java/README.md
-      Kotlin: docs/kotlin/README.md
-      Swift: docs/swift/README.md
+    - Overview: docs/getting-started/README.md
+    - Android: docs/android/README.md
+    - Java/JVM: docs/java/README.md
+    - Kotlin: docs/kotlin/README.md
+    - Swift: docs/swift/README.md
   - Documentation:
-      Prototypes: unified-prototype/README.md
-      Roadmap: ROADMAP.md
+    - Overview: docs/README.md
+    - Prototypes: unified-prototype/README.md
+    - Roadmap: ROADMAP.md
   - Participate:
-      Contributing: docs/CONTRIBUTING.md
-      Code of Conduct: docs/CODE_OF_CONDUCT.md
+    - Contributing: docs/CONTRIBUTING.md
+    - Code of Conduct: docs/CODE_OF_CONDUCT.md
   - Resources:
-      Publications: publications/README.md
-      KotlinConf 2024: publications/2024-05-kotlinconf.md
-      Newsletter: publications/newsletter/README.md
+    - Publications: publications/README.md
+    - KotlinConf 2024: publications/2024-05-kotlinconf.md
+    - Newsletter: publications/newsletter/README.md
 
 extra_css:
   - docs/assets/css/gradle.css
