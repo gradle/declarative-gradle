@@ -12,10 +12,8 @@ This is an experimental project, stay tuned for updates!
 Learn more in the [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
 blog post and [other publications](./publications/README.md).
 
-## Disclaimer
-
 !!! info
-    _Declarative Gradle_ is an experimental project.
+    _Declarative Gradle_ is an **experimental** project.
     Currently, no compatibility is guaranteed, and there is no commitment to the DSL syntax
     and available features.
     More information will be released soon.
