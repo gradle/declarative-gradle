@@ -89,6 +89,7 @@ nav:
   - Documentation:
     - Overview: docs/README.md
     - Prototypes: unified-prototype/README.md
+    - Gradle Client: gradle-client/README.md
     - Roadmap: ROADMAP.md
   - Participate:
     - Contributing: docs/CONTRIBUTING.md
@@ -131,6 +132,13 @@ plugins:
   - social
   - same-dir
   - include-markdown
+  - multirepo:
+      cleanup: false
+      keep_docs_dir: true
+      nav_repos:
+        - name: gradle-client
+          import_url: https://github.com/gradle/gradle-client?branch=main&edit_uri=/blob/main/
+          imports: ["/README.md"]
 
 # Markdown
 markdown_extensions:
