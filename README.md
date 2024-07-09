@@ -34,10 +34,9 @@ blog post and [other publications](./publications/README.md).
   Importing the software project to the IDE and interacting with it should be fast and fully reliable.
   IDEs and other tools should be able to change the definition automatically or through UI reliably.
 
-We implement those principles through a _declarative DSL_ which is, at the moment, based on Kotlin.
+We implement those principles through a _declarative DSL_ which is a tailored tiny subset of the Kotlin language.
 The [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
-outlines more details about the project and the new
-Declarative DSL we are building.
+outlines more details about the project and the new Declarative DSL we are building.
 
 <!-- TODO: Add project manifesto -->
 
@@ -127,36 +126,9 @@ javaLibrary {
 
 </details>
 
-## Get Started
-
-See the [Getting Started Guides](./docs/getting-started/README.md).
-
-## Prototypes
-
-Here are the experimental prototypes
-currently available for initial review and evaluation:
-
-- [Declarative Gradle Prototype](./unified-prototype/README.md) - prototypes of plugins for JVM, Android, Kotlin and KMP projects built using "unified" plugins that all utilize a similar model and implemented using the Declarative DSL
-- [Now In Android](https://github.com/gradle/nowinandroid/tree/main-declarative) -
-  a port of a popular Android demo app that showcases the [Support for Android](./docs/android/README.md)
-  in Declarative Gradle.
-- [Other Early prototypes](./early-prototypes/README.md) -
-Initial prototypes were created for feedback and discussion purposes.
-
 ## License
 
 All text/documentation content is open source and licensed under the
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License](./LICENSE.txt).
 Some code samples may be licensed under the Apache License v2.0
 or other permissive OSI-compliant licenses.
-
-## Learn More
-
-- [Initial Declarative Gradle Announcement and Full Manifesto](https://blog.gradle.org/declarative-gradle)
-- [Publications, presentations and interviews about Declarative Gradle](./publications/README.md)
-
-## Discuss
-
-- `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
-
-See [Gradle Community Resources](https://gradle.org/resources/) for the links to the channels.
