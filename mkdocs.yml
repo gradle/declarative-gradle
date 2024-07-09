@@ -79,8 +79,7 @@ theme:
     repo: fontawesome/brands/github
 
 nav:
-  - Home: README.md
-  - About:
+  - Home:
       Overview: README.md
       Getting Started: docs/getting-started/README.md
       Declarative Gradle for Android: docs/android/README.md
