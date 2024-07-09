@@ -79,20 +79,16 @@ theme:
     repo: fontawesome/brands/github
 
 nav:
-  - Home:
-      Overview: README.md
-      Getting Started: docs/getting-started/README.md
-      Declarative Gradle for Android: docs/android/README.md
-      Declarative Gradle for Java/JVM: docs/java/README.md
-      Declarative Gradle for Kotlin: docs/kotlin/README.md
-      Declarative Gradle for Swift: docs/swift/README.md
-      Public Roadmap: ROADMAP.md
+  - Home: README.md
   - Getting Started:
       Overview: docs/getting-started/README.md
       Android: docs/android/README.md
+      Java/JVM: docs/java/README.md
+      Kotlin: docs/kotlin/README.md
+      Swift: docs/swift/README.md
   - Documentation:
-      Android: docs/android/README.md
       Prototypes: unified-prototype/README.md
+      Roadmap: ROADMAP.md
   - Participate:
       Contributing: docs/CONTRIBUTING.md
       Code of Conduct: docs/CODE_OF_CONDUCT.md
