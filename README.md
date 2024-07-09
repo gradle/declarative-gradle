@@ -123,10 +123,3 @@ javaLibrary {
 ```
 
 </details>
-
-## License
-
-All text/documentation content is open source and licensed under the
-[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License](./LICENSE.txt).
-Some code samples may be licensed under the Apache License v2.0
-or other permissive OSI-compliant licenses.

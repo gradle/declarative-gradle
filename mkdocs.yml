@@ -7,11 +7,12 @@ site_description: >-
   Declarative Gradle is a project targeting better isolation of concern
   and expressing any build in a clear and understandable way
 copyright: >
-  For content - Copyright &copy; 2024 - All contributors to the repository and included components. 
-  The original content licenses and copyrights from the included repositories are preserved,
+  For content - Copyright &copy; 2024 - All contributors to the repository and included components.
+  <br/>All text/documentation content is open source and licensed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License</a>.
+  <br/>Some code samples may be licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> or other permissive OSI-compliant licenses.
+  <br/>The original content licenses and copyrights from the included repositories are preserved,
   you can find them in the linked repositories.
-
-  The GRADLE trademark is the property of Gradle, Inc.
+  <br/>The GRADLE trademark is the property of Gradle, Inc.
 docs_dir: .
 repo_url: https://github.com/gradle/declarative-gradle
 repo_name: Declarative Gradle repo
