@@ -80,18 +80,19 @@ theme:
     repo: fontawesome/brands/github
 
 nav:
-  - Home: README.md
+  - Home:
+    - Overview: README.md
+    - Roadmap: ROADMAP.md
   - Getting Started:
     - Overview: docs/getting-started/README.md
-    - Android: docs/android/README.md
-    - Java/JVM: docs/java/README.md
-    - Kotlin: docs/kotlin/README.md
-    - Swift: docs/swift/README.md
+    - Setup: docs/getting-started/setup.md
+    - Samples: docs/getting-started/samples.md
+    - Features: docs/getting-started/features.md
   - Documentation:
-    - Overview: docs/README.md
-    - Prototypes: unified-prototype/README.md
-    - Gradle Client: gradle-client/README.md
-    - Roadmap: ROADMAP.md
+    - Overview: docs/reference/README.md
+    - Glossary: docs/reference/glossary.md
+    - Software Features: docs/reference/software-features.md
+    - DSL: docs/reference/dsl.md
   - Participate:
     - Contributing: docs/CONTRIBUTING.md
     - Code of Conduct: docs/CODE_OF_CONDUCT.md
@@ -133,13 +134,6 @@ plugins:
   - social
   - same-dir
   - include-markdown
-  - multirepo:
-      cleanup: false
-      keep_docs_dir: true
-      nav_repos:
-        - name: gradle-client
-          import_url: https://github.com/gradle/gradle-client?branch=main&edit_uri=/blob/main/
-          imports: ["/README.md"]
 
 # Markdown
 markdown_extensions:
@@ -155,6 +149,7 @@ markdown_extensions:
       alternate_style: true
   - toc:
       permalink: '#'
+      toc_depth: 2
   - admonition
   - attr_list
   - mdx_truly_sane_lists

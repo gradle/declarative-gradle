@@ -1,6 +1,6 @@
 # Declarative Gradle - Unified Plugin Prototypes
 
-This directory contains prototypes of plugins for JVM, Android, KMP and Swift projects built using "unified" plugins that all utilize a similar model and are implemented using the Declarative DSL.
+This [directory](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype) of the `declarative-gradle` repository contains prototypes of plugins for JVM, Android, KMP and Swift projects built using "unified" plugins that all utilize a similar model and are implemented using the Declarative DSL.
 
 Currently, these different ecosystems still apply distinct plugins, but those plugins all share a common `plugin-common` dependency, which will gradually grow to contain more functionality.
 

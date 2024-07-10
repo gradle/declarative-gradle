@@ -1,9 +1,4 @@
-# Declarative Gradle - Documentation
+# Documentation
 
-* **[Gradle Client](../gradle-client)**
-
-  Application used to showcase what IDEs could do with new Declarative Gradle tooling features.
-
-* **[Roadmap](../ROADMAP.md)**
-
-  Key anticipated milestones for the Declarative Gradle project.
+* [Getting Started](./getting-started/README.md)
+* [Reference](./reference/README.md)

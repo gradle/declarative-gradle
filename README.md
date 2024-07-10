@@ -16,9 +16,8 @@ blog post and [other publications](./publications/README.md).
     _Declarative Gradle_ is an **experimental** project.
     Currently, no compatibility is guaranteed, and there is no commitment to the DSL syntax
     and available features.
-    More information will be released soon.
-    Any feedback is welcome!
-    See more on the [Contributor Guide](./docs/CONTRIBUTING.md).
+
+    Learn how you can contribute in the [Participate](./docs/CONTRIBUTING.md) section.
 
 ## Key Principles
 
@@ -38,88 +37,32 @@ outlines more details about the project and the new Declarative DSL we are build
 
 <!-- TODO: Add project manifesto -->
 
-## Concept
+## A Glimpse
 
-Here are a few very brief examples of what the Declarative Gradle syntax may look like.
+Here is a very brief example of what the Declarative Gradle syntax looks like for a Java application.
+
+```kotlin
+javaApplication {
+    javaVersion = 21
+    mainClass = "com.example.App"
+
+    dependencies {
+        implementation(project(":java-util"))
+        implementation("com.google.guava:guava:32.1.3-jre")
+    }
+}
+```
+
+Looks familiar, right?
+
 As noted above, this syntax is experimental and might change during the experiment.
 
-### Java Libraries
+## Learn More
 
-A typical Java library, which targets a single version of Java, might look like this:
+The _Declarative Gradle_ experiment is still in an early stage but is ready for your feedback!
 
-```kotlin
-javaLibrary {
-    publishedAs("my-group:my-lib:2.0")
-
-    dependencies {
-        api("some:lib:1.2")
-        implementation(projects.someLib)
-    }
-
-    // This library targets Java 21 only
-    java(21)
-
-    tests {
-        unit {
-            dependencies {
-                implementation("some:other-lib:1.4")
-            }
-        }
-    }
-}
-```
-
-### Multi-target Projects
-
-This example shows the definition of a Java library that targets both Java 11 and 21:
-
-<details>
-  <summary>Show Code</summary>
-
-```kotlin
-// Declare the type of software that the project produces
-// There is no plugin application, as Gradle infers this from the "javaLibrary" type definition
-javaLibrary {
-    // All information about the library is grouped here
-
-    // GroupID/ArtifactID/Version for publishing
-    publishedAs("my-group:my-lib:2.0")
-
-    // Common dependencies for all targets
-    dependencies {
-        api("some:lib:1.2")
-        implementation(projects.someLib)
-    }
-
-    // A library might have more than one target
-    targets {
-        // All information about specific targets is grouped here
-        
-        // Declare Java 11 as a target
-        java(11) {
-            // Specific information about Java 11 target
-            
-            // An additional dependency that is used only for Java 11
-            dependencies {
-                implementation("some:back-port-lib:1.5")
-            }
-        }
-
-        // Declare Java 21 as a target, with no additional information
-        java(21)
-    }
-    
-    tests {
-        // All information about the tests is grouped here
-        
-        unit {
-            // Dependencies for the unit tests
-            dependencies {
-                implementation("some:other-lib:1.4")
-            }
-        }
-    }
-}
-```
-
-</details>
+* [Getting Started](docs/getting-started/README.md) - Learn how to try _Declarative Gradle_ yourself.
+* [Documentation](docs/README.md) - Learn about the fundamentals behind _Declarative Gradle_.
+* [Participate](docs/CONTRIBUTING.md) - Learn how you can help shape the future of _Declarative Gradle_.
+* [Resources](publications/README.md) - Learn more from conferences, interviews, articles etc...
+* [Roadmap](ROADMAP.md) - Learn about what will come next.
