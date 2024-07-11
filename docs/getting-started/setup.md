@@ -4,7 +4,7 @@
 Declarative Gradle [samples](./samples.md) require nightly versions of Gradle and Android Studio.
 They all use the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) to point to the right Gradle version so you don't have to worry about that.
 
-To try out the samples and be able to reproduce all [features](./features.md) you need to install a few components as described below:
+To try out the samples and be able to reproduce all features you need to install a few components as described below:
 
 - [JDK](#jdk)
 - [Android Studio](#android-studio)

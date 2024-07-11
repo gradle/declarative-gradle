@@ -11,5 +11,4 @@ In our first [announcement](https://blog.gradle.org/declarative-gradle), we talk
 
 * [Setup](./setup.md)
 * [Samples](./samples.md)
-* [Features](./features.md)
 
