@@ -18,6 +18,7 @@ repo_url: https://github.com/gradle/declarative-gradle
 repo_name: Declarative Gradle repo
 edit_uri: edit/main/
 site_url: https://gradle.github.io/declarative-gradle
+strict: true
 
 # Build
 site_dir: _site
@@ -133,6 +134,13 @@ plugins:
   - social
   - same-dir
   - include-markdown
+  - redirects:
+      redirect_maps:
+        'docs/android/README.md': 'docs/getting-started/samples.md#android-application'
+        'docs/java/README.md': 'docs/getting-started/samples.md#java-application'
+        'docs/kotlin/README.md': 'docs/getting-started/samples.md#kotlin-application'
+        'docs/swift/README.md': 'docs/getting-started/samples.md#swift'
+        'unified-prototype/README.md': 'docs/getting-started/samples.md#prototypes'
 
 # Markdown
 markdown_extensions:

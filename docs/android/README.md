@@ -80,7 +80,7 @@ others require additional configuration.
 To help you with getting started,
 we forked _Now in Android_ and updated the build files using the Declarative Gradle DSL. The prototype repository can be found [here](https://github.com/gradle/nowinandroid/tree/main-declarative).
 
-The [settings file](settings.gradle.dcl) applies a new "Android ecosystem plugin", which exposes `androidLibrary` and `androidApplication` software types that can be used in subprojects.
+The settings file applies a new "Android ecosystem plugin", which exposes `androidLibrary` and `androidApplication` software types that can be used in subprojects.
 
 The migration to Declarative Gradle is in proghress, not all subprojects have been migrated yet.
 Some of the converted subprojects:
