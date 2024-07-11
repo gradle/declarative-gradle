@@ -90,7 +90,6 @@ nav:
     - Features: docs/getting-started/features.md
   - Documentation:
     - Overview: docs/reference/README.md
-    - Glossary: docs/reference/glossary.md
     - Software Features: docs/reference/software-features.md
     - DSL: docs/reference/dsl.md
   - Participate:
