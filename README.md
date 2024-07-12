@@ -2,7 +2,7 @@
 
 [![a](https://img.shields.io/badge/slack-%23declarative_gradle-brightgreen?style=flat&logo=slack)](https://gradle.org/slack-invite)
 [![a](https://img.shields.io/badge/Getting-Started-blue?style=flat)](./docs/getting-started/README.md)
-[![a](https://img.shields.io/badge/Roadmap-Public-brightgreen?style=flat)](./ROADMAP.md)
+[![a](https://img.shields.io/badge/Roadmap-Public-brightgreen?style=flat)](./docs/ROADMAP.md)
 
 At Gradle, part of our vision is to provide an elegant and extensible declarative build language
 that enables expressing any build in a clear and understandable way.
@@ -62,7 +62,6 @@ As noted above, this syntax is experimental and might change during the experime
 The _Declarative Gradle_ experiment is still in an early stage but is ready for your feedback!
 
 * [Getting Started](docs/getting-started/README.md) - Learn how to try _Declarative Gradle_ yourself.
-* [Documentation](docs/README.md) - Learn about the fundamentals behind _Declarative Gradle_.
+* [Documentation](docs/reference/README.md) - Learn about the fundamentals behind _Declarative Gradle_.
 * [Participate](docs/CONTRIBUTING.md) - Learn how you can help shape the future of _Declarative Gradle_.
-* [Resources](publications/README.md) - Learn more from conferences, interviews, articles etc...
-* [Roadmap](ROADMAP.md) - Learn about what will come next.
+* [Resources](publications/README.md) - Learn more from conferences, interviews, articles, etc.

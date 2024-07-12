@@ -38,7 +38,7 @@ theme:
     - content.tooltips
     # - header.autohide
     # - navigation.expand
-    - navigation.footer
+    # - navigation.footer
     # NOT compatible qith toc.integrate
     # - navigation.indexes
     - navigation.path
@@ -83,21 +83,20 @@ theme:
 nav:
   - Home:
     - Overview: README.md
-    - Roadmap: ROADMAP.md
   - Getting Started:
     - Overview: docs/getting-started/README.md
     - Setup: docs/getting-started/setup.md
     - Samples: docs/getting-started/samples.md
+    - Features: docs/getting-started/features.md
   - Documentation:
     - Overview: docs/reference/README.md
+    - Roadmap: docs/ROADMAP.md
     - Software Features: docs/reference/software-features.md
   - Participate:
     - Contributing: docs/CONTRIBUTING.md
     - Code of Conduct: docs/CODE_OF_CONDUCT.md
   - Resources:
     - Publications: publications/README.md
-    - KotlinConf 2024: publications/2024-05-kotlinconf.md
-    - Newsletter: publications/newsletter/README.md
 
 extra_css:
   - docs/assets/css/gradle.css

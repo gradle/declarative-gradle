@@ -1,5 +1,7 @@
 <!-- omit in toc -->
 # Samples
+!!! tip
+    Make sure you followed the [setup](./setup.md) instructions fully before trying out a sample.
 
 All samples in this page can be used to demonstrate features made possible by Declarative Gradle.
 
@@ -7,10 +9,9 @@ All samples in this page can be used to demonstrate features made possible by De
 - [Kotlin Application](#kotlin-application)
 - [Android Application](#android-application)
 - [Now In Android](#now-in-android)
-- [Prototypes](#prototypes)
+- [Bleeding edge prototypes](#bleeding-edge-prototypes)
 
-!!! tip
-    Make sure you followed the [setup](./setup.md) instructions fully before trying out a sample.
+After picking a sample, read about new [Declarative Gradle features](./features.md).
 
 ## Java Application
 
@@ -38,9 +39,9 @@ The prototype repository can be found in [github.com/gradle/nowinandroid](https:
 
 Please follow the README available at [github.com/gradle/nowinandroid/DECLARATIVE-README.md](https://github.com/gradle/nowinandroid/blob/main-declarative/DECLARATIVE-README.md) to try this sample.
 
-## Prototypes
+## Bleeding edge prototypes
 
-If you want to go further you can take a look at some other prototypes for JVM, Android, KMP, Swift and C++ projects.
+If you want to go further you can take a look at some more projects for JVM, Android, KMP, Swift and C++ projects. These projects may use newer versions of Gradle or require additional manual setup, so you should try the other samples first. 
 
 They are available at [github.com/gradle/declarative-gradle/tree/main/unified-prototype](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype).
 
