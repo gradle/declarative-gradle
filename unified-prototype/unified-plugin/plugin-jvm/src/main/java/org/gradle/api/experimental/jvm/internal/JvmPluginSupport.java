@@ -9,12 +9,14 @@ import org.gradle.api.experimental.jvm.HasJavaTargets;
 import org.gradle.api.experimental.jvm.HasJvmApplication;
 import org.gradle.api.experimental.jvm.JavaTarget;
 import org.gradle.api.experimental.jvm.extensions.testing.TestDependencies;
+import org.gradle.api.experimental.jvm.extensions.testing.Testing;
 import org.gradle.api.file.Directory;
 import org.gradle.api.plugins.JavaApplication;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JavaPluginHelper;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.api.tasks.testing.Test;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
@@ -33,7 +35,7 @@ public class JvmPluginSupport {
 
     public static void linkTestSourceSourceSetDependencies(Project project, TestDependencies dependencies) {
         JavaPluginExtension java = project.getExtensions().getByType(JavaPluginExtension.class);
-        linkSourceSetToDependencies(project, java.getSourceSets().getByName("main"), dependencies);
+        linkSourceSetToDependencies(project, java.getSourceSets().getByName("test"), dependencies);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -111,4 +113,9 @@ public class JvmPluginSupport {
         return sourceSet;
     }
 
+    public static void linkTestJavaVersion(Project project, JavaToolchainService toolchains, Testing testing) {
+        project.getTasks().withType(Test.class).named("test").configure(task -> {
+            task.getJavaLauncher().set(toolchains.launcherFor(spec -> spec.getLanguageVersion().set(testing.getJavaVersion().map(JavaLanguageVersion::of))));
+        });
+    }
 }
