@@ -18,6 +18,6 @@ Declares a few dependencies and the main class for a Java application.
 
 Declares a few dependencies for a Java library.
 
-### [Conventions](javalibrary/build-logic/src/main/kotlin/)
+### Conventions
 
-Sets up some common conventions for a Java application and library.
+`javalibrary/build-logic/src/main/kotlin` Sets up some common conventions for a Java application and library.

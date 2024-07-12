@@ -15,11 +15,3 @@
 ](https://blog.gradle.org/declarative-gradle) by Piotr Jagielski - November 2023 - Initial project announcement and the manifesto
 - [Declarative Gradle? Amper? What’s going on?!](https://github.com/kotlin-magazine/kotlin-magazine/blob/main/articles/siggi_gunnarsson_declarative_builds_for_kotlin.md) by Siggi Gunnarsson, May 2024, [fun code() magazine](https://github.com/kotlin-magazine/kotlin-magazine)
 
-## Newsletter
-
-Starting from March 2024,
-we regularly publish updates on Declarative Gradle
-in the monthly [Gradle Build Tool Newsletter](https://newsletter.gradle.org/).
-Make sure to subscribe!
-
-[Learn More about the Newsletter](./newsletter/README.md)

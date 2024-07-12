@@ -1,3 +1,4 @@
-# Declarative Gradle - Documentation
+# Documentation
 
-Coming soon!
+* [Getting Started](./getting-started/README.md)
+* [Reference](./reference/README.md)

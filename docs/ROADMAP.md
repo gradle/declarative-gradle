@@ -7,9 +7,7 @@ All the dates and the scope are aspirational.
 To discuss the roadmap and the related initiatives, use the
 `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
 
-## Key Milestones
-
-### First Early Access Preview (EAP)
+## First Early Access Preview (EAP)
 
 * Summer 2024
 * Early feedback from IDE vendors and plugin integrators
@@ -20,7 +18,7 @@ To discuss the roadmap and the related initiatives, use the
   * Android Studio DCL support preview
   * Toolability demonstrations (IDE integration, mutations)
 
-### Subsequent Early Access Previews
+## Subsequent Early Access Previews
 
 * 2024-H2
 * More EAPs towards the end of the year

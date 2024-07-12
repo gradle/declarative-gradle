@@ -1,7 +1,7 @@
 # Contributing to Declarative Gradle
 
 [![a](https://img.shields.io/badge/slack-%23declarative_gradle-brightgreen?style=flat&logo=slack)](https://gradle.org/slack-invite)
-[![a](https://img.shields.io/badge/Roadmap-Public-brightgreen?style=flat)](../ROADMAP.md)
+[![a](https://img.shields.io/badge/Roadmap-Public-brightgreen?style=flat)](./ROADMAP.md)
 
 _Declarative Gradle_ is an experimental project.
 Currently, it is not ready for tinkering or wide adoption.
