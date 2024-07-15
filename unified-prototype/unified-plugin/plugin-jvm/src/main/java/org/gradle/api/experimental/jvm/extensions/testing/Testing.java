@@ -1,13 +1,16 @@
 package org.gradle.api.experimental.jvm.extensions.testing;
 
 import org.gradle.api.Action;
-import org.gradle.api.experimental.jvm.HasJavaTarget;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @Restricted
-public interface Testing extends HasJavaTarget {
+public interface Testing {
+    @Restricted
+    Property<Integer> getTestJavaVersion();
+
     @Nested
     TestDependencies getDependencies();
 

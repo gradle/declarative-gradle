@@ -10,7 +10,7 @@ javaApplication {
 
     testing {
         // test on 21
-        javaVersion = 21
+        testJavaVersion = 21
 
         dependencies {
             implementation("org.junit.jupiter:junit-jupiter:5.10.2")

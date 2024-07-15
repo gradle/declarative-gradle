@@ -115,7 +115,7 @@ public class JvmPluginSupport {
 
     public static void linkTestJavaVersion(Project project, JavaToolchainService toolchains, Testing testing) {
         project.getTasks().withType(Test.class).named("test").configure(task -> {
-            task.getJavaLauncher().set(toolchains.launcherFor(spec -> spec.getLanguageVersion().set(testing.getJavaVersion().map(JavaLanguageVersion::of))));
+            task.getJavaLauncher().set(toolchains.launcherFor(spec -> spec.getLanguageVersion().set(testing.getTestJavaVersion().map(JavaLanguageVersion::of))));
         });
     }
 }
