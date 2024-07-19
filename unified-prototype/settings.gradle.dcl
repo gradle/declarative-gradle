@@ -24,7 +24,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "unified-prototype"
 
-conventions {
+defaults {
     androidLibrary {
         jdkVersion = 11
         compileSdk = 34
