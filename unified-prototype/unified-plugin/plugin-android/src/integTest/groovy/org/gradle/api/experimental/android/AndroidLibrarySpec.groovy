@@ -27,7 +27,7 @@ class AndroidLibrarySpec extends AbstractSpecification {
         """
 
         settingsFile << """
-            conventions {
+            defaults {
                 androidLibrary {
                     jdkVersion = 17
                     compileSdk = 34
@@ -58,7 +58,7 @@ class AndroidLibrarySpec extends AbstractSpecification {
         """
 
         settingsFile << """
-            conventions {
+            defaults {
                 androidLibrary {
                     jdkVersion = 17
                     compileSdk = 34
@@ -99,7 +99,7 @@ class AndroidLibrarySpec extends AbstractSpecification {
         """
 
         settingsFile << """
-            conventions {
+            defaults {
                 androidLibrary {
                     jdkVersion = 17
                     compileSdk = 34

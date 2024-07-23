@@ -42,12 +42,12 @@ In the future, additional types of software features will be added to Declarativ
 
 ## Shared Model Defaults
 
-Shared Model Defaults are collections of settings that are applied to all projects in a build that use a given software type.  They are shared across all projects in a build.  These are declared by referencing the software type in the `conventions` block in the declarative settings file.
+Shared Model Defaults are collections of settings that are applied to all projects in a build that use a given software type.  They are shared across all projects in a build.  These are declared by referencing the software type in the `defaults` block in the declarative settings file.
 
 For example, to declare that all projects that produce Java libraries should produce a library built for Java 11, the `javaLibrary` software type is configured in `settings.gradle.dcl`:
 
 ```kotlin
-conventions {
+defaults {
     javaLibrary {
         javaVersion = 11
     }
