@@ -6,16 +6,12 @@
 
 ## Declarative DSL in IDE
 
-TODO
+<iframe width="709" height="400" src="https://www.youtube.com/embed/POjnWOwWqco" title="First Look at Declarative Gradle - Android Studio" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Two-way editing
+## Two-Way Tooling
 
-TODO
+<iframe width="709" height="400" src="https://www.youtube.com/embed/0PBQ2gbQfjU" title="First Look at Declarative Gradle - Two-Way Tooling" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Automated changes
+## Mutations
 
-TODO
-
-## Software types and shared configuration
-
-TODO
+<iframe width="709" height="400" src="https://www.youtube.com/embed/pYuVFtfMNzM" title="First Look at Declarative Gradle - Mutations" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

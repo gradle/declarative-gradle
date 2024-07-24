@@ -4,8 +4,8 @@
 ####
 site_name: Declarative Gradle
 site_description: >-
-  Declarative Gradle is a project targeting better isolation of concern
-  and expressing any build in a clear and understandable way
+  Declarative Gradle is a project targeting better separation of concerns
+  and expressing any build in a clear and understandable way.
 copyright: >
   For content - Copyright &copy; 2024 - All contributors to the repository and included components.
   <br/>All text/documentation content is open source and licensed under the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License</a>.
