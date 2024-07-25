@@ -22,7 +22,7 @@ We recommend [Eclipse Temurin™ (OpenJDK)](https://adoptium.net/temurin/release
 
 Download and install the latest Android Studio Nightly from the [Studio Nightly](https://developer.android.com/studio/nightly) official page.
 
-It can also be installed via the [JetBrains ToolBox](https://www.jetbrains.com/toolbox-app/).
+It can also be installed via the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/).
 
 Declarative features are only available on the latest nightly releases.
 
