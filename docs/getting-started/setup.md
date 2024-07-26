@@ -20,11 +20,14 @@ We recommend [Eclipse Temurin™ (OpenJDK)](https://adoptium.net/temurin/release
 
 ## Android Studio
 
-Download and install the latest Android Studio Nightly from the [Studio Nightly](https://developer.android.com/studio/nightly) official page.
+Download and install the Android Studio Nightly 2024.1.3.3 released on 2024-07-26.
 
-It can also be installed via the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/).
+* [macOS](https://redirector.gvt1.com/edgedl/android/studio/install/2024.1.3.3/android-studio-nightly-2024-07-26-mac_arm.dmg)
+* [macOS Intel](https://redirector.gvt1.com/edgedl/android/studio/install/2024.1.3.3/android-studio-nightly-2024-07-26-mac.dmg)
+* [Windows](https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.1.3.3/android-studio-nightly-2024-07-26-windows.zip)
+* [Linux](https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.1.3.3/android-studio-nightly-2024-07-26-linux.tar.gz)
 
-Declarative features are only available on the latest nightly releases.
+Declarative features are only available on particular nightly releases.
 
 <!-- omit in toc -->
 ### Enable more declarative features in Studio
