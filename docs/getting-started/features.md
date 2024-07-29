@@ -4,6 +4,8 @@
 !!! tip
     Check out the features below with one of our [samples](./samples.md). These features are guaranteed to work with them out of the box.
 
+[Provide us feedback](https://forms.gle/oZk5MMhnwWiTxN6s6).
+
 ## Declarative DSL in IDE
 
 <iframe width="709" height="400" src="https://www.youtube.com/embed/POjnWOwWqco" title="First Look at Declarative Gradle - Android Studio" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

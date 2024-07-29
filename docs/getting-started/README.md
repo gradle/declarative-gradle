@@ -5,7 +5,7 @@ In our first [announcement](https://blog.gradle.org/declarative-gradle), we intr
 Since then, we've been working hard on several fronts to create the first early access preview (EAP) for Declarative Gradle.
 
 !!! info
-    With the first EAP, we would like you to try out what we have built so far and to give us [feedback](../CONTRIBUTING.md).
+    With the first EAP, we would like you to try out what we have built so far.
 
     Declarative Gradle is **ready** for trying out our provided sample projects for Java, Kotlin and Android applications.
 
@@ -14,3 +14,4 @@ Since then, we've been working hard on several fronts to create the first early 
 1. Follow our [setup instructions](./setup.md)
 2. Pick one or more of our [samples](./samples.md)
 3. Try out the Declarative Gradle [features](./features.md)
+4. Provide us [feedback](https://forms.gle/oZk5MMhnwWiTxN6s6)

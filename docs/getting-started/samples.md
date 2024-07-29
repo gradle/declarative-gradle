@@ -13,6 +13,8 @@ All samples in this page can be used to demonstrate features made possible by De
 
 After picking a sample, read about new [Declarative Gradle features](./features.md).
 
+[Provide us feedback](https://forms.gle/oZk5MMhnwWiTxN6s6).
+
 ## Java Application
 
 A sample Java application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `javaApplication` Software Type defined in the `org.gradle.experimental.jvm-ecosystem` ecosystem plugin.
