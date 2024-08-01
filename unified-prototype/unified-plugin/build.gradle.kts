@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm").version(libs.versions.kotlin).apply(false)
+    id("build-logic.build-update-utils")
 }
 
 version = file("version.txt").readText().trim()

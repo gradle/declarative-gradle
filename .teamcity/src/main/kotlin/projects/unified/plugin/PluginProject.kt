@@ -53,7 +53,7 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
         steps {
             step(configuredGradle {
                 name = "Change to Release Version"
-                tasks = ":unified-plugin:build-update-utils:changeSnapshotToReleaseVersion"
+                tasks = ":unified-plugin:changeSnapshotToReleaseVersion"
                 workingDir = "unified-prototype"
             })
             step(configuredGradle {
@@ -64,7 +64,7 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
             })
             step(configuredGradle {
                 name = "Change to next Snapshot Version"
-                tasks = ":unified-plugin:build-update-utils:changeReleaseToNextSnapshotVersion"
+                tasks = ":unified-plugin:changeReleaseToNextSnapshotVersion"
                 workingDir = "unified-prototype"
             })
             script {
