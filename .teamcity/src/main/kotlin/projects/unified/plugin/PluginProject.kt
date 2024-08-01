@@ -72,7 +72,7 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
                 scriptContent = """
                     set -e
                     git config credential.helper 'store --file=.git/credentials'
-                    echo 'https://bot-gradle:%github.bot-gradle.declarative-gradle.token%@github.com" > .git/credentials
+                    echo 'https://bot-gradle:%github.bot-gradle.declarative-gradle.token%@github.com' > .git/credentials
                     git push origin main --tags
                 """.trimIndent()
             }
