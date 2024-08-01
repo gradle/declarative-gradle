@@ -1,10 +1,13 @@
 plugins {
     kotlin("jvm").version(libs.versions.kotlin).apply(false)
+    id("build-logic.build-update-utils")
 }
+
+version = file("version.txt").readText().trim()
 
 subprojects {
     group = "org.gradle.experimental"
-    version = "0.1.8-SNAPSHOT"
+    version = parent!!.version
 }
 
 val publishAllPlugins = tasks.register("publishAllPlugins") {
