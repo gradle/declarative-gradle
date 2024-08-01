@@ -37,6 +37,10 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
 
         requirements {
             contains("teamcity.agent.jvm.os.name", "Linux")
+
+            doesNotContain("teamcity.agent.name", "ec2")
+            // US region agents have name "EC2-XXX"
+            doesNotContain("teamcity.agent.name", "EC2")
         }
 
         dependencies {
@@ -67,6 +71,8 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
                 name = "Push version commits"
                 scriptContent = """
                     set -e
+                    git config credential.helper 'store --file=.git/credentials'
+                    echo 'https://bot-gradle:%github.bot-gradle.declarative-gradle.token%@github.com" > .git/credentials
                     git push origin main --tags
                 """.trimIndent()
             }
