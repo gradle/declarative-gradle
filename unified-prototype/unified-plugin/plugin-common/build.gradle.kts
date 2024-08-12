@@ -1,6 +1,7 @@
 plugins {
     `kotlin-dsl`
     id("build-logic.publishing")
+    groovy // For spock testing
 }
 
 description = "Common APIs and implementation classes shared by the ecosystem specific declarative prototypes"
@@ -8,7 +9,34 @@ description = "Common APIs and implementation classes shared by the ecosystem sp
 dependencies {
     implementation(libs.android.agp.application)
 
+    implementation("commons-io:commons-io:2.8.0")
     implementation(gradleApi())
+}
+
+testing {
+    suites {
+        @Suppress("UnstableApiUsage")
+        val test by getting(JvmTestSuite::class) {
+            useSpock("2.2-groovy-3.0")
+
+            dependencies {
+                implementation("commons-io:commons-io:2.8.0")
+            }
+        }
+
+        @Suppress("UnstableApiUsage")
+        val integTest by registering(JvmTestSuite::class) {
+            useSpock("2.2-groovy-3.0")
+
+            dependencies {
+                implementation("commons-io:commons-io:2.8.0")
+                implementation(project(":plugin-jvm"))
+                implementation(project())
+            }
+        }
+
+        tasks.getByPath("check").dependsOn(integTest)
+    }
 }
 
 gradlePlugin {
