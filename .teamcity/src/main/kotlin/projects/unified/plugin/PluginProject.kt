@@ -20,7 +20,7 @@ class PluginProject(private val buildAndTest: BuildType) : Project({
 
         vcs {
             root(DslContext.settingsRootId)
-            branchFilter = "+:refs/heads/main"
+            branchFilter = "+:main"
         }
 
         params {
