@@ -21,7 +21,7 @@ public final class JVMProjectSource implements InitProjectSource {
     }
 
     @Override
-    public InitProjectGenerator getProjectGenerator() {
-        return new StaticProjectGenerator();
+    public Class<? extends InitProjectGenerator> getProjectGenerator() {
+        return StaticProjectGenerator.class;
     }
 }

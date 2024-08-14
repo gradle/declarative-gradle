@@ -10,7 +10,7 @@ import org.gradle.util.ResourceLoader;
  * as resources files in the {@link #TEMPLATES_ROOT} directory.
  */
 @SuppressWarnings("UnstableApiUsage")
-public final class StaticProjectGenerator implements InitProjectGenerator {
+public abstract class StaticProjectGenerator implements InitProjectGenerator {
     private static final String TEMPLATES_ROOT = "templates";
 
     @Override

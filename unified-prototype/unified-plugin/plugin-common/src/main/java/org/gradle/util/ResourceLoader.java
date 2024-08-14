@@ -30,7 +30,6 @@ public final class ResourceLoader {
             throw new IllegalArgumentException("Directory: '" + relativePath + "' not found on classpath.");
         }
         JarFile jarFile = ((JarURLConnection) jarDirURL.openConnection()).getJarFile();
-        System.out.println("Using URL: " + jarDirURL);
 
         Iterator<JarEntry> iterator = jarFile.entries().asIterator();
         while (iterator.hasNext()) {
@@ -39,21 +38,15 @@ public final class ResourceLoader {
 
             if (entryName.startsWith(relativePath)) {
                 String entrySuffix = entryName.substring(relativePath.length());
-                System.out.println("Entry: " + entry + " name: " + entryName + " suffix: " + entrySuffix);
                 File destFile = new File(destDir, entrySuffix);
-                System.out.println("Dest file: " + destFile);
 
                 if (entry.isDirectory()) {
-                    System.out.println("Is directory");
                     FileUtils.forceMkdir(destFile);
-                    System.out.println("Created directory");
                 } else {
-                    System.out.println("Is file");
                     try (InputStream is = jarFile.getInputStream(entry);
                          FileOutputStream fos = new FileOutputStream(destFile)) {
                         IOUtils.copy(is, fos);
                     }
-                    System.out.println("Copied file");
                 }
             }
         }
