@@ -15,7 +15,7 @@ class ResourceLoaderIntegrationTest extends Specification {
         ResourceLoader resourceLoader = new ResourceLoader()
 
         when:
-        resourceLoader.extractResourcesFromJar("templates/java-library", outputDir)
+        resourceLoader.extractDirectoryFromResources("templates/java-library", outputDir)
 
         then:
         assertOutputIs(['build.gradle.dcl', 'src/main/java/com/example/lib/Library.java'])

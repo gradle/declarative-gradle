@@ -1,6 +1,9 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     `kotlin-dsl`
     id("build-logic.publishing")
+    groovy // For spock testing
 }
 
 description = "Implements the declarative KMP DSL prototype"
@@ -12,7 +15,23 @@ dependencies {
     implementation(libs.kotlin.jvm)
 }
 
+testing {
+    suites {
+        val integTest by registering(JvmTestSuite::class) {
+            useSpock("2.2-groovy-3.0")
+
+            dependencies {
+                implementation(project(":internal-testing-utils"))
+            }
+        }
+
+        tasks.getByPath("check").dependsOn(integTest)
+    }
+}
+
 gradlePlugin {
+    testSourceSets(project.sourceSets.getByName("integTest"))
+
     plugins {
         create("kmp-library") {
             id = "org.gradle.experimental.kmp-library"

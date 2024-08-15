@@ -23,7 +23,7 @@ public abstract class StaticProjectGenerator implements InitProjectGenerator {
         ResourceLoader resourceLoader = new ResourceLoader();
 
         try {
-            resourceLoader.extractResourcesFromJar(templatePath, projectDir.getAsFile());
+            resourceLoader.extractDirectoryFromResources(templatePath, projectDir.getAsFile());
         } catch (Exception e) {
             throw new RuntimeException("Error extracting resources for: '" + projectSpec.getDisplayName() + "' from: '" + templatePath + "'!", e);
         }

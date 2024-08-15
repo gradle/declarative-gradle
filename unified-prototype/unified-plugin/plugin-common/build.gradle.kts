@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     `kotlin-dsl`
     id("build-logic.publishing")
@@ -9,27 +11,25 @@ description = "Common APIs and implementation classes shared by the ecosystem sp
 dependencies {
     implementation(libs.android.agp.application)
 
-    implementation("commons-io:commons-io:2.8.0")
+    implementation("commons-io:commons-io:2.15.1")
     implementation(gradleApi())
 }
 
 testing {
     suites {
-        @Suppress("UnstableApiUsage")
         val test by getting(JvmTestSuite::class) {
             useSpock("2.2-groovy-3.0")
 
             dependencies {
-                implementation("commons-io:commons-io:2.8.0")
+                implementation("commons-io:commons-io:2.15.1")
             }
         }
 
-        @Suppress("UnstableApiUsage")
         val integTest by registering(JvmTestSuite::class) {
             useSpock("2.2-groovy-3.0")
 
             dependencies {
-                implementation("commons-io:commons-io:2.8.0")
+                implementation("commons-io:commons-io:2.15.1")
                 implementation(project(":plugin-jvm"))
                 implementation(project())
             }

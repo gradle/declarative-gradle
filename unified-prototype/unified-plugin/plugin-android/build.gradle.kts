@@ -40,7 +40,6 @@ testing {
 
             dependencies {
                 implementation(project(":internal-testing-utils"))
-                implementation(project())
             }
         }
 
@@ -49,6 +48,8 @@ testing {
 }
 
 gradlePlugin {
+    testSourceSets(project.sourceSets.getByName("integTest"))
+
     plugins {
         create("android-library") {
             id = "org.gradle.experimental.android-library"

@@ -1,18 +1,36 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     `kotlin-dsl`
     id("build-logic.publishing")
+    groovy // For spock testing
 }
 
 description = "Implements the declarative JVM DSL prototype"
 
 dependencies {
     implementation(project(":plugin-common"))
-    implementation("commons-io:commons-io:2.8.0")
     implementation("org.gradle.toolchains:foojay-resolver:0.8.0")
     implementation(gradleApi())
 }
 
+testing {
+    suites {
+        val integTest by registering(JvmTestSuite::class) {
+            useSpock("2.2-groovy-3.0")
+
+            dependencies {
+                implementation(project(":internal-testing-utils"))
+            }
+        }
+
+        tasks.getByPath("check").dependsOn(integTest)
+    }
+}
+
 gradlePlugin {
+    testSourceSets(project.sourceSets.getByName("integTest"))
+
     plugins {
         create("jvm-library") {
             id = "org.gradle.experimental.jvm-library"
