@@ -14,6 +14,16 @@
     --md-primary-fg-color--dark:  var(--gradle-bg-dark);
 }
 
+.md-banner {
+    div {
+        text-align: center;
+        a {
+            color: var(--gradle-blue);
+            font-weight: bold;
+        }
+    }
+}
+
 .md-content {
     --md-typeset-a-color: var(--gradle-blue-lite);
 }
@@ -47,4 +57,114 @@ h4 {
 .md-typeset .admonition,
 .md-typeset details {
   font-size: 16px
+}
+
+.youtube-video {
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+  div {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    aspect-ratio: 16/9;
+    max-width: 900px;
+  }
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 1rem;
+    vertical-align: middle;
+
+    .card {
+        display: block;
+        border: .2rem solid;
+        border-radius: 1rem;
+        padding: 1rem;
+        align-items: center;
+        width: 48%;
+        min-width: 320px;
+
+        h3 {
+            font-size: x-large;
+            font-weight: bolder;
+            span {
+                margin-right: 0.5rem;
+                .section-icon {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }
+
+        items {
+            font-size: larger;
+            font-weight: bold;
+        }
+    }
+}
+
+.button {
+    display: inline-block;
+    min-width: 180px;
+    padding: 10px 20px;
+    font-size: 17px;
+    line-height: 1.4;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 8px;
+    transition: background-color .3s ease, border .3s ease;
+}
+
+.icon {
+    width: 20px;
+}
+
+.button--blue,
+.button--blue-lite {
+    color: white;
+    border-color: transparent;
+    &:hover {
+        color: white;
+    }
+}
+
+
+.button--blue {
+    border-color: var(--gradle-blue-lite);
+    background: var(--gradle-blue);
+    background: linear-gradient(var(--button-gradient-angle), var(--gradle-blue) 0%, var(--gradle-blue-lite) 100%);
+    transition: none;
+    &:hover {
+        background-color: var(--gradle-blue-lite);
+        color: white;
+    }
+}
+
+
+.button--blue-lite {
+    background-color: var(--gradle-bg-gray);
+    &:hover {
+        background-color: var(--gradle-blue-lite);
+        color: white;
+    }
 }
