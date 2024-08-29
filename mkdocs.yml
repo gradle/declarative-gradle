@@ -93,11 +93,12 @@ nav:
     - Overview: docs/reference/README.md
     - Roadmap: docs/ROADMAP.md
     - Software Features: docs/reference/software-features.md
-  - Participate:
-    - Contributing: docs/CONTRIBUTING.md
-    - Code of Conduct: docs/CODE_OF_CONDUCT.md
   - Resources:
-    - Publications: publications/README.md
+    - Publications: docs/publications/README.md
+    - Contributing: docs/CONTRIBUTING.md
+    - Feedback Form: docs/feedback.md
+    - Code of Conduct: docs/CODE_OF_CONDUCT.md
+  - Share Feedback: docs/feedback.md
 
 extra_css:
   - docs/assets/css/gradle.css
@@ -143,6 +144,8 @@ plugins:
         'docs/kotlin/README.md': 'docs/getting-started/samples.md#kotlin-application'
         'docs/swift/README.md': 'docs/getting-started/samples.md#swift'
         'unified-prototype/README.md': 'docs/getting-started/samples.md#prototypes'
+        'docs/EAP.md': https://blog.gradle.org/declarative-gradle-first-eap
+        'publications/README.md': docs/publications/README.md
 
 # Markdown
 markdown_extensions:

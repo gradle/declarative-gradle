@@ -16,6 +16,7 @@
 
 .md-banner {
     div {
+        font-size: large;
         text-align: center;
         a {
             color: var(--gradle-blue);
