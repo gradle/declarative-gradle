@@ -19,8 +19,10 @@ package org.gradle.api.experimental.android.application;
 import com.android.build.api.dsl.ApplicationBaseFlavor;
 import org.gradle.api.Action;
 import org.gradle.api.experimental.android.AndroidSoftware;
+import org.gradle.api.experimental.android.extensions.DataBinding;
 import org.gradle.api.experimental.android.extensions.DependencyGuard;
 import org.gradle.api.experimental.android.extensions.Firebase;
+import org.gradle.api.experimental.android.extensions.ViewBinding;
 import org.gradle.api.experimental.android.nia.DimensionStrategy;
 import org.gradle.api.experimental.android.nia.Flavors;
 import org.gradle.api.provider.Property;
@@ -96,5 +98,21 @@ public interface AndroidApplication extends AndroidSoftware {
     @Configuring
     default void missingDimensionStrategy(Action<? super DimensionStrategy> action) {
         action.execute(getMissingDimensionStrategy());
+    }
+
+    @Nested
+    ViewBinding getViewBinding();
+
+    @Configuring
+    default void viewBinding(Action<? super ViewBinding> action) {
+        action.execute(getViewBinding());
+    }
+
+    @Nested
+    DataBinding getDataBinding();
+
+    @Configuring
+    default void dataBinding(Action<? super DataBinding> action) {
+        action.execute(getDataBinding());
     }
 }

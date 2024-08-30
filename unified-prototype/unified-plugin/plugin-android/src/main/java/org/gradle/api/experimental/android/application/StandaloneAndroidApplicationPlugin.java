@@ -43,6 +43,8 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
         dslModel.getBuildTypes().getRelease().getApplicationIdSuffix().convention((String) null);
 
         dslModel.getFlavors().getEnabled().convention(false);
+        dslModel.getViewBinding().getEnabled().convention(false);
+        dslModel.getDataBinding().getEnabled().convention(false);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -69,6 +71,9 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
             ifPresent(dslModel.getApplicationId(), defaultConfig::setApplicationId);
             return null;
         });
+
+        android.getBuildFeatures().setViewBinding(dslModel.getViewBinding().getEnabled().get());
+        android.getBuildFeatures().setDataBinding(dslModel.getDataBinding().getEnabled().get());
 
         // TODO:DG All this configuration should be moved to the NiA project
         if (NiaSupport.isNiaProject(project)) {
