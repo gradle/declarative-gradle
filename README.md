@@ -10,14 +10,27 @@ We are working on _Declarative Gradle_ to realize that part of the vision.
 This is an experimental project, stay tuned for updates!
 
 Learn more in the [Declarative Gradle Announcement](https://blog.gradle.org/declarative-gradle)
-blog post and [other publications](./publications/README.md).
+blog post and [other publications](./docs/publications/README.md).
 
-!!! info
-    _Declarative Gradle_ is an **experimental** project.
-    Currently, no compatibility is guaranteed, and there is no commitment to the DSL syntax
-    and available features.
+## Status
 
-    Learn how you can contribute in the [Participate](./docs/CONTRIBUTING.md) section.
+_Declarative Gradle_ is an **experimental** project, now in [Early Access Preview (EAP)](./docs/EAP.md).
+We invite you to [try out Declarative Gradle](./docs/getting-started/README.md),
+and to [share feedback](./docs/feedback.md).
+The project includes the following experimental parts:
+
+- Changes in Gradle to support DCL files
+- Changes in Android Studio to support DCL files
+- Prototype plugins demonstrating software types and higher-level models
+- A Gradle test client demonstrating features not yet implemented in the IDE
+
+Currently, no compatibility is guaranteed, and there is no commitment to the DSL syntax
+and available features.
+Learn how you can contribute in the [Participate](./docs/CONTRIBUTING.md) section.
+
+<a class="button button--blue" href="./docs/feedback">
+   Share Your Feedback
+</a>
 
 ## Key Principles
 
@@ -64,4 +77,9 @@ The _Declarative Gradle_ experiment is still in an early stage but is ready for 
 * [Getting Started](docs/getting-started/README.md) - Learn how to try _Declarative Gradle_ yourself.
 * [Documentation](docs/reference/README.md) - Learn about the fundamentals behind _Declarative Gradle_.
 * [Participate](docs/CONTRIBUTING.md) - Learn how you can help shape the future of _Declarative Gradle_.
-* [Resources](publications/README.md) - Learn more from conferences, interviews, articles, etc.
+* [Resources](docs/publications/README.md) - Learn more from conferences, interviews, articles, etc.
+
+## Share Feedback
+
+We invite you to [try out Declarative Gradle](./docs/getting-started/README.md),
+and to [share your feedback](./docs/feedback.md).

@@ -10,8 +10,9 @@ Discussion and sharing feedback is the recommended way of participation at the m
 ## Share Feedback
 
 While the project is in early stages,
-initial feedback on DSL and use-cases will be appreciated!
+initial feedback on the DSL, early demos, features and use-cases will be appreciated!
 
+- Fill out the [Feedback Form](./feedback.md)
 - `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
 
 ## Adopting Declarative Gradle in your projects

@@ -26,6 +26,7 @@ site_dir: _site
 # Theme
 theme:
   name: material
+  custom_dir: docs/theme/
   highlightjs: true
   features:
     - announce.dismiss
@@ -92,14 +93,17 @@ nav:
     - Overview: docs/reference/README.md
     - Roadmap: docs/ROADMAP.md
     - Software Features: docs/reference/software-features.md
-  - Participate:
-    - Contributing: docs/CONTRIBUTING.md
-    - Code of Conduct: docs/CODE_OF_CONDUCT.md
   - Resources:
-    - Publications: publications/README.md
+    - Publications: docs/publications/README.md
+    - Contributing: docs/CONTRIBUTING.md
+    - Feedback Form: docs/feedback.md
+    - Code of Conduct: docs/CODE_OF_CONDUCT.md
+  - Share Feedback: docs/feedback.md
 
 extra_css:
   - docs/assets/css/gradle.css
+extra_javascript:
+  - docs/assets/js/google-tag-support.js
 
 extra:
   social:
@@ -118,9 +122,8 @@ extra:
     - icon: fontawesome/brands/mastodon
       link: https://mastodon.social/@Gradle
       name: Mastodon
-#  analytics:
-#    provider: google
-#    property: TODO
+  analytics:
+    provider: custom
 
 plugins:
   - search
@@ -128,7 +131,10 @@ plugins:
 # FIXME: Collision on GitHub Actions, to be fixed later
 #  - macros
   - mkdocs-pdf
-  - social
+  - social:
+      cards_layout_options:
+        background_color: "#010002"
+        font_family: Lato
   - same-dir
   - include-markdown
   - redirects:
@@ -138,6 +144,8 @@ plugins:
         'docs/kotlin/README.md': 'docs/getting-started/samples.md#kotlin-application'
         'docs/swift/README.md': 'docs/getting-started/samples.md#swift'
         'unified-prototype/README.md': 'docs/getting-started/samples.md#prototypes'
+        'docs/EAP.md': https://blog.gradle.org/declarative-gradle-first-eap
+        'publications/README.md': docs/publications/README.md
 
 # Markdown
 markdown_extensions:

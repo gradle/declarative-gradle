@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block announce %}
+  Declarative Gradle is now in Early Access Preview (EAP), and we need your feedback!
+  <a href="https://declarative.gradle.org/docs/getting-started/">Try it out</a>
+  and <a href="https://declarative.gradle.org/docs/feedback/">share your experiences</a>.
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WRTQKGT"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+{% endblock %}
