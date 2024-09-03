@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.firebase.perf.plugin)
     implementation(libs.firebase.crashlytics.plugin)
     implementation(libs.oss.licenses.plugin)
+    implementation(libs.compose.compiler.plugin)
 
     implementation(libs.apache.commons.lang)
     implementation(libs.android.tools.common)
