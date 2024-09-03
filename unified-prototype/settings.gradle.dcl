@@ -26,12 +26,12 @@ rootProject.name = "unified-prototype"
 
 defaults {
     androidLibrary {
-        jdkVersion = 11
+        jdkVersion = 17
         compileSdk = 34
     }
 
     androidApplication {
-        jdkVersion = 11
+        jdkVersion = 17
         compileSdk = 34
     }
 }

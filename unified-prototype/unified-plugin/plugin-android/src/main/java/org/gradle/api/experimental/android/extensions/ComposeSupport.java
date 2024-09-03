@@ -24,6 +24,8 @@ public final class ComposeSupport {
             project.getLogger().info("Compose is enabled in: " + project.getPath());
             androidLib.getBuildFeatures().setCompose(true);
 
+            project.getPlugins().apply("org.jetbrains.kotlin.plugin.compose");
+
             androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");
 
             dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));

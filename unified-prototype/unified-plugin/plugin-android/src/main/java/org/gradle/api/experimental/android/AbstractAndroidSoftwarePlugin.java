@@ -142,13 +142,13 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
 
             // Add support for KSP
             project.getPlugins().apply("com.google.devtools.ksp");
-            project.getDependencies().add("ksp", "com.google.dagger:hilt-android-compiler:2.50");
+            project.getDependencies().add("ksp", "com.google.dagger:hilt-android-compiler:2.52");
 
             // Add support for Hilt
             project.getPlugins().apply("dagger.hilt.android.plugin");
-            project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.50");
+            project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.52");
 
-            project.getDependencies().add("kspTest", "com.google.dagger:hilt-android-compiler:2.50");
+            project.getDependencies().add("kspTest", "com.google.dagger:hilt-android-compiler:2.52");
         }
     }
 

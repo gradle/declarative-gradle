@@ -266,8 +266,8 @@ public final class NiaSupport {
     private static void configureKotlin(Project project) {
         project.getTasks().withType(KotlinCompile.class, task -> {
             KotlinJvmOptions kotlinOptions = task.getKotlinOptions();
-            // Set JVM target to 11
-            kotlinOptions.setJvmTarget(JavaVersion.VERSION_11.toString());
+            // Set JVM target to 17
+            kotlinOptions.setJvmTarget(JavaVersion.VERSION_17.toString());
 
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
