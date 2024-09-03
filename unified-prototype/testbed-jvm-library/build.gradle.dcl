@@ -4,9 +4,9 @@ jvmLibrary {
     }
 
     targets {
-        java(11) {
+        java(21) {
             dependencies {
-                // Requires java 11
+                // This library will only be available for Java 21 targets
                 implementation("org.hibernate.orm:hibernate-core:6.4.2.Final")
             }
         }
