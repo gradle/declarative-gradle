@@ -3,7 +3,7 @@ A sample Android application written in the Declarative Gradle DSL, using the pr
 
 ## Building and Running
 
-This sample shows the definition of a multiproject Android application implemented using Kotlin 1.9.23 source code.
+This sample shows the definition of a multiproject Android application implemented using Kotlin 1.9.24 source code.
 The project is the result of reproducing the project produced by the `gradle init` command in Gradle 8.9 as an Android project.
 
 To build the project without running, use:
