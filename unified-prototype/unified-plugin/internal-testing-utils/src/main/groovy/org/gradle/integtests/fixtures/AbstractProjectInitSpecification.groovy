@@ -13,7 +13,8 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
 
     protected File projectDir = file("new-project").tap { mkdirs() }
 
-    abstract String getPluginId()
+    abstract String getProjectSpecType()
+    abstract String getEcosystemPluginId()
 
     // TODO: add project type method here, specify type of project to be generated (need to update Gradle wrapper to new nightly containing getType() first)
 
@@ -29,15 +30,14 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
     }
 
     protected void runInitWithPluginAsInitProjectSpecSupplier() {
-        def args = ["init",
-                    "-D${AutoAppliedPluginHandler.INIT_PROJECT_SPEC_SUPPLIERS_PROP}=$pluginId:$DECLARATIVE_PROTOTYPE_VERSION",
-                    "-D${TestOverrideConsoleDetector.INTERACTIVE_TOGGLE}=true"] as String[]
+        def initInvocation = ["-D${AutoAppliedPluginHandler.INIT_PROJECT_SPEC_SUPPLIERS_PROP}=$ecosystemPluginId:$DECLARATIVE_PROTOTYPE_VERSION",
+                    "init",
+                    "--type", "$projectSpecType"] as String[]
 
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withArguments(args)
                 .withPluginClasspath()
-                .withDebug(true)
+                .withArguments(initInvocation)
                 .forwardOutput()
                 .build()
     }
@@ -46,7 +46,6 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
                 .withArguments("build")
-                .withDebug(true)
                 .forwardOutput()
                 .build()
     }
