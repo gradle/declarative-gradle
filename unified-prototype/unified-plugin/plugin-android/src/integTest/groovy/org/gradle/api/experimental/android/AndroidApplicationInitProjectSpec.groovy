@@ -1,10 +1,8 @@
 package org.gradle.api.experimental.android
 
-import org.gradle.integtests.fixtures.AbstractProjectInitSpecification
-
-class AndroidApplicationInitProjectSpec extends AbstractProjectInitSpecification {
+class AndroidApplicationInitProjectSpec extends AbstractAndroidInitProjectSpec {
     @Override
-    String getPluginId() {
-        return "org.gradle.experimental.android-ecosystem"
+    String getProjectSpecType() {
+        return "android-application"
     }
 }

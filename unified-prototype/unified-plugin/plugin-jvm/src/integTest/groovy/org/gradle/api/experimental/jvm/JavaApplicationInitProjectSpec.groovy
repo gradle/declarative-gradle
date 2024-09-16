@@ -5,7 +5,12 @@ import org.gradle.integtests.fixtures.AbstractProjectInitSpecification
 
 class JavaApplicationInitProjectSpec extends AbstractProjectInitSpecification {
     @Override
-    String getPluginId() {
+    String getEcosystemPluginId() {
         return "org.gradle.experimental.jvm-ecosystem"
+    }
+
+    @Override
+    String getProjectSpecType() {
+        return "java-application"
     }
 }
