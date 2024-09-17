@@ -4,6 +4,7 @@ plugins {
     `kotlin-dsl`
     id("build-logic.publishing")
     groovy // For spock testing
+    `java-test-fixtures`
 }
 
 description = "Common APIs and implementation classes shared by the ecosystem specific declarative prototypes"
@@ -22,6 +23,7 @@ testing {
 
             dependencies {
                 implementation("commons-io:commons-io:2.15.1")
+                implementation(testFixtures(project()))
             }
         }
 
@@ -31,7 +33,7 @@ testing {
             dependencies {
                 implementation("commons-io:commons-io:2.15.1")
                 implementation(project(":plugin-jvm"))
-                implementation(project())
+                implementation(testFixtures(project()))
             }
         }
 

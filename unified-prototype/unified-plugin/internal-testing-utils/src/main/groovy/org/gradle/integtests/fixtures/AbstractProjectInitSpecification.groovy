@@ -49,6 +49,7 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
     protected void canBuildGeneratedProject() {
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
+                .withPluginClasspath()
                 .withArguments("build")
                 .forwardOutput()
                 .build()

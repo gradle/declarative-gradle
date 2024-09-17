@@ -74,8 +74,6 @@ gradlePlugin {
             tags = setOf("declarative-gradle", "android")
         }
     }
-
-    testSourceSet(sourceSets.getByName("integTest"))
 }
 
 // Compile against Java 17 since Android requires Java 17 at minimum
