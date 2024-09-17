@@ -1,6 +1,5 @@
 package org.gradle.integtests.fixtures
 
-import org.gradle.internal.nativeintegration.console.TestOverrideConsoleDetector
 import org.gradle.plugin.management.internal.autoapply.AutoAppliedPluginHandler
 import org.gradle.test.fixtures.AbstractSpecification
 import org.gradle.testkit.runner.GradleRunner
@@ -9,14 +8,12 @@ import org.gradle.testkit.runner.GradleRunner
  * Base class for tests that generate, build, and validate (via run, or something else) included project init specifications.
  */
 abstract class AbstractProjectInitSpecification extends AbstractSpecification {
-    private static final String DECLARATIVE_PROTOTYPE_VERSION = "0.1.11"
+    private static final String DECLARATIVE_PROTOTYPE_VERSION = "use.local.version"
 
     protected File projectDir = file("new-project").tap { mkdirs() }
 
     abstract String getProjectSpecType()
     abstract String getEcosystemPluginId()
-
-    // TODO: add project type method here, specify type of project to be generated (need to update Gradle wrapper to new nightly containing getType() first)
 
     def "can generate project from init project spec"() {
         when:
