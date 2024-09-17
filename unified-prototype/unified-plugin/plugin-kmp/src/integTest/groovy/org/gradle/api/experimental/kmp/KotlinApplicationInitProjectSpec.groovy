@@ -11,7 +11,7 @@ class KotlinApplicationInitProjectSpec extends AbstractProjectInitSpecification 
 
     @Override
     protected String getProjectSpecType() {
-        return "declarative-kotlin-(jvm)-application-project"
+        return "declarative-kotlin-j-v-m-application-project"
     }
 
     @Override
@@ -23,5 +23,15 @@ class KotlinApplicationInitProjectSpec extends AbstractProjectInitSpecification 
                 .build()
 
         assert result.output.contains("Hello World!")
+    }
+
+    @Override
+    protected void canBuildGeneratedProject() {
+        result = GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withPluginClasspath()
+                .withArguments(["build", "-Xdoclint:none"]) // Suppress repetitive warning for missing javadoc
+                .forwardOutput()
+                .build()
     }
 }
