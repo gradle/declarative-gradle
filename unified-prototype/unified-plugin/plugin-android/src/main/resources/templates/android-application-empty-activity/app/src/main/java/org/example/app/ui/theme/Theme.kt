@@ -1,4 +1,4 @@
-package com.tomtresansky.myapplication.ui.theme
+package org.example.app.ui.theme
 
 import android.app.Activity
 import android.os.Build

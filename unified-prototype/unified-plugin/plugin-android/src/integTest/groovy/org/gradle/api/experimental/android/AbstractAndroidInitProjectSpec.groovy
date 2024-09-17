@@ -4,7 +4,7 @@ import org.gradle.integtests.fixtures.AbstractProjectInitSpecification
 
 abstract class AbstractAndroidInitProjectSpec extends AbstractProjectInitSpecification {
     @Override
-    String getEcosystemPluginId() {
+    protected String getEcosystemPluginId() {
         return "org.gradle.experimental.android-ecosystem"
     }
 }

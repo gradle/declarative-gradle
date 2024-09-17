@@ -12,8 +12,15 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
 
     protected File projectDir = file("new-project").tap { mkdirs() }
 
-    abstract String getProjectSpecType()
-    abstract String getEcosystemPluginId()
+    protected abstract String getProjectSpecType()
+    protected abstract String getEcosystemPluginId()
+
+    /**
+     * Perform additional validation on the built project, perhaps by running it and verifying the output.
+     * <p>
+     * Defaults to No-Op.
+     */
+    protected void validateBuiltProject() {}
 
     def "can generate project from init project spec"() {
         when:
@@ -23,7 +30,7 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
         canBuildGeneratedProject()
 
         and:
-        validateGeneratedProjectRuns()
+        validateBuiltProject()
     }
 
     protected void runInitWithPluginAsInitProjectSpecSupplier() {
@@ -45,15 +52,5 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
                 .withArguments("build")
                 .forwardOutput()
                 .build()
-    }
-
-    protected void validateGeneratedProjectRuns() {
-        result = GradleRunner.create()
-                .withProjectDir(projectDir)
-                .withArguments(":app:run")
-                .forwardOutput()
-                .build()
-
-        assert result.output.contains("Hello World!")
     }
 }
