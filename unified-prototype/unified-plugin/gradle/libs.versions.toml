@@ -1,9 +1,8 @@
 [versions]
 # Kotlin Libs
 # Find latest version at: https://kotlinlang.org/docs/releases.html#release-details
-# Keep these at 2.0.10 to avoid "The `embedded-kotlin` and `kotlin-dsl` plugins rely on features of Kotlin `2.0.10` that might work differently than in the requested version `2.0.20`." for now
-kotlin = "2.0.10"
-ksp = "2.0.10-1.0.24"
+kotlin = "2.0.20"
+ksp = "2.0.20-1.0.25"
 
 # Android Libs
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
