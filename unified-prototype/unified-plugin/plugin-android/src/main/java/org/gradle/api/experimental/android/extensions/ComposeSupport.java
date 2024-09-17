@@ -29,11 +29,14 @@ public final class ComposeSupport {
             androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.12");
 
             dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
-            dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
-            dslModel.getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling-preview");
+            dslModel.getTesting().getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
+            dslModel.getTesting().getDependencies().getAndroidImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
 
+            // TODO: Are these necessary?  Could they be removed and added explicitly per project as they are used?
+            dslModel.getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling-preview");
             dslModel.getBuildTypes().getDebug().getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling");
 
+            // TODO: Expose this as a testing option?
             androidLib.getTestOptions().getUnitTests().setIncludeAndroidResources(true); // For Robolectric
 
             project.getTasks().withType(KotlinCompile.class).configureEach(task -> {
