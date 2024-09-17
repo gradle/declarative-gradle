@@ -10,6 +10,6 @@ class KotlinApplicationInitProjectSpec extends AbstractProjectInitSpecification 
 
     @Override
     String getProjectSpecType() {
-        return "kotlin-application"
+        return "declarative-kotlin-(jvm)-application-project"
     }
 }

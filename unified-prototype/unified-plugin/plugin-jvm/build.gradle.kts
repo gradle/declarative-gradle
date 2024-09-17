@@ -16,6 +16,7 @@ dependencies {
 
 testing {
     suites {
+        @Suppress("UnstableApiUsage")
         val integTest by registering(JvmTestSuite::class) {
             useSpock("2.2-groovy-3.0")
 

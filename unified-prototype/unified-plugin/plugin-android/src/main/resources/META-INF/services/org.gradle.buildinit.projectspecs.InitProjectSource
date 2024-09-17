@@ -1,1 +1,1 @@
-org.gradle.api.experimental.buildinit.AndroidProjectSource
+org.gradle.api.experimental.android.buildinit.AndroidProjectSource
