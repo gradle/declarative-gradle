@@ -30,3 +30,20 @@ public abstract class StaticProjectGenerator {}
 //        }
 //    }
 //}
+
+    @Override
+    public void generate(InitProjectConfig config, Directory projectDir) {
+        if (!(config.getProjectSpec() instanceof StaticProjectSpec projectSpec)) {
+            throw new IllegalArgumentException("Unknown project type: " + config.getProjectSpec().getDisplayName() + " (" + config.getProjectSpec().getClass().getName() + ")");
+        }
+
+        String templatePath = TEMPLATES_ROOT + "/" + projectSpec.getType();
+        ResourceLoader resourceLoader = new ResourceLoader();
+
+        try {
+            resourceLoader.extractDirectoryFromResources(templatePath, projectDir.getAsFile());
+        } catch (Exception e) {
+            throw new RuntimeException("Error extracting resources for: '" + projectSpec.getDisplayName() + "' from: '" + templatePath + "'!", e);
+        }
+    }
+}
