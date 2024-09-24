@@ -5,8 +5,8 @@ import org.gradle.testkit.runner.GradleRunner
 import org.junit.Ignore
 
 /*
-  TODO: Figure out why this is failing with:
-   Cannot use org.gradle.api.internal.AbstractNamedDomainObjectContainer<org.gradle.api.experimental.kmp.KmpLibraryTarget!>! as a container type in fun org.gradle.api.experimental.kmp.KmpLibraryTargetContainer.configure(groovy.lang.Closure<(raw) kotlin.Any!>!): org.gradle.api.internal.AbstractNamedDomainObjectContainer<org.gradle.api.experimental.kmp.KmpLibraryTarget!>!
+  TODO: This requires an upgrade to a published 0.1.14, to get the changes to the KMP project to use StaticKmpLibraryTargets and avoid
+  errors about the PNDOC
 */
 @Ignore
 class KotlinApplicationInitProjectSpec { //extends AbstractProjectInitSpecification {
@@ -36,7 +36,7 @@ class KotlinApplicationInitProjectSpec { //extends AbstractProjectInitSpecificat
 //        result = GradleRunner.create()
 //                .withProjectDir(projectDir)
 //                .withPluginClasspath()
-//                .withArguments(["build", "-Xdoclint:none"]) // Suppress repetitive warning for missing javadoc
+//                .withArguments("build")
 //                .forwardOutput()
 //                .build()
 //    }
