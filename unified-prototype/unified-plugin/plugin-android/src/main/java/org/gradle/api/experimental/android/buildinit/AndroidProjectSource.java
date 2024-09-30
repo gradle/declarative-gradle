@@ -21,3 +21,9 @@ public final class AndroidProjectSource implements InitProjectSource {
             new StaticProjectSpec("android-application-empty-activity", "Declarative Android Application Project with Empty Activity")
         );
     }
+
+    @Override
+    public Class<? extends InitProjectGenerator> getProjectGenerator() {
+        return StaticProjectGenerator.class;
+    }
+}
