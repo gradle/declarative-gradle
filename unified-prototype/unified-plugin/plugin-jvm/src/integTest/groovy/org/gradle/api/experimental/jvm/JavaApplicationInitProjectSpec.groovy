@@ -2,10 +2,27 @@
 package org.gradle.api.experimental.jvm
 
 import org.gradle.integtests.fixtures.AbstractProjectInitSpecification
+import org.gradle.testkit.runner.GradleRunner
 
 class JavaApplicationInitProjectSpec extends AbstractProjectInitSpecification {
     @Override
-    String getPluginId() {
+    protected String getEcosystemPluginId() {
         return "org.gradle.experimental.jvm-ecosystem"
+    }
+
+    @Override
+    protected String getProjectSpecType() {
+        return "java-application"
+    }
+
+    @Override
+    protected void validateBuiltProject() {
+        result = GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments(":app:run")
+                .forwardOutput()
+                .build()
+
+        assert result.output.contains("Hello World!")
     }
 }

@@ -1,6 +1,5 @@
 package org.gradle.integtests.fixtures
 
-import org.gradle.internal.nativeintegration.console.TestOverrideConsoleDetector
 import org.gradle.plugin.management.internal.autoapply.AutoAppliedPluginHandler
 import org.gradle.test.fixtures.AbstractSpecification
 import org.gradle.testkit.runner.GradleRunner
@@ -9,13 +8,19 @@ import org.gradle.testkit.runner.GradleRunner
  * Base class for tests that generate, build, and validate (via run, or something else) included project init specifications.
  */
 abstract class AbstractProjectInitSpecification extends AbstractSpecification {
-    private static final String DECLARATIVE_PROTOTYPE_VERSION = "0.1.11"
+    private static final String DECLARATIVE_PROTOTYPE_VERSION = "use.local.version"
 
     protected File projectDir = file("new-project").tap { mkdirs() }
 
-    abstract String getPluginId()
+    protected abstract String getProjectSpecType()
+    protected abstract String getEcosystemPluginId()
 
-    // TODO: add project type method here, specify type of project to be generated (need to update Gradle wrapper to new nightly containing getType() first)
+    /**
+     * Perform additional validation on the built project, perhaps by running it and verifying the output.
+     * <p>
+     * Defaults to No-Op.
+     */
+    protected void validateBuiltProject() {}
 
     def "can generate project from init project spec"() {
         when:
@@ -25,19 +30,18 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
         canBuildGeneratedProject()
 
         and:
-        validateGeneratedProjectRuns()
+        validateBuiltProject()
     }
 
     protected void runInitWithPluginAsInitProjectSpecSupplier() {
-        def args = ["init",
-                    "-D${AutoAppliedPluginHandler.INIT_PROJECT_SPEC_SUPPLIERS_PROP}=$pluginId:$DECLARATIVE_PROTOTYPE_VERSION",
-                    "-D${TestOverrideConsoleDetector.INTERACTIVE_TOGGLE}=true"] as String[]
+        def initInvocation = ["-D${AutoAppliedPluginHandler.INIT_PROJECT_SPEC_SUPPLIERS_PROP}=$ecosystemPluginId:$DECLARATIVE_PROTOTYPE_VERSION",
+                    "init",
+                    "--type", "$projectSpecType"] as String[]
 
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withArguments(args)
                 .withPluginClasspath()
-                .withDebug(true)
+                .withArguments(initInvocation)
                 .forwardOutput()
                 .build()
     }
@@ -45,19 +49,9 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
     protected void canBuildGeneratedProject() {
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
+                .withPluginClasspath()
                 .withArguments("build")
-                .withDebug(true)
                 .forwardOutput()
                 .build()
-    }
-
-    protected void validateGeneratedProjectRuns() {
-        result = GradleRunner.create()
-                .withProjectDir(projectDir)
-                .withArguments(":app:run")
-                .forwardOutput()
-                .build()
-
-        assert result.output.contains("Hello World!")
     }
 }

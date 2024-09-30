@@ -1,7 +1,7 @@
 kotlinLibrary {
     targets {
         jvm {
-            jdkVersion = 11
+            jdkVersion = 17
         }
         nodeJs()
         macOsArm64()

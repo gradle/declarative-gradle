@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.firebase.perf.plugin)
     implementation(libs.firebase.crashlytics.plugin)
     implementation(libs.oss.licenses.plugin)
+    implementation(libs.compose.compiler.plugin)
 
     implementation(libs.apache.commons.lang)
     implementation(libs.android.tools.common)
@@ -73,8 +74,6 @@ gradlePlugin {
             tags = setOf("declarative-gradle", "android")
         }
     }
-
-    testSourceSet(sourceSets.getByName("integTest"))
 }
 
 // Compile against Java 17 since Android requires Java 17 at minimum

@@ -49,10 +49,6 @@ class AndroidApplicationSpec extends AbstractSpecification {
             <manifest/>
         """
 
-        file("gradle.properties").text = """
-            android.useAndroidX=true
-        """
-
         expect:
         succeeds(":build")
     }
@@ -93,6 +89,10 @@ class AndroidApplicationSpec extends AbstractSpecification {
             }
     
             rootProject.name = "example"
+        """
+
+        file("gradle.properties").text = """
+            android.useAndroidX=true
         """
     }
 }
