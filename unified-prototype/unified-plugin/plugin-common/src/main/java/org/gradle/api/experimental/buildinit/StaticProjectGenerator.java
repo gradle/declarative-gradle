@@ -5,10 +5,10 @@ package org.gradle.api.experimental.buildinit;
 import org.gradle.buildinit.projectspecs.InitProjectGenerator;
 //import org.gradle.util.ResourceLoader;
 
-/**
- * An {@link InitProjectGenerator} that generates a project from a static template packaged
- * as resources files in the {@link #TEMPLATES_ROOT} directory.
- */
+///**
+// * An {@link InitProjectGenerator} that generates a project from a static template packaged
+// * as resources files in the {@link #TEMPLATES_ROOT} directory.
+// */
 @SuppressWarnings("UnstableApiUsage")
 public abstract class StaticProjectGenerator {}
 //implements InitProjectGenerator {
