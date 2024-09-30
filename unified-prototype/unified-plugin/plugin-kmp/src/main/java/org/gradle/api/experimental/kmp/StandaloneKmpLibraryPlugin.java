@@ -78,7 +78,7 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
 
         // Link JVM targets
-        dslModel.getTargets().withType(KmpLibraryJvmTarget.class).all(target -> {
+        dslModel.getTargetsContainer().withType(KmpLibraryJvmTarget.class).all(target -> {
             kotlin.jvm(target.getName(), kotlinTarget -> {
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
@@ -92,7 +92,7 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
 
         // Link JS targets
-        dslModel.getTargets().withType(KmpLibraryNodeJsTarget.class).all(target -> {
+        dslModel.getTargetsContainer().withType(KmpLibraryNodeJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
                 kotlinTarget.nodejs();
                 KotlinPluginSupport.linkSourceSetToDependencies(
@@ -104,7 +104,7 @@ abstract public class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         });
 
         // Link Native targets
-        dslModel.getTargets().withType(KmpLibraryNativeTarget.class).all(target -> {
+        dslModel.getTargetsContainer().withType(KmpLibraryNativeTarget.class).all(target -> {
             kotlin.macosArm64(target.getName(), kotlinTarget -> {
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,

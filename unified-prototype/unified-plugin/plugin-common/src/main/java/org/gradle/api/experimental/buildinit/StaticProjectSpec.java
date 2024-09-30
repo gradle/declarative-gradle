@@ -11,26 +11,27 @@ import java.util.List;
  * using the {@link StaticProjectGenerator}
  */
 @SuppressWarnings("UnstableApiUsage")
-public final class StaticProjectSpec implements InitProjectSpec {
-    private final String templatePath;
-    private final String displayName;
-
-    public StaticProjectSpec(String templatePath, String displayName) {
-        this.templatePath = templatePath;
-        this.displayName = displayName;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    @Override
-    public List<InitProjectParameter<?>> getParameters() {
-        return Collections.emptyList();
-    }
-
-    public String getTemplatePath() {
-        return templatePath;
-    }
-}
+public final class StaticProjectSpec {}
+//implements InitProjectSpec {
+//    private final String templatePath;
+//    private final String displayName;
+//
+//    public StaticProjectSpec(String templatePath, String displayName) {
+//        this.templatePath = templatePath;
+//        this.displayName = displayName;
+//    }
+//
+//    @Override
+//    public String getDisplayName() {
+//        return displayName;
+//    }
+//
+//    @Override
+//    public List<InitProjectParameter<?>> getParameters() {
+//        return Collections.emptyList();
+//    }
+//
+//    public String getTemplatePath() {
+//        return templatePath;
+//    }
+//}

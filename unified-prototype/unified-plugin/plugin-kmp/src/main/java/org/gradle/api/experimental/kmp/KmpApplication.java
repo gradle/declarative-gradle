@@ -5,6 +5,7 @@ import org.gradle.api.experimental.common.HasApplicationDependencies;
 import org.gradle.api.experimental.common.HasCliExecutables;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
@@ -17,11 +18,17 @@ public interface KmpApplication extends HasApplicationDependencies, HasCliExecut
     @Input
     Property<String> getLanguageVersion();
 
+    @Internal
     @Nested
-    KmpApplicationTargetContainer getTargets();
+    KmpApplicationTargetContainer getTargetsContainer();
+
+    @Nested
+    default StaticKmpApplicationTargets getTargets() {
+        return getTargetsContainer();
+    }
 
     @Configuring
-    default void targets(Action<? super KmpApplicationTargetContainer> action) {
+    default void targets(Action<? super StaticKmpApplicationTargets> action) {
         action.execute(getTargets());
     }
 }

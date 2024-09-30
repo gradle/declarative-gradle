@@ -53,7 +53,7 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
         });
 
         // Link Native targets
-        dslModel.getTargets().withType(KmpApplicationNativeTarget.class).all(target -> {
+        dslModel.getTargetsContainer().withType(KmpApplicationNativeTarget.class).all(target -> {
             kotlin.macosArm64(target.getName(), kotlinTarget -> {
                 kotlinTarget.binaries(nativeBinaries -> {
                     nativeBinaries.executable(executable -> {
@@ -90,7 +90,7 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
         KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
 
         // Link JVM targets
-        dslModel.getTargets().withType(KmpApplicationJvmTarget.class).all(target -> {
+        dslModel.getTargetsContainer().withType(KmpApplicationJvmTarget.class).all(target -> {
             kotlin.jvm(target.getName(), kotlinTarget -> {
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
@@ -111,7 +111,7 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
         });
 
         // Link JS targets
-        dslModel.getTargets().withType(KmpApplicationNodeJsTarget.class).all(target -> {
+        dslModel.getTargetsContainer().withType(KmpApplicationNodeJsTarget.class).all(target -> {
             kotlin.js(target.getName(), kotlinTarget -> {
                 kotlinTarget.nodejs();
                 KotlinPluginSupport.linkSourceSetToDependencies(
@@ -123,7 +123,7 @@ abstract public class StandaloneKmpApplicationPlugin implements Plugin<Project> 
         });
 
         // Link Native targets
-        dslModel.getTargets().withType(KmpApplicationNativeTarget.class).all(target -> {
+        dslModel.getTargetsContainer().withType(KmpApplicationNativeTarget.class).all(target -> {
             kotlin.macosArm64(target.getName(), kotlinTarget -> {
                 KotlinPluginSupport.linkSourceSetToDependencies(
                         project,
