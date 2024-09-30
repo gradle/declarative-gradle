@@ -3,17 +3,13 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.internal.CollectionCallbackActionDecorator;
 import org.gradle.api.internal.DefaultPolymorphicDomainObjectContainer;
-import org.gradle.declarative.dsl.model.annotations.Adding;
-import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.reflect.Instantiator;
 import org.gradle.internal.service.ServiceRegistry;
 
 import javax.inject.Inject;
 
-@Restricted
-public abstract class KmpLibraryTargetContainer extends DefaultPolymorphicDomainObjectContainer<KmpLibraryTarget> {
+public abstract class KmpLibraryTargetContainer extends DefaultPolymorphicDomainObjectContainer<KmpLibraryTarget> implements StaticKmpLibraryTargets {
     @Inject
     public KmpLibraryTargetContainer(Instantiator instantiator, InstantiatorFactory instantiatorFactory, CollectionCallbackActionDecorator callbackDecorator, ServiceRegistry services) {
         super(KmpLibraryTarget.class, instantiator, instantiatorFactory.decorateLenient(services), callbackDecorator);
@@ -22,34 +18,34 @@ public abstract class KmpLibraryTargetContainer extends DefaultPolymorphicDomain
         registerBinding(KmpLibraryNativeTarget.class, KmpLibraryNativeTarget.class);
     }
 
-    @Adding
+    @Override
     public void jvm() {
         maybeCreate("jvm", KmpLibraryJvmTarget.class);
     }
 
-    @Configuring
+    @Override
     public void jvm(Action<? super KmpLibraryJvmTarget> action) {
         KmpLibraryJvmTarget target = maybeCreate("jvm", KmpLibraryJvmTarget.class);
         action.execute(target);
     }
 
-    @Adding
+    @Override
     public void nodeJs() {
         maybeCreate("nodeJs", KmpLibraryNodeJsTarget.class);
     }
 
-    @Configuring
+    @Override
     public void nodeJs(Action<? super KmpLibraryNodeJsTarget> action) {
         KmpLibraryNodeJsTarget target = maybeCreate("nodeJs", KmpLibraryNodeJsTarget.class);
         action.execute(target);
     }
 
-    @Adding
+    @Override
     public void macOsArm64() {
         maybeCreate("macOsArm64", KmpLibraryNativeTarget.class);
     }
 
-    @Configuring
+    @Override
     public void macOsArm64(Action<? super KmpLibraryNativeTarget> action) {
         KmpLibraryNativeTarget target = maybeCreate("macOsArm64", KmpLibraryNativeTarget.class);
         action.execute(target);
