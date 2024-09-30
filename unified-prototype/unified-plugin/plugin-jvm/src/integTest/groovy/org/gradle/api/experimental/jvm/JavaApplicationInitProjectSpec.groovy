@@ -12,7 +12,7 @@ class JavaApplicationInitProjectSpec extends AbstractProjectInitSpecification {
 
     @Override
     protected String getProjectSpecType() {
-        return "declarative-java-application-project"
+        return "java-application"
     }
 
     @Override
