@@ -8,4 +8,8 @@ public interface AndroidSoftwareDependencies extends Dependencies {
     DependencyCollector getImplementation();
     DependencyCollector getRuntimeOnly();
     DependencyCollector getCompileOnly();
+
+    // Added by Android Gradle Plugin https://googlesamples.github.io/android-custom-lint-rules/api-guide/publishing.md.html
+    DependencyCollector getLintChecks();
+    DependencyCollector getLintPublish();
 }

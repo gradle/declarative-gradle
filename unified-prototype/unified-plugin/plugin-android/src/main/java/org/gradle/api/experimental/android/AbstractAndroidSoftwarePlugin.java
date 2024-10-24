@@ -80,6 +80,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         configurations.getByName("implementation").fromDependencyCollector(dependencies.getImplementation());
         configurations.getByName("compileOnly").fromDependencyCollector(dependencies.getCompileOnly());
         configurations.getByName("runtimeOnly").fromDependencyCollector(dependencies.getRuntimeOnly());
+        configurations.getByName("lintChecks").fromDependencyCollector(dependencies.getLintChecks());
+        configurations.getByName("lintPublish").fromDependencyCollector(dependencies.getLintPublish());
     }
 
     /**
