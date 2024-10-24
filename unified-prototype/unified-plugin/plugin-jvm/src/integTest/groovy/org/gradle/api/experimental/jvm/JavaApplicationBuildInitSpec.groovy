@@ -1,10 +1,10 @@
 //file:noinspection GroovyAssignabilityCheck
 package org.gradle.api.experimental.jvm
 
-import org.gradle.integtests.fixtures.AbstractProjectInitSpecification
+import org.gradle.integtests.fixtures.AbstractBuildInitSpecification
 import org.gradle.testkit.runner.GradleRunner
 
-class JavaApplicationInitProjectSpec extends AbstractProjectInitSpecification {
+class JavaApplicationBuildInitSpec extends AbstractBuildInitSpecification {
     @Override
     protected String getEcosystemPluginId() {
         return "org.gradle.experimental.jvm-ecosystem"
@@ -16,9 +16,10 @@ class JavaApplicationInitProjectSpec extends AbstractProjectInitSpecification {
     }
 
     @Override
-    protected void validateBuiltProject() {
+    protected void validateBuild() {
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
+                .withPluginClasspath()
                 .withArguments(":app:run")
                 .forwardOutput()
                 .build()

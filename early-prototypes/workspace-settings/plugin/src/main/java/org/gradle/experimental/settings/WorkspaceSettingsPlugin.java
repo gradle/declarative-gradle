@@ -14,7 +14,7 @@ import java.io.File;
 /**
  * A plugin that allows you to configure the workspace settings.
  */
-abstract public class WorkspaceSettingsPlugin implements Plugin<Settings> {
+public abstract class WorkspaceSettingsPlugin implements Plugin<Settings> {
     public void apply(Settings settings) {
         settings.getExtensions().create("workspace", DefaultWorkspaceSettings.class, settings);
     }

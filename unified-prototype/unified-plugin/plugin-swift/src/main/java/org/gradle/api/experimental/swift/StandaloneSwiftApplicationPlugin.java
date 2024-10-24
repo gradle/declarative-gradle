@@ -20,7 +20,7 @@ public abstract class StandaloneSwiftApplicationPlugin implements Plugin<Project
     public static final String SWIFT_APPLICATION = "swiftApplication";
 
     @SoftwareType(name = SWIFT_APPLICATION, modelPublicType = SwiftApplication.class)
-    abstract public SwiftApplication getApplication();
+    public abstract SwiftApplication getApplication();
 
     @Override
     public void apply(Project project) {

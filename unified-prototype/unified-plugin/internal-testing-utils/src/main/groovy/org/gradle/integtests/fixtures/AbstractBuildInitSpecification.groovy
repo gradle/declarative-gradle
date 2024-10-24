@@ -1,13 +1,13 @@
 package org.gradle.integtests.fixtures
 
-import org.gradle.plugin.management.internal.autoapply.AutoAppliedPluginHandler
+import org.gradle.buildinit.specs.internal.BuildInitSpecRegistry
 import org.gradle.test.fixtures.AbstractSpecification
 import org.gradle.testkit.runner.GradleRunner
 
 /**
  * Base class for tests that generate, build, and validate (via run, or something else) included project init specifications.
  */
-abstract class AbstractProjectInitSpecification extends AbstractSpecification {
+abstract class AbstractBuildInitSpecification extends AbstractSpecification {
     private static final String DECLARATIVE_PROTOTYPE_VERSION = "use.local.version"
 
     protected File projectDir = file("new-project").tap { mkdirs() }
@@ -20,23 +20,24 @@ abstract class AbstractProjectInitSpecification extends AbstractSpecification {
      * <p>
      * Defaults to No-Op.
      */
-    protected void validateBuiltProject() {}
+    protected void validateBuild() {}
 
     def "can generate project from init project spec"() {
         when:
-        runInitWithPluginAsInitProjectSpecSupplier()
+        runInitWithPluginAsBuildInitSpecSupplier()
 
         then:
         canBuildGeneratedProject()
 
         and:
-        validateBuiltProject()
+        true
+        validateBuild()
     }
 
-    protected void runInitWithPluginAsInitProjectSpecSupplier() {
-        def initInvocation = ["-D${AutoAppliedPluginHandler.INIT_PROJECT_SPEC_SUPPLIERS_PROP}=$ecosystemPluginId:$DECLARATIVE_PROTOTYPE_VERSION",
-                    "init",
-                    "--type", "$projectSpecType"] as String[]
+    protected void runInitWithPluginAsBuildInitSpecSupplier() {
+        def initInvocation = ["-D${BuildInitSpecRegistry.BUILD_INIT_SPECS_PLUGIN_SUPPLIER}=$ecosystemPluginId:$DECLARATIVE_PROTOTYPE_VERSION",
+                              "init",
+                              "--type", "$projectSpecType"] as String[]
 
         result = GradleRunner.create()
                 .withProjectDir(projectDir)

@@ -17,18 +17,17 @@ import javax.inject.Inject;
  * Creates a declarative {@link JvmApplication} DSL model, applies the official Jvm plugin,
  * and links the declarative model to the official plugin.
  */
-abstract public class StandaloneJvmApplicationPlugin implements Plugin<Project> {
+public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> {
 
     public static final String JVM_APPLICATION = "jvmApplication";
 
     @SuppressWarnings("UnstableApiUsage")
     @SoftwareType(name = JVM_APPLICATION, modelPublicType = JvmApplication.class)
-    abstract public JvmApplication getJvmApplication();
+    public abstract JvmApplication getJvmApplication();
 
     @Override
     public void apply(Project project) {
         JvmApplication dslModel = getJvmApplication();
-        project.getExtensions().add(JVM_APPLICATION, dslModel);
 
         project.getPlugins().apply(ApplicationPlugin.class);
         project.getPlugins().apply(CliApplicationConventionsPlugin.class);

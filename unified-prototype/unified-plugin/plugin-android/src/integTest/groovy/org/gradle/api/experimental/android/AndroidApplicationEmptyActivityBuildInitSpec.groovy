@@ -1,6 +1,6 @@
 package org.gradle.api.experimental.android
 
-class AndroidApplicationEmptyActivityInitProjectSpec extends AbstractAndroidInitProjectSpec {
+class AndroidApplicationEmptyActivityBuildInitSpec extends AbstractAndroidBuildInitSpec {
     @Override
     String getProjectSpecType() {
         return "android-application-empty-activity"

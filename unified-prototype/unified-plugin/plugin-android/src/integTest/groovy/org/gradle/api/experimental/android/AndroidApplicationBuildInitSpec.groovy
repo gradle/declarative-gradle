@@ -1,6 +1,6 @@
 package org.gradle.api.experimental.android
 
-class AndroidApplicationInitProjectSpec extends AbstractAndroidInitProjectSpec {
+class AndroidApplicationBuildInitSpec extends AbstractAndroidBuildInitSpec {
     @Override
     protected String getProjectSpecType() {
         return "android-application"

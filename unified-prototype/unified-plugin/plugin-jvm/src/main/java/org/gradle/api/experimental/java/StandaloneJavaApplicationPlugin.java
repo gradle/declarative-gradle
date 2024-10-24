@@ -16,24 +16,21 @@ import javax.inject.Inject;
  * Creates a declarative {@link JavaApplication} DSL model, applies the official Java application plugin,
  * and links the declarative model to the official plugin.
  */
-abstract public class StandaloneJavaApplicationPlugin implements Plugin<Project> {
-
+@SuppressWarnings("UnstableApiUsage")
+public abstract class StandaloneJavaApplicationPlugin implements Plugin<Project> {
     public static final String JAVA_APPLICATION = "javaApplication";
 
     @SoftwareType(name = JAVA_APPLICATION, modelPublicType = JavaApplication.class)
-    abstract public JavaApplication getApplication();
+    public abstract JavaApplication getApplication();
 
     @Override
     public void apply(Project project) {
         JavaApplication dslModel = getApplication();
-        project.getExtensions().add(JAVA_APPLICATION, dslModel);
 
         project.getPlugins().apply(ApplicationPlugin.class);
         project.getPlugins().apply(CliApplicationConventionsPlugin.class);
 
-        project.getExtensions().getByType(TestingExtension.class).getSuites().withType(JvmTestSuite.class).named("test").configure(testSuite -> {
-            testSuite.useJUnitJupiter();
-        });
+        project.getExtensions().getByType(TestingExtension.class).getSuites().withType(JvmTestSuite.class).named("test").configure(JvmTestSuite::useJUnitJupiter);
 
         linkDslModelToPlugin(project, dslModel);
     }

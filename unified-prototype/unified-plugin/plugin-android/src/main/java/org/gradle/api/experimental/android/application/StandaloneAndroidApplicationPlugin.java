@@ -18,7 +18,7 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
 
     public static final String ANDROID_APPLICATION = "androidApplication";
 
-    @SoftwareType(name = ANDROID_APPLICATION, modelPublicType=AndroidApplication.class)
+    @SoftwareType(name = ANDROID_APPLICATION, modelPublicType = AndroidApplication.class)
     public abstract AndroidApplication getAndroidApplication();
 
     @Override
@@ -31,7 +31,6 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
         super.apply(project);
 
         AndroidApplication dslModel = getAndroidApplication();
-        project.getExtensions().add(ANDROID_APPLICATION, dslModel);
 
         // Setup application-specific conventions
         dslModel.getDependencyGuard().getEnabled().convention(false);

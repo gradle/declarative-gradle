@@ -10,7 +10,7 @@ public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
     public static final String CPP_LIBRARY = "cppLibrary";
 
     @SoftwareType(name = CPP_LIBRARY)
-    abstract public CppLibrary getLibrary();
+    public abstract CppLibrary getLibrary();
 
     @Override
     public void apply(Project target) {

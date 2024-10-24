@@ -28,7 +28,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
 
     public static final String ANDROID_LIBRARY = "androidLibrary";
 
-    @SoftwareType(name = ANDROID_LIBRARY, modelPublicType=AndroidLibrary.class)
+    @SoftwareType(name = ANDROID_LIBRARY, modelPublicType = AndroidLibrary.class)
     public abstract AndroidLibrary getAndroidLibrary();
 
     @Override
@@ -41,7 +41,6 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         super.apply(project);
 
         AndroidLibrary dslModel = getAndroidLibrary();
-        project.getExtensions().add(ANDROID_LIBRARY, dslModel);
 
         // Setup library-specific conventions
         dslModel.getProtobuf().getEnabled().convention(false);

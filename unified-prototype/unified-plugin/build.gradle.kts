@@ -30,4 +30,11 @@ subprojects {
             dependsOn(tasks.named("publishToMavenLocal"))
         }
     }
+
+    tasks.withType<Javadoc>().configureEach() {
+        options {
+            val standardOptions: StandardJavadocDocletOptions = this as StandardJavadocDocletOptions
+            standardOptions.addStringOption("Xdoclint:none", "-quiet") // Suppress "warning: no comment" warnings
+        }
+    }
 }
