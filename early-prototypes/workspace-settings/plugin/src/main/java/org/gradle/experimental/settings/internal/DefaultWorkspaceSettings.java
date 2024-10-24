@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-abstract public class DefaultWorkspaceSettings implements WorkspaceSettings {
+public abstract class DefaultWorkspaceSettings implements WorkspaceSettings {
     private final Settings settings;
     private final ProjectSpecificationFactory projectSpecificationFactory;
     private boolean projectsConfigured;

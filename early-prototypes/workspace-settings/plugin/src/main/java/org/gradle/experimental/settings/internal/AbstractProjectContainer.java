@@ -16,7 +16,7 @@ import java.util.Set;
 import static org.gradle.experimental.settings.ProjectSpecification.LOGICAL_PATH_SEPARATOR;
 import static org.gradle.experimental.settings.ProjectSpecification.logicalPathFromParent;
 
-abstract public class AbstractProjectContainer implements ProjectContainer {
+public abstract class AbstractProjectContainer implements ProjectContainer {
     public static final String PROJECT_MARKER_FILE = "build.gradle.kts";
 
     protected final Settings settings;

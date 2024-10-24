@@ -9,7 +9,7 @@ import java.io.File;
 
 import static org.gradle.experimental.settings.ProjectSpecification.logicalPathFromParent;
 
-abstract public class DefaultProjectSpecification extends AbstractProjectContainer implements ProjectSpecification {
+public abstract class DefaultProjectSpecification extends AbstractProjectContainer implements ProjectSpecification {
     @Inject
     public DefaultProjectSpecification(Settings settings, File dir, String logicalPath, ProjectContainer parent, ProjectSpecificationFactory projectSpecificationFactory) {
         super(settings, dir, logicalPath, parent, projectSpecificationFactory);

@@ -15,22 +15,20 @@ import javax.inject.Inject;
  * Creates a declarative {@link JavaLibrary} DSL model, applies the official Java library plugin,
  * and links the declarative model to the official plugin.
  */
+@SuppressWarnings("UnstableApiUsage")
 public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
     public static final String JAVA_LIBRARY = "javaLibrary";
 
     @SoftwareType(name = JAVA_LIBRARY, modelPublicType = JavaLibrary.class)
-    abstract public JavaLibrary getLibrary();
+    public abstract JavaLibrary getLibrary();
 
     @Override
     public void apply(Project project) {
         JavaLibrary dslModel = getLibrary();
-        project.getExtensions().add(JAVA_LIBRARY, dslModel);
 
         project.getPlugins().apply(JavaLibraryPlugin.class);
 
-        project.getExtensions().getByType(TestingExtension.class).getSuites().withType(JvmTestSuite.class).named("test").configure(testSuite -> {
-            testSuite.useJUnitJupiter();
-        });
+        project.getExtensions().getByType(TestingExtension.class).getSuites().withType(JvmTestSuite.class).named("test").configure(JvmTestSuite::useJUnitJupiter);
 
         linkDslModelToPlugin(project, dslModel);
     }

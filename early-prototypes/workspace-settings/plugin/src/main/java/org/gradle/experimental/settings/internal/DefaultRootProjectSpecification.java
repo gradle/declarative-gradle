@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.util.function.Predicate;
 
-abstract public class DefaultRootProjectSpecification extends AbstractProjectContainer implements RootProjectSpecification {
+public abstract class DefaultRootProjectSpecification extends AbstractProjectContainer implements RootProjectSpecification {
     @Inject
     public DefaultRootProjectSpecification(Settings settings, ProjectSpecificationFactory projectSpecificationFactory) {
         super(settings, settings.getRootDir(), "", null, projectSpecificationFactory);

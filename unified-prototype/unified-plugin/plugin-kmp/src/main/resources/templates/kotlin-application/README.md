@@ -3,7 +3,7 @@ A sample Kotlin application written in the Declarative Gradle DSL, using the pro
 
 ## Building and Running
 
-This sample shows the definition of a Kotlin JVM application implemented using Kotlin 1.9.23 source code.
+This sample shows the definition of a Kotlin JVM application implemented using Kotlin 2.0.21 source code.
 The project is the result of converting the project produced by the `gradle init` command in Gradle 8.9.
 
 To build and test the application without running, use:

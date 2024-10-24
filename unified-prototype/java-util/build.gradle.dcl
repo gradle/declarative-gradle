@@ -1,3 +1,3 @@
 javaLibrary {
-    javaVersion = 11
+    javaVersion = 17
 }
