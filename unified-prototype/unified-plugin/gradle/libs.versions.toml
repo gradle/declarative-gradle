@@ -22,6 +22,7 @@ truth = "1.4.2"
 protobuf = "0.9.4"
 oss-licenses = "0.10.6"
 roborazzi = "1.7.0"
+secrets = "2.0.1"
 
 [libraries]
 # Kotlin Libs
@@ -50,6 +51,7 @@ dependency-guard-plugin = { module = "com.dropbox.dependency-guard:com.dropbox.d
 oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "oss-licenses" }
 protobuf-plugin = { module = "com.google.protobuf:protobuf-gradle-plugin", version.ref = "protobuf" }
 roborazzi-plugin = { module = "io.github.takahirom.roborazzi:roborazzi-gradle-plugin", version.ref = "roborazzi" }
+secrets-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secrets"}
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
 [plugins]
