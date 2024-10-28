@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.gradle.experimental.android-ecosystem").version("0.1.17")
+    id("org.gradle.experimental.android-ecosystem").version("0.1.18")
 }
 
 dependencyResolutionManagement {
