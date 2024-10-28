@@ -5,6 +5,7 @@ import androidx.room.gradle.RoomExtension;
 import com.android.build.api.dsl.BuildType;
 import com.android.build.api.dsl.CommonExtension;
 import com.android.build.api.dsl.UnitTestOptions;
+import com.google.android.libraries.mapsplatform.secrets_gradle_plugin.SecretsPluginExtension;
 import com.google.devtools.ksp.gradle.KspExtension;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.NamedDomainObjectContainer;
@@ -63,6 +64,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         dslModel.getRoom().getVersion().convention("2.6.1");
         dslModel.getLicenses().getEnabled().convention(false);
         dslModel.getBaselineProfile().getEnabled().convention(false);
+        dslModel.getSecrets().getEnabled().convention(false);
 
         // Setup Test Options conventions
         dslModel.getTesting().getTestOptions().getIncludeAndroidResources().convention(false);
@@ -130,9 +132,20 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
             BaselineProfileConsumerExtension baselineProfileExtension = project.getExtensions().getByType(BaselineProfileConsumerExtension.class);
             configureBaselineProfile(project, dslModel.getBaselineProfile(), baselineProfileExtension);
         }
+
+        configureSecrets(project, dslModel);
     }
 
-    private static void configureLicenses(Project project, AndroidSoftware dslModel) {
+    protected void configureSecrets(Project project, AndroidSoftware dslModel) {
+        if (dslModel.getSecrets().getEnabled().get()) {
+            project.getPlugins().apply("com.google.android.libraries.mapsplatform.secrets-gradle-plugin");
+
+            SecretsPluginExtension secrets = project.getExtensions().getByType(SecretsPluginExtension.class);
+            ifPresent(dslModel.getSecrets().getDefaultPropertiesFileName(), secrets::setDefaultPropertiesFileName);
+        }
+    }
+
+    protected void configureLicenses(Project project, AndroidSoftware dslModel) {
         if (dslModel.getLicenses().getEnabled().get()) {
             project.getPlugins().apply("com.google.android.gms.oss-licenses-plugin");
         }

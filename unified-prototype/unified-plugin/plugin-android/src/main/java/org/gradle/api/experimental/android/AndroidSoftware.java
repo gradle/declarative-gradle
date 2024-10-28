@@ -9,6 +9,7 @@ import org.gradle.api.experimental.android.extensions.CoreLibraryDesugaring;
 import org.gradle.api.experimental.android.extensions.Hilt;
 import org.gradle.api.experimental.android.extensions.KotlinSerialization;
 import org.gradle.api.experimental.android.extensions.Room;
+import org.gradle.api.experimental.android.extensions.Secrets;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
 import org.gradle.api.experimental.android.nia.Feature;
 import org.gradle.api.experimental.android.extensions.Licenses;
@@ -142,5 +143,16 @@ public interface AndroidSoftware extends HasLinting {
     @Configuring
     default void lint(Action<? super Lint> action) {
         action.execute(getLint());
+    }
+
+    /**
+     * Applies the Secrets Gradle Plugin for Android (https://github.com/google/secrets-gradle-plugin).
+     */
+    @Nested
+    Secrets getSecrets();
+
+    @Configuring
+    default void secrets(Action<? super Secrets> action) {
+        action.execute(getSecrets());
     }
 }
