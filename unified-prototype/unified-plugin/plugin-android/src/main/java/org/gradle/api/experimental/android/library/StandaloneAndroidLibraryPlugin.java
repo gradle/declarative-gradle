@@ -44,6 +44,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
 
         // Setup library-specific conventions
         dslModel.getProtobuf().getEnabled().convention(false);
+        dslModel.getBuildConfig().convention(false);
 
         // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
         // run actions before Android does.
@@ -72,6 +73,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         }
 
         ifPresent(dslModel.getConsumerProguardFile(), android.getDefaultConfig()::consumerProguardFile);
+        ifPresent(dslModel.getBuildConfig(), android.getBuildFeatures()::setBuildConfig);
     }
 
     protected void configureProtobuf(Project project, AndroidLibrary dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {

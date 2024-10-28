@@ -55,4 +55,12 @@ public interface AndroidLibrary extends AndroidSoftware {
     default void protobuf(Action<? super Protobuf> action) {
         action.execute(getProtobuf());
     }
+
+    /**
+     * Flag to enable/disable generation of the `BuildConfig` class.
+     *
+     * Default value is `false`.
+     */
+    @Restricted
+    Property<Boolean> getBuildConfig();
 }
