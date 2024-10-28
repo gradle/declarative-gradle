@@ -6,7 +6,7 @@ ksp = "2.0.21-1.0.26"
 
 # Android Libs
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
-android = "8.5.2"
+android = "8.7.1"
 androidTools = "31.6.0"
 baselineProfile = "1.3.0"
 firebaseCrashlytics = "3.0.2"
