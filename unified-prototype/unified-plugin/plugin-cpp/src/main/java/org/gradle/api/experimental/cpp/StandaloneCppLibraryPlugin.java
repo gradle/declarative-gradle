@@ -15,7 +15,6 @@ public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(Project target) {
         CppLibrary library = getLibrary();
-        target.getExtensions().add(CPP_LIBRARY, library);
 
         target.getPlugins().apply(CppLibraryPlugin.class);
 

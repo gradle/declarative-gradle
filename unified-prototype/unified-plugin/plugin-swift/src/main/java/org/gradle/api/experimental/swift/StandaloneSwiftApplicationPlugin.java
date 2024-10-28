@@ -25,7 +25,6 @@ public abstract class StandaloneSwiftApplicationPlugin implements Plugin<Project
     @Override
     public void apply(Project project) {
         SwiftApplication application = getApplication();
-        project.getExtensions().add(SWIFT_APPLICATION, application);
 
         project.getPlugins().apply(SwiftApplicationPlugin.class);
         project.getPlugins().apply(CliApplicationConventionsPlugin.class);

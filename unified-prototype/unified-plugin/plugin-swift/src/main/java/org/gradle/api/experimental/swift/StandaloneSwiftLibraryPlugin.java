@@ -16,7 +16,6 @@ public abstract class StandaloneSwiftLibraryPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         SwiftLibrary library = getLibrary();
-        project.getExtensions().add(SWIFT_LIBRARY, library);
 
         project.getPlugins().apply(SwiftLibraryPlugin.class);
 
