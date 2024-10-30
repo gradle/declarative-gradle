@@ -31,12 +31,12 @@ gradlePlugin {
     testSourceSets(project.sourceSets.getByName("integTest"))
 
     plugins {
-        create("android-ecosystem") {
-            id = "org.gradle.experimental.android-ecosystem"
+        create("android-init") {
+            id = "org.gradle.experimental.android-ecosystem-init"
             displayName = "Android Ecosystem Experimental Declarative Plugin"
             description = "Experimental declarative plugin for the Android ecosystem"
-            implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemPlugin"
-            tags = setOf("declarative-gradle", "android")
+            implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemInitPlugin"
+            tags = setOf("declarative-gradle", "android", "init")
         }
     }
 }

@@ -25,11 +25,6 @@ public abstract class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project
 
         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
 
-        // Setup Linting conventions
-        dslModel.getLint().getEnabled().convention(false);
-        dslModel.getLint().getXmlReport().convention(false);
-        dslModel.getLint().getCheckDependencies().convention(false);
-
         linkDslModelToPlugin(project, dslModel);
     }
 
