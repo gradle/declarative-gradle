@@ -27,6 +27,7 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
 
 import javax.inject.Inject;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
@@ -56,10 +57,12 @@ public abstract class GenerateBadgingTask extends DefaultTask {
                     getApk().get().getAsFile().getAbsolutePath()
             );
 
-            try (OutputStream os = new FileOutputStream(getBadging().get().getAsFile())) {
+            try {
+                OutputStream os = new FileOutputStream(getBadging().get().getAsFile());
                 execSpec.setStandardOutput(os);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to write badging output", e);
+                // Stream automatically closed after the process completes
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
             }
         });
     }
