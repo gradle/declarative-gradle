@@ -163,7 +163,7 @@ public final class NiaSupport {
             String checkBadgingTaskName = "check" + capitalizedVariantName + "Badging";
             project.getTasks().register(checkBadgingTaskName, CheckBadgingTask.class, task -> {
                 task.getGoldenBadging().set(project.getLayout().getProjectDirectory().file(variant.getName() + "-badging.txt"));
-                task.getGoldenBadging().set(generateBadging.get().getBadging());
+                task.getGeneratedBadging().set(generateBadging.get().getBadging());
                 task.getUpdateBadgingTaskName().set(updateBadgingTaskName);
                 task.getOutput().set(project.getLayout().getBuildDirectory().dir("intermediates/" + checkBadgingTaskName));
             });
