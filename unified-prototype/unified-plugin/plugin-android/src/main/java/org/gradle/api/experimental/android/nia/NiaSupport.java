@@ -56,6 +56,7 @@ import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
  * This class is not meant to be used by other projects.
  */
 public final class NiaSupport {
+    private static final Integer DEFAULT_TARGET_SDK = 34;
     public static final String NIA_PROJECT_NAME = "nowinandroid";
 
     private NiaSupport() { /* Not instantiable */ }
@@ -68,6 +69,10 @@ public final class NiaSupport {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
+        // TODO: This might be removable
+        //noinspection deprecation
+        androidLib.getDefaultConfig().setTargetSdkPreview(dslModel.getTargetSdk().getOrElse(DEFAULT_TARGET_SDK).toString());
+
         configureFlavors(androidLib);
 
         androidLib.setResourcePrefix(buildResourcePrefix(project));
@@ -79,6 +84,8 @@ public final class NiaSupport {
     public static void configureNiaApplication(Project project, AndroidApplication dslModel) {
         ApplicationExtension androidApp = project.getExtensions().getByType(ApplicationExtension.class);
         ApplicationAndroidComponentsExtension androidAppComponents = project.getExtensions().getByType(ApplicationAndroidComponentsExtension.class);
+
+        androidApp.getDefaultConfig().setTargetSdkPreview(dslModel.getTargetSdk().getOrElse(DEFAULT_TARGET_SDK).toString());
 
         if (dslModel.getFlavors().getEnabled().get()) {
             configureFlavors(androidApp);

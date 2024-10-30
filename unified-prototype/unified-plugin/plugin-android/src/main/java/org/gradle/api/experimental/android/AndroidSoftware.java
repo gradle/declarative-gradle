@@ -21,6 +21,9 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 public interface AndroidSoftware extends HasLinting {
+    @Restricted
+    Property<Integer> getTargetSdk();
+
     /**
      * @see CommonExtension#getCompileSdk()
      */

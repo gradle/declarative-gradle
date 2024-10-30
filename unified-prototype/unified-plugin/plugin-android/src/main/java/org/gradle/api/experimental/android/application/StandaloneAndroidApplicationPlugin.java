@@ -62,7 +62,7 @@ public abstract class StandaloneAndroidApplicationPlugin extends AbstractAndroid
      */
     private void linkDslModelToPlugin(Project project, AndroidApplication dslModel) {
         ApplicationExtension android = project.getExtensions().getByType(ApplicationExtension.class);
-        linkDslModelToPlugin(project, dslModel, android);
+        super.linkDslModelToPlugin(project, dslModel, android);
 
         android.defaultConfig(defaultConfig -> {
             ifPresent(dslModel.getVersionCode(), defaultConfig::setVersionCode);
