@@ -14,16 +14,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
  * A library implemented using Kotlin and that targets a single JVM version.
  */
 @Restricted
-public interface KotlinJvmLibrary extends HasJavaTarget, HasLibraryDependencies, HasLinting {
-    @Override
-    @Nested
-    Lint getLint();
-
-    @Configuring
-    default void lint(Action<? super Lint> action) {
-        action.execute(getLint());
-    }
-
+public interface KotlinJvmLibrary extends HasJavaTarget, HasLibraryDependencies {
     @Nested
     Testing getTesting();
 

@@ -10,8 +10,6 @@ plugins {
 description = "Common APIs and implementation classes shared by the ecosystem specific declarative prototypes"
 
 dependencies {
-    implementation(libs.android.agp.application)
-
     implementation("commons-io:commons-io:2.15.1")
     implementation(gradleApi())
 }

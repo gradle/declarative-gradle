@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin;
 import org.gradle.api.experimental.android.AndroidSoftware;
+import org.gradle.api.experimental.android.extensions.linting.LintSupport;
 import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.com.google.common.base.Preconditions;
@@ -71,7 +72,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
         if (NiaSupport.isNiaProject(project)) {
             NiaSupport.configureNiaLibrary(project, dslModel);
         }
-
+        LintSupport.configureLint(project, dslModel);
         ifPresent(dslModel.getConsumerProguardFile(), android.getDefaultConfig()::consumerProguardFile);
         ifPresent(dslModel.getBuildConfig(), android.getBuildFeatures()::setBuildConfig);
     }

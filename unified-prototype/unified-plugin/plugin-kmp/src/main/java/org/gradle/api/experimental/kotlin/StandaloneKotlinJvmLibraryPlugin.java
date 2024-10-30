@@ -3,7 +3,6 @@ package org.gradle.api.experimental.kotlin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.common.extensions.LintSupport;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
@@ -38,7 +37,6 @@ public abstract class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project
         KotlinPluginSupport.linkJavaVersion(project, dslModel);
         JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
 
-        LintSupport.configureLint(project, dslModel);
         configureTesting(project, dslModel);
     }
 
