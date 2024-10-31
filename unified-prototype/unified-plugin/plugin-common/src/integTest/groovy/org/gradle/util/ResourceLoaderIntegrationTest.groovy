@@ -22,8 +22,8 @@ class ResourceLoaderIntegrationTest extends Specification {
     }
 
     private void assertOutputIs(List<String> expectedRelativePaths) {
-        def actualPaths = FileUtils.listFiles(outputDir, null, true)*.path
-        def expectedPaths = expectedRelativePaths.collect { "${outputDir.toPath()}/$it".toString() }
+        def actualPaths = FileUtils.listFiles(outputDir, null, true)*.path.sort()
+        def expectedPaths = expectedRelativePaths.collect { "${outputDir.toPath()}/$it".toString() }.sort()
         assert actualPaths == expectedPaths
     }
 }
