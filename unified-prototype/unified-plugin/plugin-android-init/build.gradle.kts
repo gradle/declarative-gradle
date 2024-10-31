@@ -6,7 +6,7 @@ plugins {
     groovy // For spock testing
 }
 
-description = "Implements the build init for Android"
+description = "Provides Build Init Specs for Android projects"
 
 dependencies {
     api(project(":plugin-common"))
@@ -33,8 +33,8 @@ gradlePlugin {
     plugins {
         create("android-init") {
             id = "org.gradle.experimental.android-ecosystem-init"
-            displayName = "Android Experimental Init Plugin"
-            description = "Experimental init plugin for the Android ecosystem"
+            displayName = "Android Experimental Build Init Plugin"
+            description = "Experimental build init plugin contribuing build types for the Android ecosystem"
             implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemInitPlugin"
             tags = setOf("declarative-gradle", "android", "init")
         }
