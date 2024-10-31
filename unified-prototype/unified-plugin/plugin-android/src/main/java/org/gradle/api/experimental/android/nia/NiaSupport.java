@@ -195,11 +195,11 @@ public final class NiaSupport {
             project.getDependencies().add("implementation", project.project(":core:designsystem"));
 
             project.getDependencies().add("implementation", "androidx.hilt:hilt-navigation-compose:1.2.0");
-            project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-runtime-compose:2.7.0");
-            project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0");
+            project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-runtime-compose:2.8.6");
+            project.getDependencies().add("implementation", "androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6");
             project.getDependencies().add("implementation", "androidx.tracing:tracing-ktx:1.3.0-alpha02");
 
-            project.getDependencies().add("androidTestImplementation", "androidx.lifecycle:lifecycle-runtime-testing:2.7.0");
+            project.getDependencies().add("androidTestImplementation", "androidx.lifecycle:lifecycle-runtime-testing:2.8.6");
         }
     }
 
