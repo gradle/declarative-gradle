@@ -14,6 +14,6 @@ class ResourceLoaderTest extends Specification {
         resourceLoader.extractDirectoryFromResources("templates/java-library", output)
 
         then:
-        FileUtils.listFiles(output, null, true)*.path == ['output/build.gradle.dcl', 'output/src/main/java/com/example/lib/Library.java']
+        FileUtils.listFiles(output, null, true)*.path.sort() == ['output/build.gradle.dcl', 'output/src/main/java/com/example/lib/Library.java']
     }
 }
