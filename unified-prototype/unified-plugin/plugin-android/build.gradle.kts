@@ -14,7 +14,6 @@ dependencies {
     api(libs.android.kotlin.android)
 
     implementation(project(":plugin-jvm"))
-    implementation(project(":plugin-android-init"))
     implementation(libs.baseline.profile.plugin)
     implementation(libs.dependency.guard.plugin)
     implementation(libs.ksp.plugin)
