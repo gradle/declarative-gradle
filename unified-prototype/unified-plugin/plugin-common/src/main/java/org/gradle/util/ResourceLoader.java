@@ -58,7 +58,7 @@ public final class ResourceLoader {
             JarEntry entry = iterator.next();
             String entryName = entry.getName();
 
-            if (entryName.startsWith(relativePath)) {
+            if (entryName.startsWith(relativePath + File.separator)) {
                 String entrySuffix = entryName.substring(relativePath.length());
                 File destFile = new File(destDir, entrySuffix);
 
