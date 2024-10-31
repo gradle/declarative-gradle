@@ -26,11 +26,12 @@ public final class ComposeSupport {
 
             project.getPlugins().apply("org.jetbrains.kotlin.plugin.compose");
 
-            androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.8");
+            // Use default version
+            // androidLib.getComposeOptions().setKotlinCompilerExtensionVersion("1.5.8");
 
-            dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
-            dslModel.getTesting().getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
-            dslModel.getTesting().getDependencies().getAndroidImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.02.02"));
+            dslModel.getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.09.00"));
+            dslModel.getTesting().getDependencies().getImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.09.00"));
+            dslModel.getTesting().getDependencies().getAndroidImplementation().add(project.getDependencies().platform("androidx.compose:compose-bom:2024.09.00"));
 
             // TODO: Are these necessary?  Could they be removed and added explicitly per project as they are used?
             dslModel.getDependencies().getImplementation().add("androidx.compose.ui:ui-tooling-preview");
