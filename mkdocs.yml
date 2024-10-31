@@ -91,8 +91,9 @@ nav:
     - Features: docs/getting-started/features.md
   - Documentation:
     - Overview: docs/reference/README.md
-    - Roadmap: docs/ROADMAP.md
+    - Generate new builds: docs/reference/build-init.md
     - Software Features: docs/reference/software-features.md
+    - Roadmap: docs/ROADMAP.md
   - Resources:
     - Publications: docs/publications/README.md
     - Contributing: docs/CONTRIBUTING.md
