@@ -7,7 +7,7 @@ import org.gradle.testkit.runner.GradleRunner
 class JavaApplicationBuildInitSpec extends AbstractBuildInitSpecification {
     @Override
     protected String getEcosystemPluginId() {
-        return "org.gradle.experimental.jvm-ecosystem"
+        return "org.gradle.experimental.jvm-ecosystem-init"
     }
 
     @Override

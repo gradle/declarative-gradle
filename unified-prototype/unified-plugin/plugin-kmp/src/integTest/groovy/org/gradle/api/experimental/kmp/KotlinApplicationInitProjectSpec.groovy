@@ -8,7 +8,7 @@ import org.junit.Ignore
 class KotlinApplicationInitProjectSpec extends AbstractBuildInitSpecification {
     @Override
     protected String getEcosystemPluginId() {
-        return "org.gradle.experimental.kmp-ecosystem"
+        return "org.gradle.experimental.kmp-ecosystem-init"
     }
 
     @Override

@@ -33,8 +33,8 @@ gradlePlugin {
     plugins {
         create("android-init") {
             id = "org.gradle.experimental.android-ecosystem-init"
-            displayName = "Android Ecosystem Experimental Declarative Plugin"
-            description = "Experimental declarative plugin for the Android ecosystem"
+            displayName = "Android Experimental Init Plugin"
+            description = "Experimental init plugin for the Android ecosystem"
             implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemInitPlugin"
             tags = setOf("declarative-gradle", "android", "init")
         }

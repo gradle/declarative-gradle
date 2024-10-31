@@ -61,5 +61,12 @@ gradlePlugin {
             implementationClass = "org.gradle.api.experimental.jvm.JvmEcosystemPlugin"
             tags = setOf("declarative-gradle", "java", "jvm")
         }
+        create("jvm-ecosystem-init") {
+            id = "org.gradle.experimental.jvm-ecosystem-init"
+            displayName = "JVM Experimental Init Plugin"
+            description = "Experimental init plugin for the JVM ecosystem"
+            implementationClass = "org.gradle.api.experimental.jvm.JvmEcosystemInitPlugin"
+            tags = setOf("declarative-gradle", "java", "jvm", "init")
+        }
     }
 }

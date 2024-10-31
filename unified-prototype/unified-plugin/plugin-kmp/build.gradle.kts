@@ -62,5 +62,12 @@ gradlePlugin {
             implementationClass = "org.gradle.api.experimental.kmp.KmpEcosystemPlugin"
             tags = setOf("declarative-gradle", "kotlin-multiplatform")
         }
+        create("kmp-ecosystem-init") {
+            id = "org.gradle.experimental.kmp-ecosystem-init"
+            displayName = "KMP Experimental Init Plugin"
+            description = "Experimental init plugin for the Kotlin Multiplatform ecosystem"
+            implementationClass = "org.gradle.api.experimental.kmp.KmpEcosystemInitPlugin"
+            tags = setOf("declarative-gradle", "kotlin-multiplatform", "init")
+        }
     }
 }
