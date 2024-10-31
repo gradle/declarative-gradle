@@ -15,9 +15,9 @@ public abstract class AndroidEcosystemInitPlugin implements Plugin<Settings> {
     public void apply(Settings settings) {
         // TODO: Add something for generating AGP-based templates
         getBuildInitSpecRegistry().register(StaticProjectGenerator.class, List.of(
-                new StaticProjectSpec("android-application", "Declarative Android Application Project"),
-                new StaticProjectSpec("android-application-basic-activity", "Declarative Android Application Project with Basic Activity"),
-                new StaticProjectSpec("android-application-empty-activity", "Declarative Android Application Project with Empty Activity")
+                new StaticProjectSpec("android-application", "Android application with Android libraries"),
+                new StaticProjectSpec("android-application-basic-activity", "Android Application with a basic Activity"),
+                new StaticProjectSpec("android-application-empty-activity", "Android Application with an empty Activity")
         ));
     }
 
