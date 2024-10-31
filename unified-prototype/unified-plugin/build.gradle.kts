@@ -1,4 +1,5 @@
 plugins {
+    id("base")
     kotlin("jvm").version(libs.versions.kotlin).apply(false)
     id("build-logic.build-update-utils")
 }
@@ -10,6 +11,8 @@ subprojects {
     version = parent!!.version
 }
 
+val rootCheck = tasks.named("check")
+
 val publishAllPlugins = tasks.register("publishAllPlugins") {
     description = "Publish all plugins in the build"
 }
@@ -18,6 +21,9 @@ subprojects {
         publishAllPlugins.configure {
             dependsOn(tasks.named("publishPlugins"))
         }
+    }
+    rootCheck.configure {
+        dependsOn(tasks.named("check"))
     }
 }
 

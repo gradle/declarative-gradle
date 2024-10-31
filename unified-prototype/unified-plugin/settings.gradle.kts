@@ -25,6 +25,5 @@ include("plugin-swift")
 include("plugin-cpp")
 include("plugin-common")
 include("internal-testing-utils")
-include("build-update-utils")
 
 rootProject.name = "unified-plugin"
