@@ -67,6 +67,13 @@ gradlePlugin {
             implementationClass = "org.gradle.api.experimental.android.application.StandaloneAndroidApplicationPlugin"
             tags = setOf("declarative-gradle", "android")
         }
+        create("android-test") {
+            id = "org.gradle.experimental.android-test"
+            displayName = "Android Test Experimental Declarative Plugin"
+            description = "Experimental declarative plugin for Android test projects"
+            implementationClass = "org.gradle.api.experimental.android.application.StandaloneAndroidTestPlugin"
+            tags = setOf("declarative-gradle", "android")
+        }
         create("android-ecosystem") {
             id = "org.gradle.experimental.android-ecosystem"
             displayName = "Android Ecosystem Experimental Declarative Plugin"

@@ -8,7 +8,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @Restricted
 public interface Testing {
     /**
-     * Whether or not to set up Jacoco support.
+     * Whether to set up Jacoco support.
      */
     @Nested
     Jacoco getJacoco();

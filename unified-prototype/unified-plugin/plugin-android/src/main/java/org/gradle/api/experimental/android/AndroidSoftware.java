@@ -3,6 +3,7 @@ package org.gradle.api.experimental.android;
 import com.android.build.api.dsl.BaseFlavor;
 import com.android.build.api.dsl.CommonExtension;
 import org.gradle.api.Action;
+import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.experimental.android.extensions.BaselineProfile;
 import org.gradle.api.experimental.android.extensions.Compose;
 import org.gradle.api.experimental.android.extensions.CoreLibraryDesugaring;
@@ -158,4 +159,7 @@ public interface AndroidSoftware extends HasLinting {
     default void secrets(Action<? super Secrets> action) {
         action.execute(getSecrets());
     }
+
+    @Nested
+    NamedDomainObjectContainer<ExperimentalProperty> getExperimentalProperties();
 }
