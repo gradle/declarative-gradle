@@ -1,5 +1,7 @@
 package org.gradle.api.experimental.android.nia;
 
+import androidx.baselineprofile.gradle.consumer.BaselineProfileConsumerExtension;
+import androidx.baselineprofile.gradle.producer.BaselineProfileProducerExtension;
 import com.android.SdkConstants;
 import com.android.build.api.artifact.SingleArtifact;
 import com.android.build.api.dsl.ApplicationExtension;
@@ -16,7 +18,9 @@ import com.android.build.api.variant.ApplicationAndroidComponentsExtension;
 import com.android.build.api.variant.BuiltArtifactsLoader;
 import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
+import com.android.build.api.variant.TestAndroidComponentsExtension;
 import com.android.build.gradle.BaseExtension;
+import com.android.build.gradle.TestExtension;
 import com.dropbox.gradle.plugins.dependencyguard.DependencyGuardPluginExtension;
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +28,9 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.gradle.api.*;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.experimental.android.application.AndroidApplication;
+import org.gradle.api.experimental.android.extensions.BaselineProfile;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
+import org.gradle.api.experimental.android.test.AndroidTest;
 import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Copy;
@@ -65,11 +71,30 @@ public final class NiaSupport {
         return Objects.equals(project.getRootProject().getName().replace("-", ""), NiaSupport.NIA_PROJECT_NAME);
     }
 
+    public static void configureNiaTest(Project project, AndroidTest dslModel) {
+        TestExtension androidTest = project.getExtensions().getByType(TestExtension.class);
+        TestAndroidComponentsExtension androidTestComponents = project.getExtensions().getByType(TestAndroidComponentsExtension.class);
+
+        androidTest.getDefaultConfig().setTargetSdkPreview(dslModel.getTargetSdk().getOrElse(DEFAULT_TARGET_SDK).toString());
+
+        configureFlavors(androidTest);
+
+        configureKotlin(project);
+
+        configureGradleManagedDevices(androidTest);
+        configurePrintApksTask(project, androidTestComponents);
+
+        if (project.getExtensions().findByName("baselineProfile") != null) {
+            BaselineProfileProducerExtension baselineProfileProducerExtension = project.getExtensions().getByType(BaselineProfileProducerExtension.class);
+            BaselineProfileConsumerExtension baselineProfileConsumerExtension = project.getExtensions().getByType(BaselineProfileConsumerExtension.class);
+            configureBaselineProfile(project, dslModel.getBaselineProfile(), baselineProfileProducerExtension, baselineProfileConsumerExtension);
+        }
+    }
+
     public static void configureNiaLibrary(Project project, AndroidLibrary dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
 
-        // TODO: This might be removable
         //noinspection deprecation
         androidLib.getDefaultConfig().setTargetSdkPreview(dslModel.getTargetSdk().getOrElse(DEFAULT_TARGET_SDK).toString());
 
@@ -428,6 +453,22 @@ public final class NiaSupport {
 
             DependencyGuardPluginExtension dependencyGuard = project.getExtensions().getByType(DependencyGuardPluginExtension.class);
             dependencyGuard.configuration(dslModel.getDependencyGuard().getConfigurationName().get());
+        }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static void configureBaselineProfile(Project project, BaselineProfile baselineProfile, BaselineProfileProducerExtension baselineProfileProducerExtension, BaselineProfileConsumerExtension baselineProfileConsumerExtension) {
+        if (baselineProfile.getEnabled().get()) {
+            project.getPlugins().apply("androidx.baselineprofile");
+
+            baselineProfileConsumerExtension.setAutomaticGenerationDuringBuild(baselineProfile.getAutomaticGenerationDuringBuild().get());
+
+            if (baselineProfile.getAdditionalManagedDevice().isPresent()) {
+                baselineProfileProducerExtension.getManagedDevices().add(baselineProfile.getAdditionalManagedDevice().get());
+            }
+            ifPresent(baselineProfile.getUseConnectedDevices(), baselineProfileProducerExtension::setUseConnectedDevices);
+
+            project.getConfigurations().getByName("baselineProfile").fromDependencyCollector(baselineProfile.getDependencies().getProfile());
         }
     }
 }
