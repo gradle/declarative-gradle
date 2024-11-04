@@ -14,6 +14,7 @@ import com.android.build.api.dsl.LibraryExtension;
 import com.android.build.api.dsl.ManagedVirtualDevice;
 import com.android.build.api.dsl.ProductFlavor;
 import com.android.build.api.dsl.TestOptions;
+import com.android.build.api.dsl.VariantDimension;
 import com.android.build.api.variant.AndroidComponentsExtension;
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension;
 import com.android.build.api.variant.BuiltArtifactsLoader;
@@ -35,7 +36,6 @@ import org.gradle.api.experimental.android.library.AndroidLibrary;
 import org.gradle.api.experimental.android.test.AndroidTest;
 import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.Directory;
-import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
@@ -58,6 +58,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
@@ -85,7 +86,16 @@ public final class NiaSupport {
 
         androidTest.getDefaultConfig().setTargetSdkPreview(dslModel.getTargetSdk().getOrElse(DEFAULT_TARGET_SDK).toString());
 
-        configureFlavors(androidTest);
+        // Use the same flavor dimensions as the application to allow generating Baseline Profiles on prod,
+        // which is more close to what will be shipped to users (no fake data), but has ability to run the
+        // benchmarks on demo, so we benchmark on stable data.
+        NiaSupport.configureFlavors(androidTest, (vd, flavor) -> {
+            vd.buildConfigField(
+                "String",
+                "APP_FLAVOR_SUFFIX",
+                "\"" + (flavor.applicationIdSuffix == null ? "" : flavor.applicationIdSuffix) + "\""
+            );
+        });
 
         configureKotlin(project);
 
@@ -243,11 +253,23 @@ public final class NiaSupport {
      * @param android the Android extension to configure
      */
     private static void configureFlavors(CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        configureFlavors(android, (dimension, flavor) -> {});
+    }
+
+    /**
+     * All NiA Android libraries get flavors, but only NiA Applications that specifically ask
+     * for them will also get flavors.
+     *
+     * @param android the Android extension to configure
+     * @param flavorConfigurationBlock additional configuration to perform on each flavor
+     */
+    public static void configureFlavors(CommonExtension<?, ?, ?, ?, ?, ?> android,
+                                        BiConsumer<VariantDimension, NiaFlavor> flavorConfigurationBlock) {
         android.getFlavorDimensions().add(FlavorDimension.contentType.name());
 
         Arrays.stream(NiaFlavor.values()).forEach(it -> android.getProductFlavors().create(it.name(), flavor -> {
             setDimensionReflectively(flavor, it.dimension.name());
-
+            flavorConfigurationBlock.accept(flavor, it);
             if (android instanceof ApplicationExtension && flavor instanceof ApplicationProductFlavor) {
                 if (it.applicationIdSuffix != null) {
                     ((ApplicationProductFlavor) flavor).setApplicationIdSuffix(it.applicationIdSuffix);
