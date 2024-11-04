@@ -71,14 +71,14 @@ gradlePlugin {
             id = "org.gradle.experimental.android-test"
             displayName = "Android Test Experimental Declarative Plugin"
             description = "Experimental declarative plugin for Android test projects"
-            implementationClass = "org.gradle.api.experimental.android.application.StandaloneAndroidTestPlugin"
+            implementationClass = "org.gradle.api.experimental.android.test.StandaloneAndroidTestPlugin"
             tags = setOf("declarative-gradle", "android")
         }
         create("android-ecosystem") {
             id = "org.gradle.experimental.android-ecosystem"
             displayName = "Android Ecosystem Experimental Declarative Plugin"
             description = "Experimental declarative plugin for the Android ecosystem"
-            implementationClass = "org.gradle.api.experimental.android.test.AndroidEcosystemPlugin"
+            implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemPlugin"
             tags = setOf("declarative-gradle", "android")
         }
     }
