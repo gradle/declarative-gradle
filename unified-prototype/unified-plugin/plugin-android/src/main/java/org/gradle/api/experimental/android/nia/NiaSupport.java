@@ -3,6 +3,7 @@ package org.gradle.api.experimental.android.nia;
 import androidx.baselineprofile.gradle.consumer.BaselineProfileConsumerExtension;
 import androidx.baselineprofile.gradle.producer.BaselineProfileProducerExtension;
 import com.android.SdkConstants;
+import com.android.build.api.artifact.ScopedArtifact;
 import com.android.build.api.artifact.SingleArtifact;
 import com.android.build.api.dsl.ApplicationExtension;
 import com.android.build.api.dsl.ApplicationProductFlavor;
@@ -18,6 +19,7 @@ import com.android.build.api.variant.ApplicationAndroidComponentsExtension;
 import com.android.build.api.variant.BuiltArtifactsLoader;
 import com.android.build.api.variant.HasAndroidTest;
 import com.android.build.api.variant.LibraryAndroidComponentsExtension;
+import com.android.build.api.variant.ScopedArtifacts;
 import com.android.build.api.variant.TestAndroidComponentsExtension;
 import com.android.build.gradle.BaseExtension;
 import com.android.build.gradle.TestExtension;
@@ -31,9 +33,15 @@ import org.gradle.api.experimental.android.application.AndroidApplication;
 import org.gradle.api.experimental.android.extensions.BaselineProfile;
 import org.gradle.api.experimental.android.library.AndroidLibrary;
 import org.gradle.api.experimental.android.test.AndroidTest;
+import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.Directory;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Copy;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension;
@@ -407,28 +415,35 @@ public final class NiaSupport {
 
             AndroidComponentsExtension<?, ?, ?> androidComponentsExtension = project.getExtensions().getByType(AndroidComponentsExtension.class);
             androidComponentsExtension.onVariants(androidComponentsExtension.selector().all(), variant -> {
-                final String testTaskName = "test" + StringUtils.capitalize(variant.getName()) + "UnitTest";
-                final File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
-                project.getTasks().register("jacoco" + StringUtils.capitalize(testTaskName) + "Report", JacocoReport.class, task -> {
-                    task.dependsOn(testTaskName);
+                final ObjectFactory objectFactory = project.getObjects();
+                final Directory buildDir = project.getLayout().getBuildDirectory().get();
+                final ListProperty<RegularFile> allJars = objectFactory.listProperty(RegularFile.class);
+                final ListProperty<Directory> allDirectories = objectFactory.listProperty(Directory.class);
 
-                    task.reports(report -> {
-                        report.getXml().getRequired().set(true);
-                        report.getXml().getRequired().set(true);
-                    });
-
+                TaskProvider<JacocoReport> reportTask = project.getTasks().register("create" + StringUtils.capitalize(variant.getName()) + "CombinedCoverageReport", JacocoReport.class, task -> {
                     task.getClassDirectories().setFrom(
-                        project.fileTree(project.getBuildDir() + "/tmp/kotlin-classes/" + variant.getName(), tree -> tree.exclude(coverageExclusions()))
+                        allJars,
+                        allDirectories.map(dirs -> dirs.stream().map(dir -> objectFactory.fileTree().setDir(dir).exclude(coverageExclusions())))
                     );
 
-                    task.getSourceDirectories().setFrom(
-                        project.files(project.getProjectDir() + "/src/main/java", project.getProjectDir() + "/src/main/kotlin"
-                        ));
+                    task.getReports().getXml().getRequired().set(true);
+                    task.getReports().getHtml().getRequired().set(true);
 
-                    task.getExecutionData().setFrom(
-                        project.files(buildDir + "/jacoco/" + testTaskName + ".exec")
-                    );
+                    // TODO: This is missing files in src/debug/, src/prod, src/demo, src/demoDebug...
+                    String projectDir = project.getLayout().getProjectDirectory().getAsFile().getPath();
+                    task.getSourceDirectories().setFrom(project.files(projectDir + "/src/main/java", projectDir + "/src/main/kotlin"));
+
+                    ConfigurableFileTree unitTestCoverage = project.fileTree(buildDir.file("/outputs/unit_test_code_coverage/" + variant.getName() + "UnitTest"));
+                    unitTestCoverage.matching(unitTestCoverage.include("**/*.exec"));
+                    ConfigurableFileTree androidTestCoverage = project.fileTree(buildDir.file("/outputs/code_coverage/" + variant.getName() + "AndroidTest"));
+                    androidTestCoverage.matching(androidTestCoverage.include("**/*.ec"));
+
+                    task.getExecutionData().setFrom(unitTestCoverage, androidTestCoverage);
                 });
+
+                variant.getArtifacts().forScope(ScopedArtifacts.Scope.PROJECT)
+                    .use(reportTask)
+                    .toGet(ScopedArtifact.CLASSES.INSTANCE, ignore -> allJars, ignore -> allDirectories);
             });
 
             project.getTasks().withType(Test.class, test -> {
