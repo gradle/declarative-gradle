@@ -27,14 +27,4 @@ class KotlinApplicationInitProjectSpec extends AbstractBuildInitSpecification {
 
         assert result.output.contains("Hello World!")
     }
-
-    @Override
-    protected void canBuildGeneratedProject() {
-        result = GradleRunner.create()
-                .withProjectDir(projectDir)
-                .withPluginClasspath()
-                .withArguments("build")
-                .forwardOutput()
-                .build()
-    }
 }
