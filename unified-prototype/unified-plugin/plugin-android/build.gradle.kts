@@ -78,7 +78,7 @@ gradlePlugin {
             id = "org.gradle.experimental.android-ecosystem"
             displayName = "Android Ecosystem Experimental Declarative Plugin"
             description = "Experimental declarative plugin for the Android ecosystem"
-            implementationClass = "org.gradle.api.experimental.android.AndroidEcosystemPlugin"
+            implementationClass = "org.gradle.api.experimental.android.test.AndroidEcosystemPlugin"
             tags = setOf("declarative-gradle", "android")
         }
     }
