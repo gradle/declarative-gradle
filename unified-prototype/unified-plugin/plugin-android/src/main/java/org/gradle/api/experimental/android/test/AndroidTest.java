@@ -19,6 +19,12 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 // both extend that folds these commonalities back into it
 public interface AndroidTest {
     /**
+     * JDK version to use for compilation.
+     */
+    @Restricted
+    Property<Integer> getJdkVersion();
+
+    /**
      * @see CommonExtension#getNamespace()
      */
     @Restricted

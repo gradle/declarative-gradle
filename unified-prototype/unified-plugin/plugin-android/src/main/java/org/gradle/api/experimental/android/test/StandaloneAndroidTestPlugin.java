@@ -3,6 +3,7 @@ package org.gradle.api.experimental.android.test;
 import com.android.build.api.dsl.ManagedVirtualDevice;
 import com.android.build.api.dsl.TestExtension;
 import com.android.build.api.dsl.UnitTestOptions;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
@@ -67,6 +68,14 @@ public abstract class StandaloneAndroidTestPlugin implements Plugin<Project> {
         });
 
         ifPresent(dslModel.getTargetProjectPath(), android::setTargetProjectPath);
+
+        android.compileOptions(compileOptions -> {
+            // Up to Java 11 APIs are available through desugaring
+            // https://developer.android.com/studio/write/java11-minimal-support-table
+            compileOptions.setSourceCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
+            compileOptions.setTargetCompatibility(JavaVersion.toVersion(dslModel.getJdkVersion().get()));
+            return null;
+        });
 
         TestOptions testOptions = dslModel.getTestOptions();
         ifPresent(testOptions.getTestInstrumentationRunner(), android.getDefaultConfig()::setTestInstrumentationRunner);
