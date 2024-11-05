@@ -2,9 +2,7 @@ package org.gradle.api.experimental.kmp
 
 import org.gradle.integtests.fixtures.AbstractBuildInitSpecification
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Ignore
 
-@Ignore
 class KotlinApplicationInitProjectSpec extends AbstractBuildInitSpecification {
     @Override
     protected String getEcosystemPluginId() {

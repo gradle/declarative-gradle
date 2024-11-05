@@ -220,7 +220,6 @@ public final class NiaSupport {
         });
     }
 
-    @SuppressWarnings("deprecation")
     private static void disableUnnecessaryAndroidTests(Project project, LibraryAndroidComponentsExtension androidLibComponents) {
         androidLibComponents.beforeVariants(androidLibComponents.selector().all(), it -> {
             it.setEnableAndroidTest(it.getEnableAndroidTest() && project.getLayout().getProjectDirectory().file("src/androidTest").getAsFile().exists());
@@ -416,11 +415,12 @@ public final class NiaSupport {
                 "**/R.class",
                 "**/R$*.class",
                 "**/BuildConfig.*",
-                "**/Manifest*.*"
+                "**/Manifest*.*",
+                "**/*_Hilt*.class",
+                "**/Hilt_*.class"
         );
     }
 
-    @SuppressWarnings("deprecation")
     private static void configureJacoco(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
         if (dslModel.getTesting().getJacoco().getEnabled().get()) {
             project.getLogger().info("JaCoCo is enabled in: " + project.getPath());
@@ -468,7 +468,7 @@ public final class NiaSupport {
                     .toGet(ScopedArtifact.CLASSES.INSTANCE, ignore -> allJars, ignore -> allDirectories);
             });
 
-            project.getTasks().withType(Test.class, test -> {
+            project.getTasks().withType(Test.class).configureEach(test -> {
                 JacocoTaskExtension jacocoTaskExtension = test.getExtensions().getByType(JacocoTaskExtension.class);
 
                 // Required for JaCoCo + Robolectric
