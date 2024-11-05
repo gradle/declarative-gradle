@@ -20,12 +20,12 @@ We recommend [Eclipse Temurin™ (OpenJDK)](https://adoptium.net/temurin/release
 
 ## Android Studio
 
-Download and install the Android Studio Nightly 2024.1.3.3 released on 2024-07-26.
+Download and install a special Android Studio Nightly release.
 
-* [macOS](https://redirector.gvt1.com/edgedl/android/studio/install/2024.1.3.3/android-studio-nightly-2024-07-26-mac_arm.dmg)
-* [macOS Intel](https://redirector.gvt1.com/edgedl/android/studio/install/2024.1.3.3/android-studio-nightly-2024-07-26-mac.dmg)
-* [Windows](https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.1.3.3/android-studio-nightly-2024-07-26-windows.zip)
-* [Linux](https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.1.3.3/android-studio-nightly-2024-07-26-linux.tar.gz)
+* [macOS Apple Silicon](https://drive.google.com/file/d/15h3rEPB1yKuwH3fhbQZk0BseIKXXUHXc/view?usp=drive_link)
+* [macOS Intel](https://drive.google.com/file/d/1P-F3AgIYeQnoWJPOJWl2dVjTzJdt23m6/view?usp=drive_link)
+* [Windows](https://drive.google.com/file/d/1Kpf4V-U6Xqi5ri2EXLEqI7z-0oftdqH_/view?usp=drive_link)
+* [Linux](https://drive.google.com/file/d/1shNAGTfDF5jIdFuF-vFme-6xrhISVyEv/view?usp=drive_link)
 
 Declarative features are only available on particular nightly releases.
 
