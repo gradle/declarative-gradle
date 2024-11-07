@@ -2,7 +2,6 @@ package org.gradle.api.experimental.android.library;
 
 import com.android.build.api.dsl.CommonExtension;
 import com.android.build.api.dsl.LibraryExtension;
-import com.android.build.api.variant.LibraryAndroidComponentsExtension;
 import com.google.protobuf.gradle.ProtobufExtension;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
@@ -14,7 +13,6 @@ import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.jetbrains.kotlin.com.google.common.base.Preconditions;
 
-import java.io.File;
 import java.util.Objects;
 import java.util.Set;
 
@@ -94,21 +92,6 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
                     generator.all().forEach(task -> {
                         task.getBuiltins().create("java", builtin -> builtin.getOptions().add("lite"));
                         task.getBuiltins().create("kotlin", builtin -> builtin.getOptions().add("lite"));
-                    });
-                });
-
-                /*
-                 * TODO:DG We don't want to rely on beforeVariants here, but how to do without hardcoding:
-                 *  the NiA variants: "demoDebug, demoRelease, prodDebug, prodRelease"?
-                 * This would seem to require some sort of ProductFlavor support (and maybe enumerated buildTypes?)
-                 * which we don't want to add just yet.
-                 */
-                LibraryAndroidComponentsExtension androidComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
-                File buildDir = project.getLayout().getBuildDirectory().get().getAsFile();
-                androidComponents.beforeVariants(androidComponents.selector().all(), variant -> {
-                    android.getSourceSets().register(variant.getName()).configure(sourceSet -> {
-                        sourceSet.getJava().srcDir(new File(buildDir, dslModel.getProtobuf().getGeneratedRootDir().get() + "/" + variant.getName() + "/java"));
-                        sourceSet.getKotlin().srcDir(new File(buildDir, dslModel.getProtobuf().getGeneratedRootDir().get() + "/" + variant.getName() + "/kotlin"));
                     });
                 });
             } else {
