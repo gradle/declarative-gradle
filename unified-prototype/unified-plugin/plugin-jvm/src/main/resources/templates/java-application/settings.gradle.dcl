@@ -1,6 +1,5 @@
 pluginManagement {
     repositories {
-        google() // Needed for the Android plugin, applied by the unified plugin
         gradlePluginPortal()
     }
 }
