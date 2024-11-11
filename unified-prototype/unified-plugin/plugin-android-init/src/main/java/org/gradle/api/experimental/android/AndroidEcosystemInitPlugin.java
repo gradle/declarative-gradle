@@ -1,8 +1,8 @@
 package org.gradle.api.experimental.android;
 
 import org.gradle.api.Plugin;
-import org.gradle.api.experimental.buildinit.StaticProjectGenerator;
-import org.gradle.api.experimental.buildinit.StaticProjectSpec;
+import org.gradle.api.experimental.buildinit.StaticBuildGenerator;
+import org.gradle.api.experimental.buildinit.StaticBuildSpec;
 import org.gradle.api.initialization.Settings;
 import org.gradle.buildinit.specs.internal.BuildInitSpecRegistry;
 
@@ -14,10 +14,10 @@ public abstract class AndroidEcosystemInitPlugin implements Plugin<Settings> {
     @Override
     public void apply(Settings settings) {
         // TODO: Add something for generating AGP-based templates
-        getBuildInitSpecRegistry().register(StaticProjectGenerator.class, List.of(
-                new StaticProjectSpec("android-application", "Android application with Android libraries"),
-                new StaticProjectSpec("android-application-basic-activity", "Android Application with a basic Activity"),
-                new StaticProjectSpec("android-application-empty-activity", "Android Application with an empty Activity")
+        getBuildInitSpecRegistry().register(StaticBuildGenerator.class, List.of(
+                new StaticBuildSpec("android-application", "Android application with Android libraries"),
+                new StaticBuildSpec("android-application-basic-activity", "Android Application with a basic Activity"),
+                new StaticBuildSpec("android-application-empty-activity", "Android Application with an empty Activity")
         ));
     }
 
