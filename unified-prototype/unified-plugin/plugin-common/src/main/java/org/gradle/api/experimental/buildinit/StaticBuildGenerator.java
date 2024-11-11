@@ -5,8 +5,6 @@ import org.gradle.buildinit.specs.BuildInitConfig;
 import org.gradle.buildinit.specs.BuildInitGenerator;
 import org.gradle.util.ResourceLoader;
 
-import java.io.File;
-
 ///**
 // * A {@link BuildInitGenerator} that generates a Gradle build from a static template packaged
 // * as resources files in the {@link #TEMPLATES_ROOT} directory.
@@ -21,7 +19,7 @@ public abstract class StaticBuildGenerator implements BuildInitGenerator {
             throw new IllegalArgumentException("Unknown project type: " + config.getBuildSpec().getDisplayName() + " (" + config.getBuildSpec().getClass().getName() + ")");
         }
 
-        String templatePath = TEMPLATES_ROOT + File.separatorChar + projectSpec.getType();
+        String templatePath = TEMPLATES_ROOT + "/" + projectSpec.getType();
         ResourceLoader resourceLoader = new ResourceLoader();
 
         try {
