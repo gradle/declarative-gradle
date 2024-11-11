@@ -5,21 +5,23 @@ import org.gradle.buildinit.specs.BuildInitConfig;
 import org.gradle.buildinit.specs.BuildInitGenerator;
 import org.gradle.util.ResourceLoader;
 
+import java.io.File;
+
 ///**
-// * A {@link BuildInitGenerator} that generates a project from a static template packaged
+// * A {@link BuildInitGenerator} that generates a Gradle build from a static template packaged
 // * as resources files in the {@link #TEMPLATES_ROOT} directory.
 // */
 @SuppressWarnings("UnstableApiUsage")
-public abstract class StaticProjectGenerator implements BuildInitGenerator {
+public abstract class StaticBuildGenerator implements BuildInitGenerator {
     private static final String TEMPLATES_ROOT = "templates";
 
     @Override
     public void generate(BuildInitConfig config, Directory projectDir) {
-        if (!(config.getBuildSpec() instanceof StaticProjectSpec projectSpec)) {
+        if (!(config.getBuildSpec() instanceof StaticBuildSpec projectSpec)) {
             throw new IllegalArgumentException("Unknown project type: " + config.getBuildSpec().getDisplayName() + " (" + config.getBuildSpec().getClass().getName() + ")");
         }
 
-        String templatePath = TEMPLATES_ROOT + "/" + projectSpec.getType();
+        String templatePath = TEMPLATES_ROOT + File.separatorChar + projectSpec.getType();
         ResourceLoader resourceLoader = new ResourceLoader();
 
         try {

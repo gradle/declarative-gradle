@@ -1,19 +1,23 @@
 package org.gradle.util
 
-import org.apache.commons.io.FileUtils
-
 import spock.lang.Specification
 
+import static org.gradle.test.util.TestAssertions.assertDirContainsExactly
+
 class ResourceLoaderTest extends Specification {
+    private File outputDir = new File("output").tap {
+        deleteDir()
+        mkdirs()
+    }
+
     def "can extract resource directory"() {
         given:
-        File output = new File("output").tap { mkdirs() }
         ResourceLoader resourceLoader = new ResourceLoader()
 
         when:
-        resourceLoader.extractDirectoryFromResources("templates/java-library", output)
+        resourceLoader.extractDirectoryFromResources("templates/java-library", outputDir)
 
         then:
-        FileUtils.listFiles(output, null, true)*.path.sort() == ['output/build.gradle.dcl', 'output/src/main/java/com/example/lib/Library.java']
+        assertDirContainsExactly(outputDir, ['build.gradle.dcl', 'src/main/java/com/example/lib/Library.java'])
     }
 }

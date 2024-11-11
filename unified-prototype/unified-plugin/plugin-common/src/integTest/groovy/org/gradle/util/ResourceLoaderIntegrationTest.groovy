@@ -1,13 +1,13 @@
 package org.gradle.util
 
-import org.apache.commons.io.FileUtils
 import spock.lang.Specification
 
-class ResourceLoaderIntegrationTest extends Specification {
-    File outputDir
+import static org.gradle.test.util.TestAssertions.assertDirContainsExactly
 
-    def setup() {
-        outputDir = new File("build/tmp/integTest/output").tap { deleteDir() }
+class ResourceLoaderIntegrationTest extends Specification {
+    private File outputDir = new File("build/tmp/integTest/output").tap {
+        deleteDir()
+        mkdirs()
     }
 
     def "can load resource from jar file"() {
@@ -18,12 +18,6 @@ class ResourceLoaderIntegrationTest extends Specification {
         resourceLoader.extractDirectoryFromResources("templates/java-library", outputDir)
 
         then:
-        assertOutputIs(['build.gradle.dcl', 'src/main/java/com/example/lib/Library.java'])
-    }
-
-    private void assertOutputIs(List<String> expectedRelativePaths) {
-        def actualPaths = FileUtils.listFiles(outputDir, null, true)*.path.sort()
-        def expectedPaths = expectedRelativePaths.collect { "${outputDir.toPath()}/$it".toString() }.sort()
-        assert actualPaths == expectedPaths
+        assertDirContainsExactly(outputDir, ['build.gradle.dcl', 'src/main/java/com/example/lib/Library.java'])
     }
 }
