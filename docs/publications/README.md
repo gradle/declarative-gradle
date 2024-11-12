@@ -14,7 +14,8 @@ Make sure to subscribe!
 
 ## Conference Presentations
 
-- [KotlinConf 2024 - Developer-first Gradle builds](./2024-05-kotlinconf.md) by Sterling Greene and Paul Merlin
+- [KotlinConf 2024 - Developer-first Gradle builds](./2024-05-kotlinconf.md) at at Kotlinconf 2024 - by Sterling Greene and Paul Merlin 
+- [Declarative Gradle on Android](https://www.droidcon.com/2024/10/17/declarative-gradle-on-android/) at droidcon New York 2024 - by Nelson Osacky and Inaki Villar
 
 ## Video Interviews
 
