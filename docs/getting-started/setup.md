@@ -22,10 +22,10 @@ We recommend [Eclipse Temurin™ (OpenJDK)](https://adoptium.net/temurin/release
 
 Download and install a special Android Studio Nightly release.
 
-* [macOS Apple Silicon](https://drive.google.com/file/d/15h3rEPB1yKuwH3fhbQZk0BseIKXXUHXc/view?usp=drive_link)
-* [macOS Intel](https://drive.google.com/file/d/1P-F3AgIYeQnoWJPOJWl2dVjTzJdt23m6/view?usp=drive_link)
-* [Windows](https://drive.google.com/file/d/1Kpf4V-U6Xqi5ri2EXLEqI7z-0oftdqH_/view?usp=drive_link)
-* [Linux](https://drive.google.com/file/d/1shNAGTfDF5jIdFuF-vFme-6xrhISVyEv/view?usp=drive_link)
+* [macOS Apple Silicon](https://drive.google.com/file/d/182T4NudSoRj8HPkM6bWyBlZP1F2WjzxE/view?usp=drive_link)
+* [macOS Intel](https://drive.google.com/file/d/1VohJ359hL5SZKQsPBUlZ5SkX6uFMOFMh/view?usp=drive_link)
+* [Windows](https://drive.google.com/file/d/1JMUB9lpx9O0RSNnfS242856nniVR1_Yf/view?usp=drive_link)
+* [Linux](https://drive.google.com/file/d/18Tn4Cxiav3vsMZ3FutCaILQYCcz2Px39/view?usp=drive_link)
 
 Declarative features are only available on particular nightly releases.
 
