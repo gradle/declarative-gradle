@@ -44,7 +44,7 @@ Please follow the [README](https://github.com/gradle/nowinandroid/blob/main-decl
 
 ## Bleeding edge prototypes
 
-If you want to go further you can take a look at some more projects for JVM, Android, KMP, Swift and C++ projects. [These projects](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype) may use newer versions of Gradle or require additional manual setup, so you should try the other samples first. 
+If you want to go further you can take a look at some more projects for JVM, Android, KMP, Swift and C++ projects. [These projects](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype) may use newer versions of Gradle or require additional manual setup, so you should try the other samples first.
 
 Please follow the README available in each directory linked below to try these samples.
 

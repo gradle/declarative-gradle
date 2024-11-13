@@ -14,13 +14,16 @@ blog post and [other publications](./docs/publications/README.md).
 
 ## Status
 
-_Declarative Gradle_ is an **experimental** project, now in [Early Access Preview (EAP)](./docs/EAP.md).
+_Declarative Gradle_ is an **experimental** project, now in its [second Early Access Preview (EAP)](./docs/EAP2.md).
 We invite you to [try out Declarative Gradle](./docs/getting-started/README.md),
 and to [share feedback](./docs/feedback.md).
 The project includes the following experimental parts:
 
+- Software Types as a declarative modeling framework
 - Changes in Gradle to support DCL files
 - Changes in Android Studio to support DCL files
+- A Visual Studio Code extension to support DCL files
+- An Eclipse IDE plugin to support DCL files
 - Prototype plugins demonstrating software types and higher-level models
 - A Gradle test client demonstrating features not yet implemented in the IDE
 
