@@ -1,15 +1,27 @@
-# Declarative Gradle Roadmap (Preview)
+# Declarative Gradle Roadmap
 
 Declarative Gradle is an experimental project under active development.
 Below, you can see the key milestones we anticipate.
-All the dates and the scope are aspirational.
+
+!!!warn
+    All the dates and the scope are aspirational.
+
+| Milestone                           |   | Date          |
+| ----------------------------------- |:-:| ------------: |
+| First Early Access Preview (EAP)    | ✅ |     July 2024 |
+| Second Early Access Preview (EAP 2) | ✅ | November 2024 |
+| Third Early Access Preview (EAP 3)  | 🏗️ | February 2024 |
+| Incubating Software Types and DCL   | ⏳ |          2025 |
+| Stable Software Types and DCL       | ⏳ |          2026 |
+
+Gradle feature lifecycle is documented in the [user manual](https://docs.gradle.org/current/userguide/feature_lifecycle.html#sec:incubating_state).
 
 To discuss the roadmap and the related initiatives, use the
 `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
 
-## First Early Access Preview (EAP) - July 2024
+## First Early Access Preview (EAP)
 
-* Summer 2024
+* July 2024
 * Early feedback from IDE vendors and plugin integrators
 * Early feedback from software developers and build engineers from the community
 * Demonstrating end to end workflows with [Now In Android](https://github.com/gradle/nowinandroid) sample and [other prototypes](https://github.com/gradle/declarative-gradle)
@@ -19,12 +31,42 @@ To discuss the roadmap and the related initiatives, use the
   * Toolability demonstrations (IDE integration, mutations)
 
 
-## Second Early Access Preview (EAP) - November 2024
+## Second Early Access Preview (EAP)
 
-## Third Early Access Previes (EAP) - February 2025
+* November 2024
+* Official Android Software Type Preview
+* New DCL Language Features
+  * Enum properties
+  * Named domain object containers
+* Configuring Software Types from Kotlin DSL
+* Prototype Plugins for C++ and Swift
+* Support for VS Code and Eclipse IDE
+* Generating Declarative Builds with `gradle init`
 
-## Incubating Software Types and Declarative Configuration Language (DCL) - 2025
+## Third Early Access Preview (EAP)
 
-## Stable Software Types
+* February 2025
+* Declarative Gradle can be used by early adopters for simple projects
+  * Add support for testing to our prototype plugins
+* Validating the Software Types approach for Composability and Extensibility
+  * Supporting new software features that are not part of the base software type
+  * Adding/configuring code quality checks
+  * Adding/configuring source-generation/bytecode-manipulation
+* More DCL features to support the official Android Software Type
+  * File and directory properties
+  * Multi-valued properties (Lists, Maps)
+  * Container defaults
+* Discovery work on the migration of existing builds
 
-## Stable Declarative Configuration Language (DCL)
+## Incubating Software Types and DCL
+
+* 2025
+* Software Types are promoted to Incubating
+  * They can be configured from both Kotlin DSL and Groovy DSL
+* Declarative Configuration Language (DCL) is promoted to Incubating
+
+## Stable Software Types and DCL
+
+* 2026
+* Software Types are promoted to Stable
+* Declarative Configuration Language (DCL) is promoted to Stable
