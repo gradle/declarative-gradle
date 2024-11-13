@@ -4,7 +4,8 @@ Declarative Gradle is an experimental project under active development.
 Below, you can see the key milestones we anticipate.
 
 !!!warn
-    All the dates and the scope are aspirational.
+    A few words of caution from our lawyers 😉
+    > The information contained in this Declarative Gradle Roadmap (the "Roadmap") is intended to outline our general product direction, which is subject to change at any time. The content provided in this Roadmap is provided for informational purposes only and is not a commitment, promise or legal obligation to deliver any material, code, or functionality and should not be relied upon in making purchasing or other decisions. The development, release and timing of any features or functionality described in this Roadmap remains at the sole discretion of Gradle, Inc. Product capabilities, timeframes and features are subject to change and should not be viewed as commitments.
 
 | Milestone                           |   | Date          |
 | ----------------------------------- |:-:| ------------: |
@@ -14,7 +15,7 @@ Below, you can see the key milestones we anticipate.
 | Incubating Software Types and DCL   | ⏳ |          2025 |
 | Stable Software Types and DCL       | ⏳ |          2026 |
 
-Gradle feature lifecycle is documented in the [user manual](https://docs.gradle.org/current/userguide/feature_lifecycle.html#sec:incubating_state).
+The Gradle feature lifecycle is documented in the [user manual](https://docs.gradle.org/current/userguide/feature_lifecycle.html#sec:incubating_state).
 
 To discuss the roadmap and the related initiatives, use the
 `#declarative-gradle` channel on the [Gradle Community Slack](https://gradle.org/slack-invite)
@@ -61,10 +62,10 @@ To discuss the roadmap and the related initiatives, use the
 ## Incubating Software Types and DCL
 
 * 2025
-* Software Types APIs are promoted to Incubating
+* Software Types APIs are released as Incubating
   * Software Types can be configured from both Kotlin DSL and Groovy DSL
   * Core JVM Plugins expose Software Types
-* DCL Language and Tooling APIs are promoted to Incubating
+* DCL Language and Tooling APIs are released as Incubating
   * More language features to support key use cases (version catalogs, polymorphic containers etc.)
   * Built-in opinionated formatter/linter (cli & ide)
 * Backwards compatibility concerns are addressed
