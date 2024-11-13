@@ -61,12 +61,23 @@ To discuss the roadmap and the related initiatives, use the
 ## Incubating Software Types and DCL
 
 * 2025
-* Software Types are promoted to Incubating
-  * They can be configured from both Kotlin DSL and Groovy DSL
-* Declarative Configuration Language (DCL) is promoted to Incubating
+* Software Types APIs are promoted to Incubating
+  * Software Types can be configured from both Kotlin DSL and Groovy DSL
+  * Core JVM Plugins expose Software Types
+* DCL Language and Tooling APIs are promoted to Incubating
+  * More language features to support key use cases (version catalogs, polymorphic containers etc.)
+  * Built-in opinionated formatter/linter (cli & ide)
+* Backwards compatibility concerns are addressed
+  * Dealing with different versions of software types over time
+  * Dealing with changes to DCL language over time
+  * Dealing with changes to DCL tooling libraries over time
+* IDE language support is enhanced
+  * IntelliJ IDEA and Android Studio ship with DCL support
+  * Language Server and associated IDE plugins are published
+  * Better assistance by IDE (e.g. completion for values, refactorings)
 
 ## Stable Software Types and DCL
 
 * 2026
 * Software Types are promoted to Stable
-* Declarative Configuration Language (DCL) is promoted to Stable
+* DCL Language and Tooling APIs are promoted to Stable
