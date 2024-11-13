@@ -17,7 +17,8 @@ public abstract class AndroidEcosystemInitPlugin implements Plugin<Settings> {
         getBuildInitSpecRegistry().register(StaticBuildGenerator.class, List.of(
                 new StaticBuildSpec("android-application", "Android application with Android libraries"),
                 new StaticBuildSpec("android-application-basic-activity", "Android Application with a basic Activity"),
-                new StaticBuildSpec("android-application-empty-activity", "Android Application with an empty Activity")
+                new StaticBuildSpec("android-application-empty-activity", "Android Application with an empty Activity"),
+                new StaticBuildSpec("android-application-agp-preview", "Android Application using Official AGP Software Types Preview")
         ));
     }
 
