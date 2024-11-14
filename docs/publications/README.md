@@ -15,12 +15,12 @@ Make sure to subscribe!
 
 ## Conference Presentations
 
-- [KotlinConf 2024 - Developer-first Gradle builds](./2024-05-kotlinconf.md) by Sterling Greene and Paul Merlin
-- [Droidcon NYC 2024 - Declarative Gradle on Android](./2024-09-droidcon-nyc.md) by Nelson Osacky and Inaki Villar
+- [Droidcon NYC 2024 - Declarative Gradle on Android](./2024-09-droidcon-nyc.md) by Nelson Osacky and Inaki Villar - September 2024
+- [KotlinConf 2024 - Developer-first Gradle builds](./2024-05-kotlinconf.md) by Sterling Greene and Paul Merlin - May 2024
 
 ## Video Interviews
 
-- [Declarative Gradle and Gradle History Gradle](https://youtu.be/xZRR71VtmGc?si=aIFWvKL80S97s_el) with Adam Murdoch, CTO at - May 02, 2024
+- [Declarative Gradle and Gradle History](https://youtu.be/xZRR71VtmGc?si=aIFWvKL80S97s_el) with Adam Murdoch - May 2024
 - [Declarative Gradle - Build Propulsion Lab](https://www.youtube.com/watch?v=TF_EuVeLND0) with Paul Merlin - April 2024, Devoxx France
 
 
