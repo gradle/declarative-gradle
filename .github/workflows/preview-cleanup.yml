@@ -1,0 +1,37 @@
+name: Delete preview on PR close
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  delete_preview:
+    runs-on: ubuntu-20.04
+    env:
+      PR_PATH: pull/${{github.event.number}}
+      DOMAIN: gradle.github.io
+      PREVIEW_REPO: community-site-preview
+
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: make empty dir
+        run: mkdir public
+
+      - name: delete folder
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          deploy_key: ${{ secrets.PREVIEW_DEPLOYMENT_KEY }}
+          external_repository: gradle/${{ env.PREVIEW_REPO }}
+          publish_dir: ./public
+          destination_dir: ${{ env.PR_PATH }}
+
+      - name: Comment on PR
+        uses: hasura/comment-progress@v2.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          number: ${{ github.event.number }}
+          id: deploy-preview
+          message: > 
+            🪓 PR closed, deleted preview at https://github.com/${{ env.PREVIEW_REPO }}/tree/gh-pages/${{ env.PR_PATH }}/

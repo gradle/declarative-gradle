@@ -9,6 +9,17 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: read
+      pull-requests: write
+
+    env:
+      PR_PATH: pull/${{github.event.number}}
+      DOMAIN: gradle.github.io
+      PREVIEW_REPO: community-site-preview
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,3 +36,27 @@ jobs:
 
       - name: Build the docs
         run: mkdocs build
+
+      - name: Deploy to PR preview
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref != 'refs/heads/main'
+        with:
+          deploy_key: ${{ secrets.PREVIEW_DEPLOYMENT_KEY }}
+          external_repository: gradle/${{ env.PREVIEW_REPO }}
+          publish_dir: ./_site
+          destination_dir: ${{ env.PR_PATH }}
+        
+      - name: Update comment
+        uses: hasura/comment-progress@v2.2.0
+        if: github.ref != 'refs/heads/main'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          number: ${{ github.event.number }}
+          id: deploy-preview
+          message: > 
+            A preview of ${{ github.event.after }} is uploaded and can be seen here:
+            
+            ✨ https://${{ env.DOMAIN }}/${{ env.PREVIEW_REPO }}/${{ env.PR_PATH}}/ ✨
+            
+            Changes may take a few minutes to propagate. 
