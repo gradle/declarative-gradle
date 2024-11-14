@@ -14,7 +14,7 @@ All samples in this page can be used to demonstrate features made possible by De
 
 After picking a sample, read about new [Declarative Gradle features](./features.md).
 
-[Provide us feedback](https://forms.gle/oZk5MMhnwWiTxN6s6).
+[Provide us feedback](../feedback.md).
 
 ## Java Application
 

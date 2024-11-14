@@ -21,4 +21,4 @@ These include Java, Kotlin, and Android application samples and a port of the po
 1. Follow our [setup instructions](./setup.md)
 2. Pick one or more of our [samples](./samples.md)
 3. Try out the Declarative Gradle [features](./features.md)
-4. Provide us [feedback](https://forms.gle/oZk5MMhnwWiTxN6s6)
+4. Provide us [feedback](../feedback.md)

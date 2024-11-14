@@ -4,7 +4,7 @@
 !!! tip
     Check out the features below with one of our [samples](./samples.md). These features are guaranteed to work with them out of the box.
 
-[Provide us feedback](https://forms.gle/oZk5MMhnwWiTxN6s6).
+[Provide us feedback](../feedback.md).
 
 ## Declarative DSL in IDE
 
