@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
 
     env:
-      PR_PATH: pull/${{github.event.number}}
+      PR_PATH: ${{ github.event.repository.name }}/pull/${{github.event.number}}
       DOMAIN: gradle.github.io
       PREVIEW_REPO: community-site-preview
 
