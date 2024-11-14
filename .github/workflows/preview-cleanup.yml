@@ -7,7 +7,7 @@ jobs:
   delete_preview:
     runs-on: ubuntu-20.04
     env:
-      PR_PATH: pull/${{github.event.number}}
+      PR_PATH: ${{ github.event.repository.name }}/pull/${{github.event.number}}
       DOMAIN: gradle.github.io
       PREVIEW_REPO: community-site-preview
 
