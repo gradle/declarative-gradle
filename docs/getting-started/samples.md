@@ -32,7 +32,7 @@ Please follow the README available at [gradle/declarative-samples-kotlin-app](ht
 
 ### Using the Official Android Software Types (Preview)
 
-A sample Android application written in the Declarative Gradle DSL, using the official Android Software Types Preview `androidApplication` and `androidLibrary` defined in the `com.android.ecosystem` ecosystem plugin.
+A sample Android application written in the Declarative Gradle DSL, using the official Android Software Types Preview `androidApp` and `androidLibrary` defined in the `com.android.ecosystem` ecosystem plugin.
 
 Please follow the README available at [gradle/declarative-samples-agp-app](https://github.com/gradle/declarative-samples-agp-app) to try this sample.
 
