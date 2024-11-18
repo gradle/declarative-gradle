@@ -146,6 +146,7 @@ plugins:
         'docs/swift/README.md': 'docs/getting-started/samples.md#swift'
         'unified-prototype/README.md': 'docs/getting-started/samples.md#prototypes'
         'docs/EAP.md': https://blog.gradle.org/declarative-gradle-first-eap
+        'docs/EAP2.md': https://blog.gradle.org/declarative-gradle-november-2024-update
         'publications/README.md': docs/publications/README.md
 
 # Markdown

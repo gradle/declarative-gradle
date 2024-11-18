@@ -7,8 +7,11 @@ They all use the [Gradle Wrapper](https://docs.gradle.org/current/userguide/grad
 To try out the samples and see all of the features, you need to install a few other components as described below:
 
 - [JDK](#jdk)
-- [Android Studio](#android-studio)
-- [Install the Gradle Client](#install-the-gradle-client)
+- [IDE](#ide)
+  - [Android Studio](#android-studio)
+  - [Visual Studio Code](#visual-studio-code)
+  - [Eclipse IDE](#eclipse-ide)
+- [Gradle Client](#gradle-client)
 - [Pick a sample](#pick-a-sample)
 
 ## JDK
@@ -18,30 +21,41 @@ Make sure to use a JDK >= 17 and that your `JAVA_HOME` points to it.
 You can use a JDK from any vendor.
 We recommend [Eclipse Temurin™ (OpenJDK)](https://adoptium.net/temurin/releases/).
 
-## Android Studio
+## IDE
+
+### Android Studio
 
 Download and install a special Android Studio Nightly release.
-
-* [macOS Apple Silicon](https://drive.google.com/file/d/182T4NudSoRj8HPkM6bWyBlZP1F2WjzxE/view?usp=drive_link)
-* [macOS Intel](https://drive.google.com/file/d/1VohJ359hL5SZKQsPBUlZ5SkX6uFMOFMh/view?usp=drive_link)
-* [Windows](https://drive.google.com/file/d/1JMUB9lpx9O0RSNnfS242856nniVR1_Yf/view?usp=drive_link)
-* [Linux](https://drive.google.com/file/d/18Tn4Cxiav3vsMZ3FutCaILQYCcz2Px39/view?usp=drive_link)
+You can find the promoted nightly releases in [this Google Drive folder](https://drive.google.com/drive/folders/19C5EMRgENKU_tOAwOVLcIGZ6Bbm63Q7V) for macOS (Apple Silicon and Intel), Windows and Linux.
+Pick the most recent one that matches your operating system.
 
 Declarative features are only available on particular nightly releases.
 
+!!! warn
+    Note that on macOS, these special Android Studio releases require to be in `~/Applications`.
+
 <!-- omit in toc -->
-### Enable more declarative features in Studio
+#### Enable more declarative features in Studio
 
-!!! info
-    While syntax highlighting of `.gradle.dcl` files works out of the box in Studio nightlies, other features require flags to be enabled.
+While syntax highlighting of `.gradle.dcl` files works out of the box in Studio nightlies, other features require flags to be enabled.
 
-1. Open _Help -> Open Custom Vm Options_
-2. Add text `-Didea.is.internal=true`
+1. Open _Tools_ -> _Internal Actions_ -> _Registry_
+1. Search for the Declarative Gradle flags by typing `declarative`
+2. Enable the `gradle.declarative.studio.support` and `gradle.declarative.ide.support` flags
 3. Restart the IDE
-4. Open _Tools -> Internal Actions -> Android -> Edit Studio Flags_ and type _"Gradle Declarative"_ in the search window
-5. Switch on the _Studio support for declarative files_ flags.
 
-## Install the Gradle Client
+### Visual Studio Code
+
+Download the [Declarative Gradle VSIX](https://gradle.github.io/declarative-vscode-extension/) and install it in your Visual Studio Code.
+
+This extension was also tested in GitHub Codespace and should work in any Visual Studio Code derivative.
+
+### Eclipse IDE
+
+TODO
+https://github.com/eclipse/buildship/blob/master/docs/user/DeclarativeGradle.md
+
+## Gradle Client
 
 The _Gradle Client_ is a standalone application used to demonstrate declarative features not yet implemented in the IDE.
 

@@ -14,7 +14,7 @@ All samples in this page can be used to demonstrate features made possible by De
 
 After picking a sample, read about new [Declarative Gradle features](./features.md).
 
-[Provide us feedback](https://forms.gle/oZk5MMhnwWiTxN6s6).
+[Provide us feedback](../feedback.md).
 
 ## Java Application
 
@@ -30,6 +30,15 @@ Please follow the README available at [gradle/declarative-samples-kotlin-app](ht
 
 ## Android Application
 
+### Using the Official Android Software Types (Preview)
+
+A sample Android application written in the Declarative Gradle DSL, using the official Android Software Types Preview `androidApp` and `androidLibrary` defined in the `com.android.ecosystem` ecosystem plugin.
+
+Please follow the README available at [gradle/declarative-samples-agp-app](https://github.com/gradle/declarative-samples-agp-app) to try this sample.
+
+
+### Using Prototype Declarative Plugins
+
 A sample Android application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `androidApplication` Software Type defined in the `org.gradle.experimental.android-ecosystem` ecosystem plugin.
 
 Please follow the README available at [gradle/declarative-samples-android-app](https://github.com/gradle/declarative-samples-android-app) to try this sample.
@@ -44,7 +53,7 @@ Please follow the [README](https://github.com/gradle/nowinandroid/blob/main-decl
 
 ## Bleeding edge prototypes
 
-If you want to go further you can take a look at some more projects for JVM, Android, KMP, Swift and C++ projects. [These projects](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype) may use newer versions of Gradle or require additional manual setup, so you should try the other samples first. 
+If you want to go further you can take a look at some more projects for JVM, Android, KMP, Swift and C++ projects. [These projects](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype) may use newer versions of Gradle or require additional manual setup, so you should try the other samples first.
 
 Please follow the README available in each directory linked below to try these samples.
 

@@ -21,22 +21,22 @@ Example: `gradle init -Dorg.gradle.buildinit.specs=<plugin-id-1:version>,<plugin
 
 ## Android 
 
-`gradle init -Dorg.gradle.buildinit.specs=org.gradle.experimental.android-ecosystem-init:0.1.23`
+`gradle init -Dorg.gradle.buildinit.specs=org.gradle.experimental.android-ecosystem-init:0.1.33`
 
-There are three build samples you can choose from.
+There are four build samples you can choose from.
 
-By default, this generates a project like [gradle/declarative-samples-android-app](https://github.com/gradle/declarative-samples-android-app).
+By default, this generates a project like [gradle/declarative-samples-android-app](https://github.com/gradle/declarative-samples-android-app) which is based on the prototype plugins. You can also generate a single Android application build with an empty Activity or basic Activity.
 
-You can also generate a single Android application build with an empty Activity or basic Activity.
+It can also generate a project like  [gradle/declarative-samples-agp-app](https://github.com/gradle/declarative-samples-agp-app) which is based on the Official Android Software Types Preview.
 
 ## Java 
 
-`gradle init -Dorg.gradle.buildinit.specs=org.gradle.experimental.jvm-ecosystem-init:0.1.23`
+`gradle init -Dorg.gradle.buildinit.specs=org.gradle.experimental.jvm-ecosystem-init:0.1.33`
 
 This init sample asks no questions and generates a project using Java like [gradle/declarative-samples-java-app](https://github.com/gradle/declarative-samples-java-app).
 
 ## Kotlin 
 
-`gradle init -Dorg.gradle.buildinit.specs=org.gradle.experimental.kmp-ecosystem-init:0.1.23`
+`gradle init -Dorg.gradle.buildinit.specs=org.gradle.experimental.kmp-ecosystem-init:0.1.33`
 
 This init sample asks no questions and generates a project using Kotlin like [gradle/declarative-samples-kotlin-app](https://github.com/gradle/declarative-samples-kotlin-app).
