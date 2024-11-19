@@ -52,8 +52,9 @@ This extension was also tested in GitHub Codespace and should work in any Visual
 
 ### Eclipse IDE
 
-TODO
-https://github.com/eclipse/buildship/blob/master/docs/user/DeclarativeGradle.md
+Install the Declarative Gradle editor support for the Eclipse IDE from Buildship snapshot [Update Site](https://github.com/eclipse/buildship/blob/master/docs/user/DeclarativeGradle.md) in our Eclipse IDE.
+
+Make sure to follow the [setup instructions](https://github.com/eclipse/buildship/blob/master/docs/user/DeclarativeGradle.md#setup) as more steps are needed for this to work.
 
 ## Gradle Client
 
