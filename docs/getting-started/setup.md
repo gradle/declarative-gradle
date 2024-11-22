@@ -32,7 +32,8 @@ Pick the most recent one that matches your operating system.
 Declarative features are only available on particular nightly releases.
 
 !!! warn
-    Note that on macOS, these special Android Studio releases require to be in `~/Applications`.
+    Note that these nightly builds are not signed/notarized and will require you to accept running them anyway.
+    Also note that on macOS, these special Android Studio releases require to be in `~/Applications`.
 
 <!-- omit in toc -->
 #### Enable more declarative features in Studio
@@ -63,6 +64,9 @@ The _Gradle Client_ is a standalone application used to demonstrate declarative 
 Download the latest release from the [Gradle Client](https://github.com/gradle/gradle-client/releases/latest) repository on GitHub and install it.
 
 The `DMG` file is for macOS, the `DEB` file is for Linux and the `MSI` file is for Windows.
+
+!!! warn
+    Note that the _Gradle Client_ is not signed/notarized and will require you to accept running it anyway.
 
 ## Pick a sample
 
