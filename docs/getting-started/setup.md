@@ -9,6 +9,7 @@ To try out the samples and see all of the features, you need to install a few ot
 - [JDK](#jdk)
 - [IDE](#ide)
   - [Android Studio](#android-studio)
+  - [IntelliJ IDEA](#intellij-idea)
   - [Visual Studio Code](#visual-studio-code)
   - [Eclipse IDE](#eclipse-ide)
 - [Gradle Client](#gradle-client)
@@ -44,6 +45,14 @@ While syntax highlighting of `.gradle.dcl` files works out of the box in Studio 
 1. Search for the Declarative Gradle flags by typing `declarative`
 2. Enable the `gradle.declarative.studio.support` and `gradle.declarative.ide.support` flags
 3. Restart the IDE
+
+### IntelliJ IDEA
+
+Download and install a special IntelliJ IDEA Nightly release.
+You can find the promoted nightly releases in [this Google Drive folder](https://drive.google.com/drive/folders/19iWu2F4dYs0Vc9xFMkSwY7wizKk-YMKl19C5EMRgENKU_tOAwOVLcIGZ6Bbm63Q7V) for macOS (Apple Silicon and Intel), Windows and Linux.
+Pick the most recent one that matches your operating system.
+
+Follow the same instructions as with [Android Studio](#android-studio) above to enable Declarative features.
 
 ### Visual Studio Code
 

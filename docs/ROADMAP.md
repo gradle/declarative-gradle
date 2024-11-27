@@ -41,6 +41,7 @@ To discuss the roadmap and the related initiatives, use the
   * Named domain object containers
 * Configuring Software Types from Kotlin DSL
 * Prototype Plugins for C++ and Swift
+* IntelliJ IDEA DCL support preview
 * Support for VS Code and Eclipse IDE
 * Generating Declarative Builds with `gradle init`
 

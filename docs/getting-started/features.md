@@ -32,6 +32,8 @@ Code completion only suggests the properties and nested blocks available in the 
 
 This video demonstrates the enhanced support for DCL in Android Studio, covering enum properties and named domain object containers.
 
+The same level of support should be expected in [IntelliJ IDEA](./setup.md#intellij-idea).
+
 ### Visual Studio Code
 
 <script src="https://fast.wistia.com/embed/medias/8t8appyr68.jsonp" async></script>
