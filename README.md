@@ -21,7 +21,7 @@ The project includes the following experimental parts:
 
 - Software Types as a declarative modeling framework
 - Changes in Gradle to support DCL files
-- Changes in Android Studio to support DCL files
+- Changes in Android Studio and IntelliJ IDEA to support DCL files
 - A Visual Studio Code extension to support DCL files
 - An Eclipse IDE plugin to support DCL files
 - Prototype plugins demonstrating software types and higher-level models
