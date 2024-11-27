@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.gradle.api.tasks.testing.Test;
 
 /**
  * Creates a declarative {@link KotlinJvmApplication} DSL model, applies the official Kotlin and application plugin,
@@ -40,5 +41,7 @@ public abstract class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project
         configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getTesting().getDependencies().getImplementation());
         configurations.getByName("testCompileOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getCompileOnly());
         configurations.getByName("testRuntimeOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getRuntimeOnly());
+
+        project.getTasks().withType(Test.class).configureEach(Test::useJUnitPlatform);
     }
 }
