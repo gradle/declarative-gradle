@@ -103,8 +103,6 @@ nav:
 
 extra_css:
   - docs/assets/css/gradle.css
-extra_javascript:
-  - docs/assets/js/google-tag-support.js
 
 extra:
   social:

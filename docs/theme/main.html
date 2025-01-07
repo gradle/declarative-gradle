@@ -8,9 +8,10 @@
 
 {% block scripts %}
   {{ super() }}
+{% endblock %}
 
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WRTQKGT"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
+{% block footer %}
+  <!-- Cookie Consent Holder -->
+  <div id="analytics-consent-div"></div>
+  {{ super() }}
 {% endblock %}
