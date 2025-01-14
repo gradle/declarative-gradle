@@ -1,7 +1,7 @@
 <!-- omit in toc -->
 # Setup
 
-Declarative Gradle [samples](./samples.md) require nightly versions of Gradle and Android Studio.
+Declarative Gradle [samples](./samples.md) require special nightly versions of Gradle and Android Studio, see below.
 They all use the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) to point to the right Gradle version, so you don't have to worry about installing a specific version of Gradle.
 
 To try out the samples and see all of the features, you need to install a few other components as described below:
@@ -41,10 +41,11 @@ Declarative features are only available on particular nightly releases.
 
 While syntax highlighting of `.gradle.dcl` files works out of the box in Studio nightlies, other features require flags to be enabled.
 
-1. Open _Tools_ -> _Internal Actions_ -> _Registry_
-1. Search for the Declarative Gradle flags by typing `declarative`
-2. Enable the `gradle.declarative.studio.support` and `gradle.declarative.ide.support` flags
-3. Restart the IDE
+1. Enable the [IDE internal mode](https://plugins.jetbrains.com/docs/intellij/enabling-internal.html) by selecting _Help_ -> _Edit Custom Properties_. This selection opens the `idea.properties` file. If it does not exist, the IDE will prompt to create one. Add a line with `idea.is.internal=true`, save the file and restart the IDE.
+2. Open _Tools_ -> _Internal Actions_ -> _Registry_
+3. Search for the Declarative Gradle flags by typing `declarative`
+4. Enable the `gradle.declarative.studio.support` and `gradle.declarative.ide.support` flags
+5. Restart the IDE
 
 ### IntelliJ IDEA
 
