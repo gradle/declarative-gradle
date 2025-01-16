@@ -149,7 +149,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
             project.getPlugins().apply("com.google.android.libraries.mapsplatform.secrets-gradle-plugin");
 
             SecretsPluginExtension secrets = project.getExtensions().getByType(SecretsPluginExtension.class);
-            ifPresent(dslModel.getSecrets().getDefaultPropertiesFileName(), secrets::setDefaultPropertiesFileName);
+            ifPresent(dslModel.getSecrets().getDefaultPropertiesFile(), file -> secrets.setDefaultPropertiesFileName(file.getAsFile().getName()));
         }
     }
 
