@@ -1,7 +1,7 @@
 <!-- omit in toc -->
 # Setup
 
-Declarative Gradle [samples](./samples.md) require special nightly versions of Gradle and Android Studio, see below.
+Declarative Gradle [samples](./samples.md) require nightly versions of Gradle and IDE/Plugins, see below.
 They all use the [Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html) to point to the right Gradle version, so you don't have to worry about installing a specific version of Gradle.
 
 To try out the samples and see all of the features, you need to install a few other components as described below:
@@ -26,18 +26,10 @@ We recommend [Eclipse Temurin™ (OpenJDK)](https://adoptium.net/temurin/release
 
 ### Android Studio
 
-Download and install a special Android Studio Nightly release.
-You can find the promoted nightly releases in [this Google Drive folder](https://drive.google.com/drive/folders/19C5EMRgENKU_tOAwOVLcIGZ6Bbm63Q7V) for macOS (Apple Silicon and Intel), Windows and Linux.
-Pick the most recent one that matches your operating system.
-
-Declarative features are only available on particular nightly releases.
-
-!!! warn
-    Note that these nightly builds are not signed/notarized and will require you to accept running them anyway.
-    Also note that on macOS, these special Android Studio releases require to be in `~/Applications`.
+Download and install an [Android Studio Nightly](https://developer.android.com/studio/nightly) release.
 
 <!-- omit in toc -->
-#### Enable more declarative features in Studio
+#### Enable declarative features in Studio
 
 While syntax highlighting of `.gradle.dcl` files works out of the box in Studio nightlies, other features require flags to be enabled.
 
