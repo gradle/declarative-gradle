@@ -79,7 +79,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
 
         // Add common JVM testing dependencies if the JVM target is a part of this build
         if (null != kotlin.getSourceSets().findByName("jvmTest")) {
-            KotlinPluginSupport.linkTestSourceSetToDependencies(project, kotlin.getSourceSets().getByName("jvmTest"), dslModel.getTargetsContainer().getByName("jvm").getTesting().getDependencies());
+            KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("jvmTest"), dslModel.getTargetsContainer().getByName("jvm").getTesting().getDependencies());
             project.getTasks().withType(KotlinJvmTest.class).forEach(Test::useJUnitPlatform);
         }
 
@@ -95,7 +95,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                         compilation.getDefaultSourceSet().getKotlin().srcDir(testSuite.getSourceRoot());
 
                         // Add testing dependencies specific to each JVM test suite
-                        KotlinPluginSupport.linkTestSourceSetToDependencies(
+                        KotlinPluginSupport.linkSourceSetToDependencies(
                                 project,
                                 compilation.getDefaultSourceSet(),
                                 testSuite.getDependencies()

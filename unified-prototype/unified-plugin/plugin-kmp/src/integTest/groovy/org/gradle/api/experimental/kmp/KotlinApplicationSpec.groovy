@@ -3,6 +3,9 @@ package org.gradle.api.experimental.kmp
 import org.gradle.test.fixtures.AbstractSpecification
 import org.gradle.testkit.runner.TaskOutcome
 
+/**
+ * Integration tests for the KMP ecosystem plugin's {@code kotlinApplication} project type.
+ */
 class KotlinApplicationSpec extends AbstractSpecification {
     def 'kmp jvm application with a jvmTest missing a dep fails to compile'() {
         given:
