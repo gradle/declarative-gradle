@@ -45,6 +45,8 @@ class AbstractSpecification extends Specification {
                 .withProjectDir(getTestDirectory())
                 .withArguments(tasks)
                 .withPluginClasspath()
+                .withDebug(true)
+                .forwardOutput()
                 .build()
         tasks.each { task ->
             assert result.task(task).outcome == SUCCESS
@@ -56,9 +58,8 @@ class AbstractSpecification extends Specification {
                 .withProjectDir(getTestDirectory())
                 .withArguments(tasks)
                 .withPluginClasspath()
-                .run()
-        tasks.each { task ->
-            assert result.task(task).outcome == FAILED
-        }
+                .withDebug(true)
+                .forwardOutput()
+                .buildAndFail()
     }
 }

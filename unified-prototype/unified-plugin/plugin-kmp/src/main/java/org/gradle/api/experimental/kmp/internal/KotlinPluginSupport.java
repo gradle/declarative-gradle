@@ -4,10 +4,13 @@ import org.gradle.api.Project;
 import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.experimental.jvm.HasJavaTarget;
+import org.gradle.api.experimental.kmp.testing.TestSuite;
+import org.gradle.api.experimental.kmp.testing.TestingDependencies;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension;
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 
+@SuppressWarnings("UnstableApiUsage")
 public class KotlinPluginSupport {
     public static void linkJavaVersion(Project project, HasJavaTarget dslModel) {
         KotlinJvmProjectExtension kotlin = project.getExtensions().getByType(KotlinJvmProjectExtension.class);
@@ -26,6 +29,15 @@ public class KotlinPluginSupport {
     }
 
     public static void linkSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, ApplicationDependencies dependencies) {
+        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
+                .getDependencies().addAllLater(dependencies.getImplementation().getDependencies());
+        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
+                .getDependencies().addAllLater(dependencies.getCompileOnly().getDependencies());
+        project.getConfigurations().getByName(sourceSet.getRuntimeOnlyConfigurationName())
+                .getDependencies().addAllLater(dependencies.getRuntimeOnly().getDependencies());
+    }
+
+    public static void linkTestSourceSetToDependencies(Project project, KotlinSourceSet sourceSet, TestingDependencies dependencies) {
         project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
                 .getDependencies().addAllLater(dependencies.getImplementation().getDependencies());
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName())
