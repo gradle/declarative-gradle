@@ -100,7 +100,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                                 compilation.getDefaultSourceSet(),
                                 testSuite.getDependencies()
                         );
-                        LOGGER.warning("Default source set for compilation: " + suiteCompilationName + " is: " + compilation.getDefaultSourceSet().getName() + " at: " + compilation.getDefaultSourceSet().getKotlin().getSrcDirs());
+//                        LOGGER.warning("Default source set for compilation: " + suiteCompilationName + " is: " + compilation.getDefaultSourceSet().getName() + " at: " + compilation.getDefaultSourceSet().getKotlin().getSrcDirs());
                     });
 
                     // Create test task for the new compilation
