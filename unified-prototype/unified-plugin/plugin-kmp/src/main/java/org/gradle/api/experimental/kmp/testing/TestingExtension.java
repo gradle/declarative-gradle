@@ -34,22 +34,22 @@ public interface TestingExtension {
     }
 
     @Nested
-    TestSuite getUnitTests();
+    TestSuite getUnitTest();
 
     @Configuring
-    default void unitTests(Action<? super TestSuite> action) {
-        action.execute(getUnitTests());
+    default void unitTest(Action<? super TestSuite> action) {
+        action.execute(getUnitTest());
     }
 
     @Nested
-    TestSuite getFunctionalTests();
+    TestSuite getFunctionalTest();
 
     @Configuring
-    default void functionalTests(Action<? super TestSuite> action) {
-        action.execute(getFunctionalTests());
+    default void functionalTest(Action<? super TestSuite> action) {
+        action.execute(getFunctionalTest());
     }
 
     default Map<String, TestSuite> getTestSuites() {
-        return Map.of("unitTest", getUnitTests(), "functionalTest", getFunctionalTests());
+        return Map.of("unitTest", getUnitTest(), "functionalTest", getFunctionalTest());
     }
 }

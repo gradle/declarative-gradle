@@ -125,10 +125,12 @@ class KotlinApplicationSpec extends AbstractSpecification {
                         jdkVersion = 17
                         
                         testing {
-                            dependencies {
-                                implementation("com.google.guava:guava:33.4.0-jre")
-                                implementation("org.junit.jupiter:junit-jupiter:5.11.4")
-                                runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+                            functionalTest {
+                                dependencies {
+                                    implementation("com.google.guava:guava:33.4.0-jre")
+                                    implementation("org.junit.jupiter:junit-jupiter:5.11.4")
+                                    runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+                                }
                             }
                         }
                     }
@@ -151,10 +153,74 @@ class KotlinApplicationSpec extends AbstractSpecification {
                         jdkVersion = 17
                         
                         testing {
+                            functionalTest {
+                                dependencies {
+                                    implementation("com.google.guava:guava:33.4.0-jre")
+                                    implementation("org.junit.jupiter:junit-jupiter:5.11.4")
+                                    runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        """
+
+        file("src/jvmFunctionalTest/kotlin/org/example/Test.kt") << customGuavaTest(false)
+
+        expect:
+        succeeds(":suiteFunctionalTestTest")
+    }
+
+    def 'kmp jvm application with a passing custom test JVM test suite inherits dependencies from common deps'() {
+        given:
+        buildFile << """
+            kotlinApplication {
+                targets {
+                    jvm {
+                        jdkVersion = 17
+                        
+                        dependencies {
+                            implementation("com.google.guava:guava:33.4.0-jre")
+                        }
+                        
+                        testing {
+                            functionalTest {
+                                dependencies {
+                                    implementation("org.junit.jupiter:junit-jupiter:5.11.4")
+                                    runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        """
+
+        file("src/jvmFunctionalTest/kotlin/org/example/Test.kt") << customGuavaTest(false)
+
+        expect:
+        succeeds(":suiteFunctionalTestTest")
+    }
+
+    def 'kmp jvm application with a passing custom test JVM test suite inherits dependencies from common test deps'() {
+        given:
+        buildFile << """
+            kotlinApplication {
+                targets {
+                    jvm {
+                        jdkVersion = 17
+                        
+                        testing {
                             dependencies {
                                 implementation("com.google.guava:guava:33.4.0-jre")
-                                implementation("org.junit.jupiter:junit-jupiter:5.11.4")
-                                runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+                            }
+                        
+                            functionalTest {
+                                dependencies {
+                                    implementation("org.junit.jupiter:junit-jupiter:5.11.4")
+                                    runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+                                }
                             }
                         }
                     }
