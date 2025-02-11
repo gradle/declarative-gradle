@@ -6,8 +6,8 @@ ksp = "2.0.21-1.0.28"
 
 # Android Libs
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
-android = "8.10.0-alpha01"
-androidTools = "31.8.0"
+android = "8.6.1"
+androidTools = "31.3.0"
 baselineProfile = "1.3.3"
 firebaseCrashlytics = "3.0.2"
 firebasePerf = "1.4.2"
@@ -17,6 +17,7 @@ room = "2.6.1"
 
 #Other Libs
 apache-commons = "3.14.0"
+commons-text = "1.13.0"
 dependency-guard = "0.4.3"
 truth = "1.4.2"
 protobuf = "0.9.4"
@@ -46,6 +47,7 @@ room-plugin = { module = "androidx.room:room-gradle-plugin", version.ref = "room
 
 #Other Libs
 apache-commons-lang = { module = "org.apache.commons:commons-lang3", version.ref = "apache-commons" }
+apache-commons-text = { module = "org.apache.commons:commons-text", version.ref = "commons-text" }
 compose-compiler-plugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 dependency-guard-plugin = { module = "com.dropbox.dependency-guard:com.dropbox.dependency-guard.gradle.plugin", version.ref = "dependency-guard"}
 oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "oss-licenses" }
