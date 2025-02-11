@@ -1,10 +1,15 @@
 # Declarative Gradle. Publications
 
-## Articles
+## Official Updates
 
 - [Declarative Gradle - November 2024 Update](./../EAP2.md) by Paul Merlin - November 2024
 - [Early Access Preview (EAP) Announcement](./../EAP.md) by Sterling Greene - July 2024
 - [Project Announcement](https://blog.gradle.org/declarative-gradle) by Piotr Jagielski - November 2023 - Initial project announcement and the manifesto
+
+## Articles
+
+- [Groovy Who? Exploring Declarative Gradle](https://www.liutikas.net/2025/01/24/Groovy-Who-Exploring-Declarative-Gradle.html) by Aurimas Liutikas - January 2025
+- [Declarative Gradle in IntelliJ IDEA](https://blog.jetbrains.com/idea/2024/11/declarative-gradle-in-intellij-idea/) by the JetBrains Team
 - [Declarative Gradle? Amper? What’s going on?!](https://github.com/kotlin-magazine/kotlin-magazine/blob/main/articles/siggi_gunnarsson_declarative_builds_for_kotlin.md) by Siggi Gunnarsson, May 2024, [fun code() magazine](https://github.com/kotlin-magazine/kotlin-magazine)
 
 ## News
