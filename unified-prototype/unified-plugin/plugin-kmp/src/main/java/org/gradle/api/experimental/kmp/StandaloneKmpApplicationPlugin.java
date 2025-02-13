@@ -33,13 +33,13 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
 
     @Override
     public void apply(Project project) {
-        PluginWiring.wirePlugin(project, getKmpApplication());
+        PluginWiring.wireKMPApplication(project, getKmpApplication());
     }
 
     public static final class PluginWiring {
         private PluginWiring() { /* not instantiable */ }
 
-        public static void wirePlugin(Project project, KmpApplication initialDslModel) {
+        public static void wireKMPApplication(Project project, KmpApplication initialDslModel) {
             KmpApplication dslModel = setupDslModel(project, initialDslModel);
 
             project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
