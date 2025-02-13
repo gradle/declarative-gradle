@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":plugin-jvm"))
     implementation(libs.kotlin.multiplatform)
     implementation(libs.kotlin.jvm)
+    implementation(libs.apache.commons.text)
 }
 
 testing {
