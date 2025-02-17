@@ -15,12 +15,23 @@ jobs:
       contents: write
       # Write permission is required for autolabeler
       pull-requests: write
+      id-token: write
     
     steps:
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::992382829881:role/GHASecrets_declarative-gradle_all
+          aws-region: "eu-central-1"
+      - name: Get secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            BOT_GRADLE_GITHUB_TOKEN, gha/declarative-gradle/_all/BOT_GRADLE_GITHUB_TOKEN
       - uses: release-drafter/release-drafter@v6
         with:
           name: next
           tag: next
           version: next
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ env.BOT_GRADLE_GITHUB_TOKEN }}
