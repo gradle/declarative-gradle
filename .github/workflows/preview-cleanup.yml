@@ -13,6 +13,7 @@ jobs:
 
     permissions:
       pull-requests: write
+      id-token: write
 
     steps:
       - name: make empty dir
@@ -26,10 +27,21 @@ jobs:
           publish_dir: ./public
           destination_dir: ${{ env.PR_PATH }}
 
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::992382829881:role/GHASecrets_declarative-gradle_all
+          aws-region: "eu-central-1"
+      - name: Get secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            BOT_GRADLE_GITHUB_TOKEN, gha/declarative-gradle/_all/BOT_GRADLE_GITHUB_TOKEN
+
       - name: Comment on PR
         uses: hasura/comment-progress@v2.2.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.BOT_GRADLE_GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           number: ${{ github.event.number }}
           id: deploy-preview
