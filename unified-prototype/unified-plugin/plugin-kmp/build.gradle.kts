@@ -9,7 +9,8 @@ plugins {
 description = "Implements the declarative KMP DSL prototype"
 
 dependencies {
-    implementation(project(":plugin-common"))
+    api(project(":plugin-common"))
+
     implementation(project(":plugin-jvm"))
     implementation(libs.kotlin.multiplatform)
     implementation(libs.kotlin.jvm)
