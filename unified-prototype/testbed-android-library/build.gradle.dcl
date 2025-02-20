@@ -17,6 +17,9 @@ androidLibrary {
                 implementation("com.squareup.okhttp3:okhttp:4.2.2")
             }
 
+            defaultProguardFiles = listOf(proguardFile("proguard-android-optimize.txt"))
+            proguardFiles = listOf(proguardFile("proguard-rules.pro"), proguardFile("some_other_file.txt"))
+
             minify {
                 enabled = true
             }
