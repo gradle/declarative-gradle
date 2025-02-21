@@ -13,7 +13,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
  * Extension to manage setting up Kotlin serialization for a Kotlin Android library.
  */
 @SuppressWarnings("UnstableApiUsage")
-@Restricted
 public interface KotlinSerialization {
     @Restricted
     Property<Boolean> getEnabled();
@@ -35,7 +34,6 @@ public interface KotlinSerialization {
     @Restricted
     Property<Boolean> getJsonEnabled();
 
-    @Restricted
     interface SerializationDependencies extends Dependencies, PlatformDependencyModifiers {
         DependencyCollector getImplementation();
     }

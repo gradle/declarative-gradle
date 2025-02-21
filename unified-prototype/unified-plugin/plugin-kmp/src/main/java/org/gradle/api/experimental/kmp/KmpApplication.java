@@ -8,12 +8,10 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
  * The public DSL interface for a declarative KMP application.
  */
-@Restricted
 public interface KmpApplication extends HasApplicationDependencies, HasCliExecutables {
     @Input
     Property<String> getLanguageVersion();

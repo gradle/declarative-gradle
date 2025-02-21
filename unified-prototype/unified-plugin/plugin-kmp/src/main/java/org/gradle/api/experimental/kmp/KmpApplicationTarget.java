@@ -6,12 +6,10 @@ import org.gradle.api.experimental.common.ApplicationDependencies;
 import org.gradle.api.experimental.kmp.testing.TestingExtension;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
  * Represents a target platform in a KMP application.
  */
-@Restricted
 public interface KmpApplicationTarget extends Named {
     @Nested
     ApplicationDependencies getDependencies();

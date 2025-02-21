@@ -6,9 +6,7 @@ import org.gradle.api.experimental.common.LibraryDependencies;
 import org.gradle.api.experimental.jvm.extensions.testing.Testing;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
 public interface JvmTarget extends Named {
 
     @Nested

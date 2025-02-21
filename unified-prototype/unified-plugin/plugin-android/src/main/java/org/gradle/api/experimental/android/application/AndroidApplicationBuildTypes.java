@@ -4,9 +4,7 @@ import org.gradle.api.Action;
 import org.gradle.api.experimental.android.AndroidSoftwareBuildTypes;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
 public interface AndroidApplicationBuildTypes extends AndroidSoftwareBuildTypes {
     @Override
     @Nested

@@ -6,7 +6,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 /**
  * Extension to manage setting up Jacoco for an Android library.
  */
-@Restricted
 public interface Jacoco {
     @Restricted
     Property<Boolean> getEnabled();

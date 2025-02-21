@@ -6,7 +6,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 /**
  * This type defines a Conventional Now In Android feature project.
  */
-@Restricted
 public interface Feature {
     @Restricted
     Property<Boolean> getEnabled();

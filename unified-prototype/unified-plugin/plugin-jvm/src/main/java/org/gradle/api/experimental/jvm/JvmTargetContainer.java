@@ -11,7 +11,6 @@ import org.gradle.internal.service.ServiceRegistry;
 
 import javax.inject.Inject;
 
-@Restricted
 public class JvmTargetContainer extends DefaultNamedDomainObjectSet<JvmTarget> {
 
     private final Instantiator elementInstantiator;

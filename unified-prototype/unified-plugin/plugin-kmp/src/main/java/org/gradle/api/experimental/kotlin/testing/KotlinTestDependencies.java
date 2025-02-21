@@ -19,10 +19,8 @@ package org.gradle.api.experimental.kotlin.testing;
 import org.gradle.api.artifacts.dsl.Dependencies;
 import org.gradle.api.artifacts.dsl.DependencyCollector;
 import org.gradle.api.plugins.jvm.PlatformDependencyModifiers;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 @SuppressWarnings("UnstableApiUsage")
-@Restricted
 public interface KotlinTestDependencies extends Dependencies, PlatformDependencyModifiers {
     DependencyCollector getImplementation();
     DependencyCollector getCompileOnly();

@@ -25,7 +25,6 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
 public interface AndroidLibrary extends AndroidSoftware {
     @Override
     @Nested
@@ -59,7 +58,7 @@ public interface AndroidLibrary extends AndroidSoftware {
 
     /**
      * Flag to enable/disable generation of the `BuildConfig` class.
-     *
+     * <p>
      * Default value is `false`.
      */
     @Restricted

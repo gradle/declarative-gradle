@@ -3,14 +3,12 @@ package org.gradle.api.experimental.kmp.testing;
 import org.gradle.api.Action;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 import java.util.Map;
 
 /**
  * A DSL block that allows for configuring testing in a KMP project.
  */
-@Restricted
 public interface TestingExtension {
     @Nested
     TestingDependencies getDependencies();

@@ -12,7 +12,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-@Restricted
 public interface AndroidSoftwareBuildType {
     /**
      * Dependencies for this build type.
