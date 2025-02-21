@@ -17,7 +17,10 @@
 package org.gradle.api.experimental.android;
 
 import org.gradle.api.Action;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+
+import java.util.List;
 
 /**
  * Static util class containing common methods.
@@ -28,6 +31,12 @@ public final class AndroidSupport {
     public static <T> void ifPresent(Property<T> property, Action<T> action) {
         if (property.isPresent()) {
             action.execute(property.get());
+        }
+    }
+
+    public static <T> void ifPresent(ListProperty<T> property, Action<T> action) {
+        if (property.isPresent()) {
+            property.get().forEach(action::execute);
         }
     }
 }
