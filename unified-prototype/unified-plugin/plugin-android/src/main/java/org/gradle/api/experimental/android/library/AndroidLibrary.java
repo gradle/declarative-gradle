@@ -18,14 +18,14 @@ package org.gradle.api.experimental.android.library;
 
 import org.gradle.api.Action;
 import org.gradle.api.experimental.android.AndroidSoftware;
-import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.experimental.android.extensions.Protobuf;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
 public interface AndroidLibrary extends AndroidSoftware {
     @Override
     @Nested
@@ -45,9 +45,8 @@ public interface AndroidLibrary extends AndroidSoftware {
         action.execute(getBuildTypes());
     }
 
-    // TODO:DG We really want to model a list of consumer proguard files here, but can't yet
     @Restricted
-    RegularFileProperty getConsumerProguardFile();
+    ListProperty<RegularFile> getConsumerProguardFiles();
 
     @Nested
     Protobuf getProtobuf();
@@ -59,7 +58,7 @@ public interface AndroidLibrary extends AndroidSoftware {
 
     /**
      * Flag to enable/disable generation of the `BuildConfig` class.
-     *
+     * <p>
      * Default value is `false`.
      */
     @Restricted

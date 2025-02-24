@@ -6,13 +6,11 @@ import org.gradle.api.experimental.android.extensions.Minify;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Adding;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 import javax.inject.Inject;
 
-@Restricted
 public interface AndroidSoftwareBuildType {
     /**
      * Dependencies for this build type.
@@ -27,24 +25,15 @@ public interface AndroidSoftwareBuildType {
         action.execute(getMinify());
     }
 
+    @Restricted
     ListProperty<ProguardFile> getProguardFiles();
+    @Restricted
     ListProperty<ProguardFile> getDefaultProguardFiles();
 
-    @Adding
-    default ProguardFile proguardFile(Action<? super ProguardFile> configure) {
+    @Restricted
+    default ProguardFile proguardFile(String name) {
         ProguardFile proguardFile = getObjectFactory().newInstance(ProguardFile.class);
-        proguardFile.getName().convention("<no name>");
-        configure.execute(proguardFile);
-        getProguardFiles().add(proguardFile);
-        return proguardFile;
-    }
-
-    @Adding
-    default ProguardFile defaultProguardFile(Action<? super ProguardFile> configure) {
-        ProguardFile proguardFile = getObjectFactory().newInstance(ProguardFile.class);
-        proguardFile.getName().convention("<no name>");
-        configure.execute(proguardFile);
-        getDefaultProguardFiles().add(proguardFile);
+        proguardFile.getName().set(name);
         return proguardFile;
     }
 

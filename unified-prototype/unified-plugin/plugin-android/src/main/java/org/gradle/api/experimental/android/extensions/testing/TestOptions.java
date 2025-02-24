@@ -21,7 +21,6 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
 public interface TestOptions {
     @Restricted
     Property<Boolean> getIncludeAndroidResources();

@@ -18,8 +18,6 @@ package org.gradle.api.experimental.android.library;
 
 import org.gradle.api.experimental.android.AndroidSoftwareDependencies;
 import org.gradle.api.experimental.common.LibraryDependencies;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
 public interface AndroidLibraryDependencies extends LibraryDependencies, AndroidSoftwareDependencies {
 }

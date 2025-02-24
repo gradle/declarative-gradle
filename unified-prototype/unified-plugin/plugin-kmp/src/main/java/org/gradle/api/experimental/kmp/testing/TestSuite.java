@@ -9,7 +9,6 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 /**
  * Represents a custom suite of tests for a KMP project.
  */
-@Restricted
 public interface TestSuite {
     @Restricted
     DirectoryProperty getSourceRoot();

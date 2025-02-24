@@ -1,13 +1,11 @@
 package org.gradle.api.experimental.common;
 
 import org.gradle.api.artifacts.dsl.DependencyCollector;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 /**
  * The declarative dependencies DSL block for a library.
  */
 @SuppressWarnings("UnstableApiUsage")
-@Restricted
 public interface LibraryDependencies extends BasicDependencies {
     DependencyCollector getApi();
 

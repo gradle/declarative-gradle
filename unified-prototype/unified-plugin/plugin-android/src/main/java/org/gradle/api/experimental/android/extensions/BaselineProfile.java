@@ -23,7 +23,6 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 // TODO: This might be better split into separate producer/consumer parts
-@Restricted
 public interface BaselineProfile {
     @Restricted
     Property<Boolean> getEnabled();

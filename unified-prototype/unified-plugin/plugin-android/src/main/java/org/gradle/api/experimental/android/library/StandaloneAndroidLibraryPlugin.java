@@ -71,7 +71,7 @@ public abstract class StandaloneAndroidLibraryPlugin extends AbstractAndroidSoft
             NiaSupport.configureNiaLibrary(project, dslModel);
         }
         LintSupport.configureLint(project, dslModel);
-        ifPresent(dslModel.getConsumerProguardFile(), android.getDefaultConfig()::consumerProguardFile);
+        ifPresent(dslModel.getConsumerProguardFiles(), android.getDefaultConfig()::consumerProguardFile);
         ifPresent(dslModel.getBuildConfig(), android.getBuildFeatures()::setBuildConfig);
     }
 

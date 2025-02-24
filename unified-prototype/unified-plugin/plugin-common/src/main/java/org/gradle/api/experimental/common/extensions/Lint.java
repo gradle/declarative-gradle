@@ -19,7 +19,6 @@ package org.gradle.api.experimental.common.extensions;
 import org.gradle.api.provider.Property;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-@Restricted
 public interface Lint {
     @Restricted
     Property<Boolean> getEnabled();
