@@ -9,7 +9,6 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 public interface AndroidSoftwareBuildType {
@@ -32,7 +31,7 @@ public interface AndroidSoftwareBuildType {
     ListProperty<ProguardFile> getDefaultProguardFiles();
 
     @Restricted
-    default ProguardFile proguardFile(@Nullable String name) {
+    default ProguardFile proguardFile(String name) {
         ProguardFile proguardFile = getObjectFactory().newInstance(ProguardFile.class);
         proguardFile.getName().set(name);
         return proguardFile;
