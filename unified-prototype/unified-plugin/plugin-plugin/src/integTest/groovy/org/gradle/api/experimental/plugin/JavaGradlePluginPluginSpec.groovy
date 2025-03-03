@@ -53,11 +53,16 @@ class JavaGradlePluginPluginSpec extends AbstractSpecification {
                 includeBuild("plugin")
             }
             
+            include("example-project")
+            
+            rootProject.name = "example-plugin-use"
+        """
+
+        and:
+        file("example-project/build.gradle") << """
             plugins {
                 id("org.gradle.example")
             }
-            
-            rootProject.name = "example-plugin-use"
         """
 
         and:
@@ -82,8 +87,8 @@ class JavaGradlePluginPluginSpec extends AbstractSpecification {
         file("plugin/settings.gradle.dcl") << defineExamplePluginSettings()
 
         expect:
-        succeeds(":build")
-        result.getOutput() == "Hello from ExamplePlugin"
+        succeeds(":example-project:help")
+        result.getOutput().contains("Hello from ExamplePlugin")
     }
 
     private String defineExamplePlugin() {

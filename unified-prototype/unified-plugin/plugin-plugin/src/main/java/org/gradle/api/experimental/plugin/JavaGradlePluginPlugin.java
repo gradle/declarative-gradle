@@ -3,6 +3,7 @@ package org.gradle.api.experimental.plugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension;
 
 /**
  * Creates a declarative {@link JavaGradlePlugin} DSL model, applies the Gradle java-gradle-plugin plugin,
@@ -18,5 +19,20 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         project.getPluginManager().apply("java-gradle-plugin");
+
+        project.afterEvaluate(evaluatedProject -> {
+            JavaGradlePlugin projectDefinition = getGradlePlugin();
+
+            project.setDescription(projectDefinition.getDescription().get());
+            project.getConfigurations().getByName("implementation").fromDependencyCollector(projectDefinition.getDependencies().getImplementation());
+
+            GradlePluginDevelopmentExtension pluginDevelopmentExtension = project.getExtensions().getByType(GradlePluginDevelopmentExtension.class);
+            projectDefinition.getGradlePlugins().forEach(gradlePlugin -> {
+                pluginDevelopmentExtension.getPlugins().create(gradlePlugin.getName(), p -> {
+                    p.setId(gradlePlugin.getId().get());
+                    p.setImplementationClass(gradlePlugin.getImplementationClass().get());
+                });
+            });
+        });
     }
 }
