@@ -24,6 +24,7 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
             JavaGradlePlugin projectDefinition = getGradlePlugin();
 
             project.setDescription(projectDefinition.getDescription().get());
+            project.getConfigurations().getByName("api").fromDependencyCollector(projectDefinition.getDependencies().getApi());
             project.getConfigurations().getByName("implementation").fromDependencyCollector(projectDefinition.getDependencies().getImplementation());
 
             GradlePluginDevelopmentExtension pluginDevelopmentExtension = project.getExtensions().getByType(GradlePluginDevelopmentExtension.class);

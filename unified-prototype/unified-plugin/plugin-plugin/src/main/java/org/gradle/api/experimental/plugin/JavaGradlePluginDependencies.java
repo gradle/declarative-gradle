@@ -6,5 +6,6 @@ import org.gradle.api.plugins.jvm.PlatformDependencyModifiers;
 
 @SuppressWarnings("UnstableApiUsage")
 public interface JavaGradlePluginDependencies extends Dependencies, PlatformDependencyModifiers {
+    DependencyCollector getApi();
     DependencyCollector getImplementation();
 }
