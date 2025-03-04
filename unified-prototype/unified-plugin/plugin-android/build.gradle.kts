@@ -45,7 +45,9 @@ testing {
             }
         }
 
-        tasks.getByPath("check").dependsOn(integTest)
+        tasks.named("check") {
+            dependsOn(integTest)
+        }
     }
 }
 

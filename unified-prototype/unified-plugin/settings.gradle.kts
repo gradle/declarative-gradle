@@ -24,6 +24,7 @@ include("plugin-android-init")
 include("plugin-swift")
 include("plugin-cpp")
 include("plugin-common")
+include("plugin-plugin")
 include("internal-testing-utils")
 
 rootProject.name = "unified-plugin"
