@@ -35,7 +35,7 @@ gradlePlugin {
 
     plugins {
         create("gradle-plugin") {
-            id = "org.gradle.experimental.gradle-plugin"
+            id = "org.gradle.experimental.java-gradle-plugin"
             displayName = "Gradle Java Plugin Experimental Declarative Plugin"
             description = "Experimental declarative plugin for building Gradle plugins in Java"
             implementationClass = "org.gradle.api.experimental.plugin.JavaGradlePluginPlugin"
@@ -45,7 +45,7 @@ gradlePlugin {
             id = "org.gradle.experimental.plugin-ecosystem"
             displayName = "Gradle Plugin Experimental Declarative Plugin"
             description = "Experimental declarative plugin for the building Gradle plugins"
-            implementationClass = "org.gradle.api.experimental.plugin.PluginEcosystemPlugin"
+            implementationClass = "org.gradle.api.experimental.plugin.GradlePluginEcosystemPlugin"
             tags = setOf("declarative-gradle", "plugin")
         }
     }
