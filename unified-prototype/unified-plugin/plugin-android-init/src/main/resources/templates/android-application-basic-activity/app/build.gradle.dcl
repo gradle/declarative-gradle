@@ -23,12 +23,8 @@ androidApplication {
                 enabled = false
             }
 
-            defaultProguardFile {
-                name = "proguard-android-optimize.txt"
-            }
-            proguardFile {
-                name = "proguard-rules.pro"
-            }
+            defaultProguardFiles = listOf(proguardFile("proguard-android-optimize.txt"))
+            proguardFiles = listOf(proguardFile("proguard-rules.pro"))
         }
     }
 }
