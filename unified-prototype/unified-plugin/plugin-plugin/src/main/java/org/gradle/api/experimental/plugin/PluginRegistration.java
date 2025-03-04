@@ -8,5 +8,8 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 @ElementFactoryName("id")
 public interface PluginRegistration extends Named {
     @Restricted
+    Property<String> getDescription();
+
+    @Restricted
     Property<String> getImplementationClass();
 }

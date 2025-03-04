@@ -32,6 +32,7 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
                 pluginDevelopmentExtension.getPlugins().create(registration.getName(), p -> {
                     p.setId(registration.getName());
                     p.setImplementationClass(registration.getImplementationClass().get());
+                    p.setDescription(registration.getDescription().get());
                 });
             });
         });
