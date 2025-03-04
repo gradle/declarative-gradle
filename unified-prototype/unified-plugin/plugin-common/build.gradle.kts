@@ -32,6 +32,15 @@ testing {
                 implementation(project(":plugin-jvm"))
                 implementation(testFixtures(project()))
             }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(tasks.named("test"))
+                        inputs.files(layout.settingsDirectory.file("version.txt"))
+                    }
+                }
+            }
         }
 
         tasks.named("check") {
