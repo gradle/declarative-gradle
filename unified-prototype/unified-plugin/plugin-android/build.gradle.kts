@@ -43,6 +43,15 @@ testing {
             dependencies {
                 implementation(project(":internal-testing-utils"))
             }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(tasks.named("test"))
+                        inputs.files(layout.settingsDirectory.file("version.txt"))
+                    }
+                }
+            }
         }
 
         tasks.named("check") {
