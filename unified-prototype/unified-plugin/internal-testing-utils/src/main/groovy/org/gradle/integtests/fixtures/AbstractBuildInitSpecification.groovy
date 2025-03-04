@@ -30,7 +30,9 @@ abstract class AbstractBuildInitSpecification extends AbstractSpecification {
         canBuildGeneratedProject()
 
         and:
-        true
+        if (shouldValidateLatestPublishedVersionUsedInSpec()) {
+            validateLatestPublishedVersionUsedInSpec()
+        }
         validateBuild()
     }
 
@@ -54,5 +56,34 @@ abstract class AbstractBuildInitSpecification extends AbstractSpecification {
                 .withArguments("build")
                 .forwardOutput()
                 .build()
+    }
+
+    protected boolean shouldValidateLatestPublishedVersionUsedInSpec() {
+        return true
+    }
+
+    protected void validateLatestPublishedVersionUsedInSpec() {
+        def pendingProjectVersion = readProjectVersion(file("../../../../../../version.txt"))
+        def lastPublishedVersion = previousVersion(pendingProjectVersion)
+        def specVersion = readSpecVersion(projectDir.file("settings.gradle.dcl"))
+        assert lastPublishedVersion == specVersion, "Expected spec to use last published version $lastPublishedVersion, but it was using $specVersion instead.  Please update this."
+    }
+
+    private String readProjectVersion(File versionFile) {
+        def content = versionFile.text
+        return content.trim()
+    }
+
+    protected String readSpecVersion(File settingsFile) {
+        def content = settingsFile.text
+        def matcher = content =~ /id\("org\.gradle\.experimental\..*"\)\.version\("([^"]+)"\)/
+        return (matcher.find()) ? matcher.group(1) : null
+    }
+
+    private String previousVersion(String version) {
+        if (version.endsWith("-SNAPSHOT")) {
+            version = version - "-SNAPSHOT"
+        }
+        return version[0..-2] + (version[-1].toInteger() - 1)
     }
 }
