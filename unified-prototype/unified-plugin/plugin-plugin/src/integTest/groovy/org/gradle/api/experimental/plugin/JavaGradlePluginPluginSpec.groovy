@@ -31,9 +31,8 @@ class JavaGradlePluginPluginSpec extends AbstractSpecification {
                     implementation("com.google.guava:guava:33.4.0-jre")
                 }
                 
-                gradlePlugins {
-                    gradlePlugin("custom-ecosystem") {
-                        id = "org.gradle.example"
+                registers {
+                    id("org.gradle.example") {
                         implementationClass = "org.gradle.example.ExamplePlugin"
                     }
                 }
@@ -74,9 +73,8 @@ class JavaGradlePluginPluginSpec extends AbstractSpecification {
                     implementation("com.google.guava:guava:33.4.0-jre")
                 }
                 
-                gradlePlugins {
-                    gradlePlugin("custom-ecosystem") {
-                        id = "org.gradle.example"
+                registers {
+                    id("org.gradle.example") {
                         implementationClass = "org.gradle.example.ExamplePlugin"
                     }
                 }

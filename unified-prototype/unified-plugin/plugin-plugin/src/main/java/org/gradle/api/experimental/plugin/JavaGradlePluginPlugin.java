@@ -28,10 +28,10 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
             project.getConfigurations().getByName("implementation").fromDependencyCollector(projectDefinition.getDependencies().getImplementation());
 
             GradlePluginDevelopmentExtension pluginDevelopmentExtension = project.getExtensions().getByType(GradlePluginDevelopmentExtension.class);
-            projectDefinition.getGradlePlugins().forEach(gradlePlugin -> {
-                pluginDevelopmentExtension.getPlugins().create(gradlePlugin.getName(), p -> {
-                    p.setId(gradlePlugin.getId().get());
-                    p.setImplementationClass(gradlePlugin.getImplementationClass().get());
+            projectDefinition.getRegisters().forEach(registration -> {
+                pluginDevelopmentExtension.getPlugins().create(registration.getName(), p -> {
+                    p.setId(registration.getName());
+                    p.setImplementationClass(registration.getImplementationClass().get());
                 });
             });
         });

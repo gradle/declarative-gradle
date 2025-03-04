@@ -22,5 +22,5 @@ public interface JavaGradlePlugin {
         action.execute(getDependencies());
     }
 
-    NamedDomainObjectContainer<GradlePlugin> getGradlePlugins();
+    NamedDomainObjectContainer<PluginRegistration> getRegisters();
 }
