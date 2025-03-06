@@ -65,7 +65,6 @@ To discuss the roadmap and the related initiatives, use the
 * More DCL features
   * `Map<K, V>` properties
   * Container defaults
-* Reference Version Catalogs for dependency declarations in DCL
 
 ## Incubating Software Types and DCL
 
