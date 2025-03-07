@@ -18,3 +18,8 @@ signing {
 gradle.taskGraph.whenReady {
     signing.isRequired = allTasks.stream().anyMatch { it is com.gradle.publish.PublishTask }
 }
+
+// we want plugins to preserve method parameter names in class files, useful in IDE auto-completion
+tasks.compileJava {
+    options.compilerArgs.add("-parameters")
+}
