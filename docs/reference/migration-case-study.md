@@ -1,19 +1,21 @@
-# Example Migration
 
-In Feb/March 2025, using the version of Declarative Gradle that would be made available as EAP 3, we migrated the [`gradle client`](https://github.com/gradle/gradle-client) to using DCL build files and a custom Software Type that described the tools and features used by this particular build.
+# Case Study - Converting Gradle-Client
+
+## Introduction
+
+In Feb/March 2025, using the version of Declarative Gradle that would be made available as EAP 3, we migrated the [`gradle client`](https://github.com/gradle/gradle-client) application to Declarative Gradle, including using a custom Software Type that described the tools and features used by one of its projects.
+The Gradle Client is a desktop Kotlin Compose application that uses the Gradle tooling API to provide a rich GUI for analyzing Declarative Gradle build.
 
 This migration allowed us to further explore this process and understand typical stumbling blocks and areas that need improvement.
 
-This document outlines that experience and our findings, and provides a case study that should approximate a real-world migration.
-You can see the results by comparing [the initial state of the repo](https://github.com/gradle/gradle-client/tree/4fb821caecbc4a55c5896624b31b201f66cc9fd0) with the state [after the migration was completed](https://github.com/gradle/gradle-client/commit/0c324821e52e82a14413f0d195ad3dda8dc687df).
+This document outlines that experience, our findings, and provides a case study that should approximate a real-world migration.
+You can see the results by comparing [the initial state of the repo](https://github.com/gradle/gradle-client/tree/4fb821caecbc4a55c5896624b31b201f66cc9fd0) with the state [after the migration was completed](https://github.com/gradle/gradle-client/commit/5484d947379fb7d8b4e2f00322bd3f37ba0f486f).
 
-# How to Convert an Existing Project to Declarative Gradle
+## Overview
 
-The first thing to keep in mind is that using Declarative Gradle is *not* an all or nothing proposition.
-Gradle has always supported mixing build script DSLs between projects in a multi-project build using Groovy and Kotlin DSLs.
-It continues to support doing the same with DCL buildscripts, which allows us to migrate project by project.
-
-# Migration Process for Gradle-Client
+At a high-level, we followed [the guidance](migration-guide.md) in our documentation with one exception.
+If you browse the repository commits you'll notice one change we made was to migrate the _most_ complex project first.
+This was done inorder to explore the process, and is not recommended for your own efforts.
 
 ## Initial Setup
 
@@ -21,7 +23,7 @@ It continues to support doing the same with DCL buildscripts, which allows us to
 
 Features are constantly being added to the Declarative Gradle support.  
 Any project interested in experimenting with DCL files should ensure they are using at least the latest stable Gradle release.
-For the migration of the Gradle-Client project, we upgraded the wrapper to use a nightly Gradle build [gradle-8.14-20250222002553+0000](https\://services.gradle.org/distributions-snapshots/gradle-8.14-20250222002553+0000-bin.zip) in order to get support for the very latest Declarative Gradle features.
+For the migration of the Gradle-Client project, we evetually upgraded the wrapper to the latest stable Gradle build [gradle-8.14-milestone-4](https\://services.gradle.org/distributions/gradle-8.14-milestone-4-bin.zip) in order to get support for the very latest Declarative Gradle features.
 It is likely that by the time you are reading this, there will be a later milestone or release candidate of Gradle 8.14 available that would be usable for your own migrations.
 
 3. Identify the project to be migrated first
@@ -29,7 +31,11 @@ It is likely that by the time you are reading this, there will be a later milest
 We decided to start with the [`gradle-client` subproject](https://github.com/gradle/gradle-client/tree/main/gradle-client), as this was the most important and fully featured project contained in the Gradle Client build, which would be the most interesting to investigate.
 For your own migrations, you should probably consider which projects would be _simplest_ to migrate.
 Projects that are simpler and most similar to our declarative samples are good candidates.
-If your project _doesn't_ already use Gradle's Kotlin DSL, you'll want to migrate to this first from your Groovy build using the existing [migration guide](https://docs.gradle.org/current/userguide/migrating_from_groovy_to_kotlin_dsl.html) in the Gradle documentation.
+
+
+4. Enable Software Types in Kotlin DSL Scripts
+Set the org.gradle.kotlin.dsl.dcl flag in the root project's `gradle.properties` file.
+This will allow Gradle to understand Software Types used in `*.kts` buildscripts.
 
 3. Add the proper ecosystem plugin
 
@@ -37,7 +43,7 @@ The Declarative Gradle prototype maintains a KMP prototype plugin.
 As the `gradle-client` project is a Kotlin Multiplatform project, we added this plugin to the project's existing `settings.gradle.kts` file.
 Also, be sure to include the `gradlePluginPortal()` as a repository if your project doesn't already include this.
 
-
+In `/settings.gradle.dcl`, add, if not already present:
 ```
 pluginManagement {
     repositories {
@@ -57,7 +63,7 @@ Thing like declaring typical `implementation`, `api` and testing dependencies sh
 Migrating your dependencies to these is a good test of your setup.
 Remember that Declarative Software Types can be used from KTS files.
 
-We added the following to the `gradle-client` project's `build.gradle.kts` file:
+We added the following to the `/gradle-client/build.gradle.kts` file:
 
 
 ```
@@ -88,12 +94,14 @@ kotlinApplication {
 ```
 
 And we _removed_ these dependencies from the `jvmMain.dependencies` block where they were previously declared.
-Set the org.gradle.kotlin.dsl.dcl flag in the project's properties file.
+As this KMP project was only targeting the JVM platform, replacing the declarations in the `jvmMain.dependencies` with the `jvm.dependencies` block, will add them to the same configurations when the Software Type plugin applied, and the dependencies available to the project will remain identical after this change.
+
 Now the prototype plugin should be take care of wiring these dependencies into the appropriate configurations, and the project should continue to build and run without change.
 
 This represents the minimal configuration needed to make use of this `kotlinApplication` Software Type - which is why this snippet also declares the required JDK version information.
 
-Continue to do this for each of your dependencies.
+Continue to migrate each of your dependencies from the global `dependencies` block into the appropriate, more specific `dependencies` block provided by the new Software Type.
+The goal is to completely delete the global block.
 
 5. Setup an included build to define custom plugins
 
@@ -129,6 +137,10 @@ Discuss need for afterEvaluate...
 Convert files to DCL
 Build should still run
 
+
+
+
+
 ## Remaining TODOs
 
 Discuss stuff we couldn't migrate.
@@ -141,31 +153,16 @@ There's no easy button, but it's not THAT hard...
 It’s really nice to add something to the extension interface, hit refresh, and then get type-safe assistance on it immediately in the project build...
 
 
-# Hints and Tips
-
-- Add `@file:Suppress("UnstableApiUsage")` to the top of your KTS files during the intermediate stages to silence warnings about many of the DCL types.
-- DCL does not yet support Version Catalogs, so if you're using one, you'll need to convert your `libs.my.lib` dependency declarations to GAV coordinates like `org:mylib:1.4` when you're ready to switch from using Kotlin DSL files with Software Types to fully declarative DCL files.  This is annoying, but temporary.
-- DCL files don't allow infix notation.  If you were applying plugins like:
-
-```
-    plugins {
-        id("my.plugin") version "0.4"
-    }
-```
-
-switch to using chained calls like:
-```
-    plugins {
-        id("my.plugin").version("0.4")
-    }
-```
 
 
-## Footguns
-- It’s easy to forget to set org.gradle.kotlin.dsl.dcl flag in properties, but this is necessary to use Software Type plugins in non-DCL (KTS) files.
-- NDOC discussion...
-- Using the wrong annotation types
-- Other stuff from my notes
-- Unnecessary brackets are actually necessary...
+
+
+
+TODO
+- Mention that the platform didn't work in DCL until some recent changes
+- Mention that in a mature D-G ecosystem, we can imagine finding existing Software Type Feature plugins for Detekt, Compose and SQLDelight support that could be mixed into an existing Kotlin ecosystem plugins. For now, however, composability is still a work in progress.
+
+
+
 
 
