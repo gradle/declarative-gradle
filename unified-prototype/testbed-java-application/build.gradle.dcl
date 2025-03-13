@@ -2,6 +2,7 @@ javaApplication {
     // compile for 17
     javaVersion = 17
     mainClass = "com.example.App"
+    jvmArguments = listOf("-Xmx2G", "-XX:+HeapDumpOnOutOfMemoryError")
 
     dependencies {
         implementation(project(":java-util"))
