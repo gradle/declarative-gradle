@@ -47,18 +47,17 @@ To discuss the roadmap and the related initiatives, use the
 
 ## Third Early Access Preview (EAP)
 
-* Early March 2025
+* March 2025
 * Declarative Gradle can be used by early adopters for simple projects
   * Add support for testing to our prototype plugins
 * More DCL features to support the official Android Software Type
   * File and directory properties
   * `List<T>` properties
-  * Container defaults
 * Discovery work on the migration of existing builds
 
 ## Fourth Early Access Preview (EAP)
 
-* 2025 Q2
+* 2025 Q3
 * Validating the Software Types approach for Composability and Extensibility
   * Supporting new software features that are not part of the base software type
   * Adding/configuring code quality checks
