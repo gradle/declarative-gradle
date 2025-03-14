@@ -71,6 +71,7 @@ public class JvmPluginSupport {
     public static void linkApplicationMainClass(Project project, HasJvmApplication application) {
         JavaApplication app = project.getExtensions().getByType(JavaApplication.class);
         app.getMainClass().set(application.getMainClass());
+        app.setApplicationDefaultJvmArgs(application.getJvmArguments().get());
     }
 
     public static SourceSet setupCommonSourceSet(Project project) {

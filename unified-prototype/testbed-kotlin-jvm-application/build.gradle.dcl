@@ -1,6 +1,7 @@
 kotlinJvmApplication {
     javaVersion = 21
     mainClass = "com.example.AppKt"
+    jvmArguments = listOf("-Xmx2G", "-XX:+HeapDumpOnOutOfMemoryError")
 
     dependencies {
         implementation(project(":kotlin-jvm-util"))
