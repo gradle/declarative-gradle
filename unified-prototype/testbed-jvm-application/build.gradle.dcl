@@ -1,5 +1,6 @@
 jvmApplication {
     mainClass = "com.example.App"
+    jvmArguments = listOf("-Xmx2G", "-XX:+HeapDumpOnOutOfMemoryError")
 
     dependencies {
         implementation(project(":java-util"))

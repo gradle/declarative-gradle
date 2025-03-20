@@ -53,6 +53,7 @@ public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> 
             // Create a run task
             TaskProvider<JavaExec> runTask = project.getTasks().register(sourceSet.getTaskName("run", null), JavaExec.class, task -> {
                 task.getMainClass().set(dslModel.getMainClass());
+                task.getJvmArguments().set(dslModel.getJvmArguments());
                 task.setClasspath(sourceSet.getRuntimeClasspath());
             });
             dslModel.getRunTasks().add(runTask);
