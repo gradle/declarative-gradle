@@ -3,7 +3,15 @@ package com.example;
 import com.example.utils.Utils;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Example Java class.
+ */
 public class App {
+    /**
+     * Entry point.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         // Verify that Guava is available
         ImmutableList.Builder<String> builder = ImmutableList.builder();
