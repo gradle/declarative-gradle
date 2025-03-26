@@ -4,6 +4,12 @@ javaApplication {
     mainClass = "com.example.App"
     jvmArguments = listOf("-Xmx2G", "-XX:+HeapDumpOnOutOfMemoryError")
 
+    checkstyle {
+        checkstyleVersion = "9.3"
+        configDirectory = layout.settingsDirectory.dir("config")
+        configFile = layout.settingsDirectory.file("config/checkstyle.xml")
+    }
+
     dependencies {
         implementation(project(":java-util"))
         implementation("com.google.guava:guava:32.1.3-jre")

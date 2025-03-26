@@ -7,6 +7,7 @@ import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.plugins.ApplicationPlugin;
 import org.gradle.api.plugins.jvm.JvmTestSuite;
+import org.gradle.api.plugins.quality.CheckstylePlugin;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 import org.gradle.testing.base.TestingExtension;
 
@@ -32,6 +33,12 @@ public abstract class StandaloneJavaApplicationPlugin implements Plugin<Project>
 
         project.getExtensions().getByType(TestingExtension.class).getSuites().withType(JvmTestSuite.class).named("test").configure(JvmTestSuite::useJUnitJupiter);
 
+        dslModel.checkstyle(checkstyleDefinition -> {
+            checkstyleDefinition.getCheckstyleVersion().convention(CheckstylePlugin.DEFAULT_CHECKSTYLE_VERSION);
+            checkstyleDefinition.getConfigDirectory().convention(project.getLayout().getSettingsDirectory().dir("config"));
+            checkstyleDefinition.getConfigFile().convention(checkstyleDefinition.getConfigDirectory().file("checkstyle.xml"));
+        });
+
         linkDslModelToPlugin(project, dslModel);
     }
 
@@ -44,6 +51,7 @@ public abstract class StandaloneJavaApplicationPlugin implements Plugin<Project>
         JvmPluginSupport.linkMainSourceSourceSetDependencies(project, dslModel.getDependencies());
         JvmPluginSupport.linkTestJavaVersion(project, getJavaToolchainService(), dslModel.getTesting());
         JvmPluginSupport.linkTestSourceSourceSetDependencies(project, dslModel.getTesting().getDependencies());
+        JvmPluginSupport.linkCheckstyle(project, dslModel.getCheckstyle());
 
         dslModel.getRunTasks().add(project.getTasks().named("run"));
     }
