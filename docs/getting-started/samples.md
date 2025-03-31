@@ -9,6 +9,7 @@ All samples in this page can be used to demonstrate features made possible by De
 - [Java Application](#java-application)
 - [Kotlin Application](#kotlin-application)
 - [Android Application](#android-application)
+- [Gradle Client Application](#gradle-client-application)
 - [Now In Android](#now-in-android)
 - [Bleeding edge prototypes](#bleeding-edge-prototypes)
 
@@ -42,6 +43,12 @@ Please follow the README available at [gradle/declarative-samples-agp-app](https
 A sample Android application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `androidApplication` Software Type defined in the `org.gradle.experimental.android-ecosystem` ecosystem plugin.
 
 Please follow the README available at [gradle/declarative-samples-android-app](https://github.com/gradle/declarative-samples-android-app) to try this sample.
+
+## Gradle Client Application
+
+A visualization application aimed at demonstrating features in Declarative Gradle for which IDEA support is not yet fully developed.
+
+Please follow the README located at [gradle/gradle-client](https://github.com/gradle/gradle-client) to try out this application.
 
 ## Now In Android
 
