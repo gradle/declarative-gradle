@@ -58,6 +58,9 @@ The prototype repository can be found in [gradle/nowinandroid](https://github.co
 
 Please follow the [README](https://github.com/gradle/nowinandroid/blob/main-declarative/DECLARATIVE-README.md) to try this sample.
 
+> **_NOTE:_** This test project is not being actively updated as Declarative Gradle evolves. 
+> It was an experiment mainly done for validating the EAP 2 release and doesn't make use of newer features that would better model the project.
+
 ## Bleeding edge prototypes
 
 If you want to go further you can take a look at some more projects for JVM, Android, KMP, Swift and C++ projects. [These projects](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype) may use newer versions of Gradle or require additional manual setup, so you should try the other samples first.
