@@ -9,6 +9,7 @@ All samples in this page can be used to demonstrate features made possible by De
 - [Java Application](#java-application)
 - [Kotlin Application](#kotlin-application)
 - [Android Application](#android-application)
+- [Gradle Client Application](#gradle-client-application)
 - [Now In Android](#now-in-android)
 - [Bleeding edge prototypes](#bleeding-edge-prototypes)
 
@@ -43,6 +44,12 @@ A sample Android application written in the Declarative Gradle DSL, using the pr
 
 Please follow the README available at [gradle/declarative-samples-android-app](https://github.com/gradle/declarative-samples-android-app) to try this sample.
 
+## Gradle Client Application
+
+A visualization application aimed at demonstrating features in Declarative Gradle for which IDEA support is not yet fully developed.
+
+Please follow the README located at [gradle/gradle-client](https://github.com/gradle/gradle-client) to try out this application.
+
 ## Now In Android
 
 [Now in Android](https://github.com/android/nowinandroid) is a fully functional Android app built entirely with Kotlin and Jetpack Compose from the Android team.
@@ -50,6 +57,9 @@ We forked _Now in Android_ and updated the build to work with Declarative Gradle
 The prototype repository can be found in [gradle/nowinandroid](https://github.com/gradle/nowinandroid).
 
 Please follow the [README](https://github.com/gradle/nowinandroid/blob/main-declarative/DECLARATIVE-README.md) to try this sample.
+
+> **_NOTE:_** This test project is not being actively updated as Declarative Gradle evolves. 
+> It was an experiment mainly done for validating the EAP 2 release and doesn't make use of newer features that would better model the project.
 
 ## Bleeding edge prototypes
 
