@@ -41,7 +41,7 @@ For more information, see the [Software Features reference](https://declarative.
 
 ### 3. Convert your settings files to use DCL
 
-First, rename your `/settings.gradle.kts` file to a `/settings.gradle.dcl` file.
+First, rename your `settings.gradle.kts` file to a `settings.gradle.dcl` file.
 This may require you to comment out or relocate any features that are not currently supported by the DCL.
 For example, one commonly used feature that is not yet supported in DCL is [repository content filtering](https://docs.gradle.org/current/userguide/filtering_repository_content.html#sec:declaring-content-repositories). 
 Such logic must be moved into project-level build scripts if it is necessary to continue to use it (this particular feature is usually an optional performance optimization).
@@ -63,13 +63,13 @@ For example:
 
 ```
 plugins {
-  // … existing plugins used
+  // ... existing plugins used
 }
 
-// … other imperative configuration
+// ... other imperative configuration
 
 mySoftwareType {
-  // …declarative configuration
+  // ... declarative configuration
 }
 ```
 
