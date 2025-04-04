@@ -2,76 +2,124 @@
 
 ## Introduction
 
-This page provides overview of how to migrate existing builds to begin using Gradle's new Declarative Configuration Language (DCL) in an existing project.
-It discusses pain points, gotchas and other interesting nuggets informed by an actual migration.
+This page provides an overview of how to update existing builds to use Gradle's new Declarative Configuration Language (DCL).
 
-Note that as of this writing (early March 2025) DCL's support for composability and extensibility is not yet available in EAP 3, so the approach outlined here is not meant to be the final state of this process.
-We recognize that there are major areas for improvement, and are actively exploring changes we hope to make available in the next EAP release.
-However, despite these limitations, we think that this guide will still be useful to early adopters who are eager to experiment with DCL _now_.
+As of the latest release (EAP 3) available at the time of writing (early April 2025) DCL's support for composability and extensibility is not yet available. 
+The approach outlined here should be considered temporary and not the final state of the migration process.
+We recognize that there are major areas for improvement, and we are actively exploring changes we hope to make available in the next EAP release.
+However, despite these limitations, we think this guide will be useful to early adopters who are eager to experiment with Gradle’s new DCL _now_.
+
+This guide is meant as an overview of a typical migration process.
+For a detailed exploration of an actual migration, see the [Migration Case Study](migrating-case-study.md).
 
 ## Migration Process
 
-The important steps of the migration process to follow are outlined below.
+The important major steps of the migration process are outlined below.
 
-1. Identify a project migration order
+### 1. Decide which projects to migrate first
 
-In is likely in a multi-project build that some projects will be much easier to convert to DCL than others.
-The less imperative logic, third-party plugins, and atypical configuration is present in a buildscript, the easier it will be to convert.
-Project that look similar to one of our [Declarative Samples](https://declarative.gradle.org/docs/getting-started/samples/), or the output of Gradle's built-in [build init plugin](https://docs.gradle.org/current/userguide/build_init_plugin.html), are good candidates to be converted first.
-Starting with simpler projects allows you to verify that Declarative Gradle is properly setup and should make debugging issues with more complex projects easier.
+In a multi-project build, some projects will likely be much easier to convert to DCL than others.
+Projects with minimal imperative logic, that use fewer third-party plugins, and do typical, idomatic configuration in the buildscript, are easier to convert.
+Projects that resemble our [Declarative Samples](https://declarative.gradle.org/docs/getting-started/samples/), or the output of Gradle's built-in [build init plugin](https://docs.gradle.org/current/userguide/build_init_plugin.html) are strong candidates to migrate first.
+Starting with simpler projects allows you to verify that Declarative Gradle is properly setup, and makes debugging issues easier.
 
-Keep in mind is that using Declarative Gradle is *not* an all or nothing proposition.
-Gradle has always supported mixing build script DSLs between projects in a multi-project build using Groovy and Kotlin DSLs.
-It continues to support doing the same with DCL buildscripts, which allows us to migrate project by project.
+Keep in mind that using Declarative Gradle is *not* an all or nothing process.
+Gradle supports mixing DSLs within a multi-project build — Groovy and Kotlin DSLs can coexist, and so can DCL.
+This allows you to migrate a build incrementally, project by project.
 
-2. Ready the project for DCL
+### 2. Prepare the project for Declarative Gradle
 
-First, the project you are converting _doesn't_ already use Gradle's Kotlin DSL, you should migrate to it using the existing [migration from Groovy DSL guide](https://docs.gradle.org/current/userguide/migrating_from_groovy_to_kotlin_dsl.html) in the Gradle documentation.
-You should also ensure you are using the latest stable Gradle build, at least [the latest used by the Declarative Gradle prototype plugins](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/gradle/wrapper/gradle-wrapper.properties). 
+If the project you are converting _doesn't_ already use Gradle's Kotlin DSL, begin by converting it using the official [Groovy to Kotlin DSL migration guide](https://docs.gradle.org/current/userguide/migrating_from_groovy_to_kotlin_dsl.html).
+Also ensure you are using the latest stable Gradle version, at minimum [the current version used by the Declarative Gradle prototype plugins](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/gradle/wrapper/gradle-wrapper.properties). 
 
-Next, enable Software Types in Kotlin DSL Scripts by setting the `org.gradle.kotlin.dsl.dcl=true` flag in the root project's `gradle.properties` file.
-This will allow Gradle to understand Software Types used in `*.kts` buildscripts alongside other imperative project configuration logic.
+Next, enable Software Types in Kotlin DSL scripts by setting the `org.gradle.kotlin.dsl.dcl=true` flag in the root project's `gradle.properties` file.
+This flag allows Gradle to understand Software Types used in `*.kts` buildscripts alongside imperative project configuration logic.
 
-You'll also need to identify which declarative _ecosystem plugins_ (such as the [`jvm-ecosystem` plugin](https://plugins.gradle.org/plugin/org.gradle.experimental.jvm-ecosystem)) to apply in order to make the Software Types you wish to use available to your project.
-See the page on [Software Features](https://declarative.gradle.org/docs/reference/software-features/) in the Declarative Gradle documentation for more information on these topics.
+Finally, identify which declarative _Ecosystem Plugins_  are needed to expose the Software Types relevant to your project. 
+For example, apply the [`jvm-ecosystem` plugin](https://plugins.gradle.org/plugin/org.gradle.experimental.jvm-ecosystem) if you’re working with JVM projects.
+For more information, see the [Software Features reference](https://declarative.gradle.org/docs/reference/software-features/) in the Declarative Gradle documentation.
 
-3. Declarativize your settings
+### 3. Convert your settings files to use DCL
 
-Convert your `/settings.gradle.kts` file to a `/settings.gradle.dcl` file.
-This requires renaming the file, and may involve commenting out or relocating to project buildscripts any features that are not currently supported by the DCL (for instance repository content filtering).
+First, rename your `/settings.gradle.kts` file to a `/settings.gradle.dcl` file.
+This may require you to comment out or relocate any features that are not currently supported by the DCL.
+For example, one commonly used feature that is not yet supported in DCL is [repository content filtering](https://docs.gradle.org/current/userguide/filtering_repository_content.html#sec:declaring-content-repositories). 
+Such logic must be moved into project-level build scripts if it is necessary to continue to use it (this particular feature is usually an optional performance optimization).
 
-Apply the ecosystem plugins your build will use in the `plugins` block in this file (add one if it doesn't already exist) and verify your build still runs. 
+Next, apply the required ecosystem plugins using a `plugins` block in the settings file - add one if it doesn't already exist.
+Then run your build to ensure everything still works correctly.
 
-4. Declarativize simple projects
+### 4. Convert simple projects to use DCL
 
-Any Declarative Gradle builds (those that make use of a `settings.gradle.dcl` file) can include a mix of declarative projects using `*.dcl` buildscripts, and non-declarative projects using Gradle's Groovy or Kotlin DSLs.
-So there is no need to convert every project in your build at once.
-You should start with the simplest projects that can already be nicely described by existing declarative Software Types, such as Gradle's prototype ecosystem plugins.
+Once you’ve setup Declarative Gradle in settings file like this, you can begin migrating individual projects using a gradual, low-risk approach. 
+Declarative Gradle supports mixed builds – using `*.dcl` buildscripts alongside traditional Groovy or Kotlin DSLs.
+There is no need to migrate everything at once.
 
-Convert these projects one at a time, by renaming the file from `build.gradle.kts` to `build.gradle.dcl`, and replacing the entire contents of their buildscripts with the Software Type from the ecosystem plugin you applied to your settings file that describes it.
+Start with the simplest projects that can be nicely described by existing declarative Software Types, such as [Gradle's prototype ecosystem plugins](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype).
 
-Configure the Software Type by adding dependencies, setting version information, project description, and any other property values to reproduce what was done in the original imperative buildscript.
-This may involve commenting out or relocating any features that are not currently supported by the DCL or that Software Type.
+Software Types can be used in Kotlin DSL buildscripts once the appropriate Ecosystem Plugin is applied in your settings file. 
+You can add a new block to the bottom of your `build.gradle.kts` file using the `modelPublicType` from the `@SoftwareType` getter of the type you will be using.
+For example:
 
-Verify your build still runs. 
+```
+plugins {
+  // … existing plugins used
+}
 
-5. Setup a Composite build
+// … other imperative configuration
 
-The current lack of composability in DCL makes it very likely you'll need to create custom Software Types for some of the more complex projects in your builds.
-After finishing converting the easy projects, you'll want to setup a [Composite build](https://docs.gradle.org/current/userguide/composite_builds.html#defining_composite_builds) that your build uses.
+mySoftwareType {
+  // …declarative configuration
+}
+```
 
-The additional build included by your composite builds (often called the "included build" due to the method used to register it in your settings file), is a fully independent builds that makes its products implicitly available to your build.
-You can use a composite build to write declarative plugins that define new Software Types.
-These Software Types can be published and used anywhere, but you will probably only want to use them within the build you are migrating.
-Setting up a composite build will make this usage straightforward.
+Depending on the defaults and conventions implemented in this Software Type, your project's configuration, and how they may conflict, your project may or may not continue to be buildable at this point.
 
-See the Gradle documentation linked above for information on how to do this. 
+Once the appropriate Ecosystem Plugin is applied in your settings, begin migrating configuration into the Software Type’s extension.
+For example, any `dependencies` declared by your project in Gradle’s top-level `dependencies` block be moved to the equivalent location provided by your Software Type’s extension.
 
-6. Create custom Software Types for complex projects
+Fully configure the Software Type by: 
+- Adding all dependencies
+- Setting version information
+- Providing necessary directory values
+- Assigning any other property values needed
 
-Now that you have a location to put it, it's time to define a new project in your included build that will hold your new plugins.
-This project can _also_ use Gradle's DCL.
-Create a `settings.gradle.dcl` file in the root of your included build and apply the Gradle Plugin Ecosystem plugin it it:
+You may need to comment out or relocate any features that are not currently supported by the DCL or the Software Type in use.
+Starting with simple projects helps reduce the likelihood of hitting these limitations early in the migration process.
+
+For a detailed walkthrough, see our [Case Study](migrating-case-study.md) which demonstrates this approach in a real multi-project build. 
+
+Once all configuration has been moved into the Software Type and the project builds successfully:
+- Rename the file from `build.gradle.kts` to `build.gradle.dcl`
+- Verify your build again
+
+Congratulations, you’ve now successfully migrated a project to Declarative Gradle.
+
+Continue migrating your simpler projects one at a time. 
+Stop when you reach a project that is too complex to migrate cleanly.
+This can easily happen due to 3rd party plugins or custom build-logic.  
+You can revisit options here as DCL support continues to expand.
+
+### 5. Setup a Composite build
+
+As you migrate more complex projects, you may find that existing Software Types do not cover all your configuration needs. 
+It may be necessary to create custom Software Types to support advanced or project-specific features.
+To support this, set up a [Composite build](https://docs.gradle.org/current/userguide/composite_builds.html#defining_composite_builds) for rapid development of declarative plugins.
+
+A composite build allows you to include an additional build — often called an "included build" due to the method used to register it in your settings file.  
+This included build is a fully independent build that produces products which your main build can automatically use.
+Use this included build to define and test custom declarative plugins, including new Software Types tailored to your needs that can be used by the build you are migrating. 
+The composite build makes it easy to iterate on these custom types as your migration progresses.
+
+See the [Gradle documentation on composite builds](https://docs.gradle.org/current/userguide/composite_builds.html#defining_composite_builds) for further instructions.
+
+### 6. Create custom Software Types
+
+Once you’ve set up an included build, you can use it to define custom declarative plugins for your complex projects.
+Start by creating a new project in the included build to hold your plugins. 
+This project itself can also use Declarative Gradle.
+
+Create a `settings.gradle.dcl` file in the root of your included build and apply the Gradle Plugin Ecosystem plugin in it:
 
 ```
 plugins {
@@ -79,75 +127,118 @@ plugins {
 }
 ```
 
-This plugin will allow you declaratively create new Software Types in Java.
-See the page on [Software Features](https://declarative.gradle.org/docs/reference/software-features/) in the Declarative Gradle documentation for more information on how to do this topics.
-It's also helpful to look at some of [the prototype plugins](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype/unified-plugin) built in our prototype.
+This Declarative Gradle plugin allows you to create new Software Types in Java.
 
-You'll need to provide at least 4 parts:
-- A top-level extension that will be configured in the DCL file by any project using this Software Type.
-- A Software Type plugin, that implements `Plugin<Project>` and has a `public abstract` getter annotated with `@SoftwareType` that exposes that extension type.
-- A "Ecosystem" plugin, that implements `Plugin<Settings>`, and registers your software type via `@RegistersSoftwareTypes(MySoftwareTypePlugin.class)`.
-- Registration of the new plugins in the `build.gradle.dcl` file in the project that contains them, using the `registers` block provided by the `javaGradlePlugin` Software Type's top-level extension. 
+See the [Software Features reference](https://declarative.gradle.org/docs/reference/software-features/) for more information on how to implement Software Types.
+It's also helpful to review [the prototype plugins](https://github.com/gradle/declarative-gradle/tree/main/unified-prototype/unified-plugin) used to build the current test projects used in development.
 
-Exactly how to build these Software Types depends on the particulars of the projects you intend to use them, what plugins those project use, and how those projects are configured in their existing buildscripts.  
-Continue reading [a mini-"Case Study"](migration-case-study.md) of our efforts to convert an actual existing project.
+A Software Type plugin requires at least 4 parts:
+1. A *top-level DSL interface* that will be configured in the DCL file by any project using this Software Type
+2. A *Software Type plugin* that implements `Plugin<Project>` and has a `public abstract` getter annotated with `@SoftwareType` exposing the DSL interface
+3. An *"Ecosystem" plugin* that implements `Plugin<Settings>` and registers the software type via `@RegistersSoftwareTypes(MySoftwareTypePlugin.class)`
+4. *Registration of the new plugins* in the `build.gradle.dcl` file of the project that contains them using the `registers` block provided by the `javaGradlePlugin` Software Type's top-level extension 
 
-8. Declarativize complex projects
+How you implement these parts depends on the specific needs of the projects you are targeting, what plugins they use, and how they are configured.
 
-Add your new Ecosystem plugin to the list of plugins your project's `settings.gradle.dcl` file.
-Add your new Software Type extension to your project's existing `build.gradle.kts` file.
-Now configure the new Software Type, moving things like verion and dependency declarations from the imperative parts of your buildscript, which comprises everything outside of your Software Type extension, to the declarative part inside of it.
+For a detailed example of this process, check out [a mini-"Case Study"](migration-case-study.md).
+As a starting point, consider copying a simple prototype like the `jvm-library` Declarative plugin.
 
-This is likely iterative process, where you will incrementally migrate bits of configuration from the imperative part of your buildscript to the Software Type, then realize you are lacking functionality in the Software Type and reengineer it to expand its capabilitys, then continue migrating functionality, until you are finished.
-Fortunately, the included build will make rapidly testing changes to your plugin and updating your buildscript very easy.
-Verifying your build after moving each bit of configuration is highly recommended.
+### 7. Convert complex projects to use DCL
 
-The goal is to completely migrate _everything_ contained in your buildscript to the Software Type so that the imperative part shrinks to empty.
-After this is finished, you can rename the file to `build.gradle.dcl` and 
+Once you've created a custom Software Type, you're ready to apply it to more complex projects.
 
-9. Continue until all projects are using DCL
+Start by:
+- Adding your new Ecosystem Plugin to the list of plugins in your `settings.gradle.dcl` file
+- Adding your new Software Type block to your project's existing `build.gradle.kts` file
+- Configuring the new Software Type in the same way as you did with your simpler projects using pre-existing prototype Declarative plugins, by moving things like version and dependency declarations from the imperative parts of your buildscript, to the declarative part inside of your new Software Type
 
-Once you have your included build set up, and your first custom Software Type plugin used by one of your projects, you should find it easy to repeat this proces for all the projects in your build that require customization.
+This process is iterative. 
+You’ll migrate a piece of configuration, then realize the Software Type is missing some capability. 
+Update the plugin in your included build, test again, and repeat.
+This feedback loop is fast, since your included build and project are part of the same composite build, so you can test both together with a single build invocation.
 
-As all projects in your build are now fully declarative, you can delete the `org.gradle.kotlin.dsl.dcl=true` flag from your `gradle.properties`.
+Validating your build frequently after each change is highly recommended.
+Before migrating any configuration, you should verify that your custom Software Type is correctly wired into the build:
+- Create an empty type that does absolutely nothing
+- Use it in your existing project’s *.kts file 
+- Confirm it does not affect your build (unlike using the pre-existing prototype plugins, which may have requirements or clash with your project’s conventions)
 
-10. (Optional) Extract common project configuration to defaults
+This helps ensure that the integration is sound before you begin migrating real logic.
 
-Now that you have all your projects converted, you can look to make your build more DRY by extracting common configuration to the `defaults` block in your root `settings.gradle.dcl` file.
-For every Software Type you use, if you always set a certain property to the same value (for example, setting a jdk version), you can set this just once and avoid duplication.
+You should save your project before attempting to migrate larger bits of configuration, such as the application of each 3rd party plugin, into your Declarative Software Type plugin’s logic.
 
-See [the androidLibrary defaults](https://github.com/gradle/declarative-gradle/blob/main/unified-prototype/settings.gradle.kts#L27) in our Gradle prototype plugins repository for an example of this.
+Once all logic has been moved into your Software Type and the imperative part of the build script is empty:
+- Rename the file to `build.gradle.dcl`
+- Verify your build one last time
 
-## Hints and Tips
+### 8. Continue until all projects are using DCL
 
-- Add `@file:Suppress("UnstableApiUsage")` to the top of your KTS files during the intermediate stages to silence warnings about many of the DCL types.
-- DCL does not yet support Version Catalogs, so if you're using one, you'll need to convert your `libs.my.lib` dependency declarations to GAV coordinates like `org:mylib:1.4` when you're ready to switch from using Kotlin DSL files with Software Types to fully declarative DCL files.  This is annoying, but temporary until a better solution to reusable version declarations is made available in a future EAP.
+Once you’ve successfully set up your included build and applied your first custom Software Type to a project, you can continue migrating the remaining projects that require customization using the same approach.
 
-## Footguns
-- DCL files don't allow infix notation.  If you were previously applying plugins like:
+Repeat the process—refining or extending your Software Types as needed—until every project in your build uses a declarative build script (`*.dcl` file).
+
+When all the projects in your build are fully declarative, and every buildscript files present is a `*.dcl` file (meaning there are no remaining `*.kts` or `*.gradle` files), remove the `org.gradle.kotlin.dsl.dcl=true` flag from your `gradle.properties`.
+
+### 9. (Optional) Extract common project configuration to defaults
+
+Once your build is fully migrated, you can reduce duplication by extracting common configuration to the `defaults` block in your root `settings.gradle.dcl` file.
+If you find that certain properties are always set to the same value across multiple projects using the same Software Types (for example, setting the same JDK version in every library project), you can configure this just once in `defaults` rather than repeating it in each build script.
+
+You can see an example of this pattern in [the androidLibrary defaults block](https://github.com/gradle/declarative-gradle/blob/v0.1.44/unified-prototype/settings.gradle.kts#L28) in the Declarative Gradle prototype plugins repository.
+
+## Hints, Tips and Footguns
+
+Add `@file:Suppress("UnstableApiUsage")` to the top of your KTS files during the intermediate stages to silence IDE warnings about many of the DCL types being `@Incubating`.
+
+DCL does not yet support Version Catalogs, so if you're using one, you'll need to convert your `libs.my.lib` dependency declarations to GAV coordinates like `org:mylib:1.4`.  
+These are supported within Kotlin DSL (`*.kts`) buildscripts using Software Types but *not* within fully declarative `*.dcl` files.
+This is annoying, but temporary until a better solution to reusable version declarations in DCL is made available in a future EAP.
+If your organization allows it, your AI assistant of choice is likely very able to do this conversion if you provide your Version Catalog file and dependencies block, and ask it to produce the same dependencies using inline GAV coordinates no longer referencing the catalog file.
+
+DCL files don't allow infix notation.  If you were previously applying plugins like:
 
 ```
-    plugins {
-        id("my.plugin") version "0.4"
-    }
+plugins {
+    id("my.plugin") version "0.4"
+}
 ```
 
 switch to using chained calls like:
+
 ```
-    plugins {
-        id("my.plugin").version("0.4")
-    }
+plugins {
+    id("my.plugin").version("0.4")
+}
 ```
-- NDOC discussion...
-- Using the wrong annotation types
-- Other stuff from my notes
-- Unnecessary brackets are actually necessary...
 
+When configuring Software Types, you may find yourself needing to use explicit empty pairs of braces (`{}`), especially when adding new elements to `NamedDomainObjectContainer`s, even if it is not necessary to perform any configuration on these new elements. 
+This is due to limitations in our DCL parser, and may be addressed in a future version; for now, these empty pairs of braces remain necessary to avoid confusing parsing errors.
 
-TODO
-- Continue expanding Footguns
+The names of the annotation types used by Declarative Gradle are fairly common.
+Make sure you are using the proper DCL annotations:
 
+```
+org.gradle.api.tasks.Nested;
+org.gradle.declarative.dsl.model.annotations.Configuring;
+org.gradle.declarative.dsl.model.annotations.Restricted;
+```
 
+You might think to avoid some of the complexity of using an included build by making use of `buildSrc` to define your new plugins, especially if your build already uses `buildSrc` for other purposes.  
+This will *not* work for your Ecosystem Plugins.
+`buildSrc` is built by Gradle only _after_ your build’s settings script is evaluated, so you can’t put `Plugin<Settings>`s in there and expect to be able to apply them in your `settings.gradle.kts/dcl` file.  
+You need to use an included build (or an external dependency) to define the plugins you want to use for this.
 
+Many DCL error messages are not yet polished and can be confusing.
+For example:
 
+If you use `@Restricted` instead of `@Nested` on an inner block type, you get unhelpful messages like:
 
+```
+org.gradle.api.internal.plugins.PluginApplicationException: Failed to apply plugin class 'org.gradle.client.softwaretype.CustomDesktopComposeApplicationPlugin'.
+...
+Caused by: org.gradle.internal.instantiation.ClassGenerationException: Could not generate a decorated class for type CustomDesktopComposeApplication.
+...
+Caused by: org.gradle.api.reflect.ObjectInstantiationException: Could not create an instance of type org.gradle.client.softwaretype.CustomDesktopComposeApplication.
+...
+Caused by: java.lang.IllegalArgumentException: Cannot have abstract method CustomDesktopComposeApplication.getCompose().
+```
