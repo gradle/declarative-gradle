@@ -10,7 +10,7 @@ We recognize that there are major areas for improvement, and we are actively exp
 However, despite these limitations, we think this guide will be useful to early adopters who are eager to experiment with Gradle’s new DCL _now_.
 
 This guide is meant as an overview of a typical migration process.
-For a detailed exploration of an actual migration, see the [Migration Case Study](migrating-case-study.md).
+For a detailed exploration of an actual migration, see the [Migration Case Study](migration-case-study.md).
 
 ## Migration Process
 
@@ -87,7 +87,7 @@ Fully configure the Software Type by:
 You may need to comment out or relocate any features that are not currently supported by the DCL or the Software Type in use.
 Starting with simple projects helps reduce the likelihood of hitting these limitations early in the migration process.
 
-For a detailed walkthrough, see our [Case Study](migrating-case-study.md) which demonstrates this approach in a real multi-project build. 
+For a detailed walkthrough, see our [Case Study](migration-case-study.md) which demonstrates this approach in a real multi-project build. 
 
 Once all configuration has been moved into the Software Type and the project builds successfully:
 - Rename the file from `build.gradle.kts` to `build.gradle.dcl`
