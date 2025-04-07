@@ -1,15 +1,13 @@
 # Declarative Gradle - Share Feedback
 
 While Declarative Gradle is in early stages, you can explore the project samples and some of the features.
-Check out the [Getting Started Guide](./getting-started/README.md) tfor the pointer.
+Check out the [Getting Started Guide](./getting-started/README.md) for the pointer.
 Initial feedback on the DSL, early demos, features and use-cases will be appreciated!
 
 ## Slack
 
 We have a `#declarative-gradle` channel on the [Gradle Community Slack](https://community.gradle.org/contributing/community-slack/).
 It is a main discussion channel for the feature and for Q&A.
-
-If you are a Kotlin user, there is also a `#gradle` channel on the [Kotlin Foundation Slack](https://community.gradle.org/contributing/community-slack/).
 
 ## GitHub Issues
 
