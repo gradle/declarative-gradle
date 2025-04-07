@@ -11,7 +11,7 @@ Below, you can see the key milestones we anticipate.
 | ----------------------------------- |:-:| ------------: |
 | First Early Access Preview (EAP)    | ✅ |     July 2024 |
 | Second Early Access Preview (EAP 2) | ✅ | November 2024 |
-| Third Early Access Preview (EAP 3)  | 🏗️ |    March 2025 |
+| Third Early Access Preview (EAP 3)  | 🏗️ |    April 2025 |
 | Incubating Software Types and DCL   | ⏳ |          2025 |
 | Stable Software Types and DCL       | ⏳ |          2026 |
 
@@ -47,7 +47,7 @@ To discuss the roadmap and the related initiatives, use the
 
 ## Third Early Access Preview (EAP)
 
-* March 2025
+* April 2025
 * Declarative Gradle can be used by early adopters for simple projects
   * Add support for testing to our prototype plugins
 * More DCL features to support the official Android Software Type
