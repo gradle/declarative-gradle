@@ -9,8 +9,6 @@ Initial feedback on the DSL, early demos, features and use-cases will be appreci
 We have a `#declarative-gradle` channel on the [Gradle Community Slack](https://community.gradle.org/contributing/community-slack/).
 It is a main discussion channel for the feature and for Q&A.
 
-If you are a Kotlin user, there is also a `#gradle` channel on the [Kotlin Foundation Slack](https://community.gradle.org/contributing/community-slack/).
-
 ## GitHub Issues
 
 For any bug report or feature request,
