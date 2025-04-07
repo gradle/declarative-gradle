@@ -1,7 +1,7 @@
 # Declarative Gradle - Share Feedback
 
 While Declarative Gradle is in early stages, you can explore the project samples and some of the features.
-Check out the [Getting Started Guide](./getting-started/README.md) tfor the pointer.
+Check out the [Getting Started Guide](./getting-started/README.md) for the pointer.
 Initial feedback on the DSL, early demos, features and use-cases will be appreciated!
 
 ## Slack
