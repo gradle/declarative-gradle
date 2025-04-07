@@ -1020,7 +1020,7 @@ We're exploring ways to address this in future releases.
 
 ## Conclusion
 
-There's no “easy button”, but as this case study shows, it's not _that_ hard to start using DCL in a real-world build.
+There's no “easy button”, but as this case study shows, if you already know how to write Gradle Plugins, it's not _that_ hard to start using DCL in a real-world build.
 And the benefits of moving toward a declarative Gradle paradigm are significant.
 
 Shaping your DSL to match the structure of the plugins you want to wire it to is, at this stage, still more of an art than a science.
