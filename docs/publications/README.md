@@ -1,9 +1,10 @@
-# Declarative Gradle. Publications
+# Declarative Gradle Publications
 
 ## Official Updates
 
-- [Declarative Gradle - November 2024 Update](./../EAP2.md) by Paul Merlin - November 2024
-- [Early Access Preview (EAP) Announcement](./../EAP.md) by Sterling Greene - July 2024
+- [Declarative Gradle EAP3](./../EAP3.md) by Sterling Greene - April 2025
+- [Declarative Gradle EAP2](./../EAP2.md) by Paul Merlin - November 2024
+- [Declarative Gradle EAP1](./../EAP.md) by Sterling Greene - July 2024
 - [Project Announcement](https://blog.gradle.org/declarative-gradle) by Piotr Jagielski - November 2023 - Initial project announcement and the manifesto
 
 ## Articles
@@ -15,7 +16,7 @@
 ## News
 
 We publish monthly updates on Declarative Gradle as a part of the
-[Gradle Build Tool Newslettter](https://newsletter.gradle.org/).
+[Gradle Build Tool Newsletter](https://newsletter.gradle.org/).
 Make sure to subscribe!
 
 ## Conference Presentations
