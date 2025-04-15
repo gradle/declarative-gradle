@@ -93,6 +93,8 @@ nav:
     - Overview: docs/reference/README.md
     - Generate new builds: docs/reference/build-init.md
     - Software Features: docs/reference/software-features.md
+    - Migration Guide: docs/reference/migration-guide.md
+    - Example Project Migration: docs/reference/migration-case-study.md
     - Roadmap: docs/ROADMAP.md
   - Resources:
     - Publications: docs/publications/README.md
