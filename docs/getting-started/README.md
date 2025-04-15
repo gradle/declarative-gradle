@@ -6,7 +6,7 @@ That post introduced our ideas for a developer-first software definition and how
 Since then, we've been working hard to create sample projects and add support for Declarative Gradle in Android Studio, IntelliJ and VSCode. 
 
 !!! info
-    With each EAP, we would like you to try out what we have built so far.
+    After each EAP, we encourage you to try out what we have built so far and tell us what you think!
 
     Declarative Gradle is **ready** for trying out our provided sample projects for Java, Kotlin and Android applications.
 
