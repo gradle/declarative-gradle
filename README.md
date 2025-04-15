@@ -14,7 +14,7 @@ blog post and [other publications](./docs/publications/README.md).
 
 ## Status
 
-_Declarative Gradle_ is an **experimental** project, now in its [second Early Access Preview (EAP)](./docs/EAP2.md).
+_Declarative Gradle_ is an **experimental** project, now in its [third Early Access Preview (EAP)](./docs/EAP3.md).
 We invite you to [try out Declarative Gradle](./docs/getting-started/README.md),
 and to [share feedback](./docs/feedback.md).
 The project includes the following experimental parts:

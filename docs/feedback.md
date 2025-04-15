@@ -18,9 +18,9 @@ Later, we may move them into the main Gradle repository.
 ## Feedback Form
 
 If the form below does not load,
-use [this link](https://docs.google.com/forms/d/e/1FAIpQLSefobpybAJK-C1ADdAvhlvf8egvdMzxIi_sGVDKa4G26MfTcg/viewform)
+use [this link](https://forms.gle/EZKg9YL8gV7uE81e9)
 
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSefobpybAJK-C1ADdAvhlvf8egvdMzxIi_sGVDKa4G26MfTcg/viewform?embedded=true" width="100%" height="2345" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdoUOOt0v4f2Db34vyEVpMEHG1SCNTMP1qSQtZVAudMMlr4aw/viewform?embedded=true" width="100%" height="2345" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 
 ## Spread the Word!
 
