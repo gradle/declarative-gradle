@@ -41,9 +41,7 @@ While syntax highlighting of `.gradle.dcl` files works out of the box in Studio 
 
 ### IntelliJ IDEA
 
-Download and install a special IntelliJ IDEA Nightly release.
-You can find the promoted nightly releases in [this Google Drive folder](https://drive.google.com/drive/folders/19iWu2F4dYs0Vc9xFMkSwY7wizKk-YMKl) for macOS (Apple Silicon and Intel), Windows and Linux.
-Pick the most recent one that matches your operating system.
+Download and install the latest [IntelliJ 2025.2 EAP](https://www.jetbrains.com/idea/nextversion/) release. Earlier releases do not fully support DCL features. 
 
 Follow the same instructions as with [Android Studio](#android-studio) above to enable Declarative features.
 
