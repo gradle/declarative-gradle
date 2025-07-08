@@ -12,7 +12,7 @@ Below, you can see the key milestones we anticipate.
 | First Early Access Preview (EAP)    | ✅ |     July 2024 |
 | Second Early Access Preview (EAP 2) | ✅ | November 2024 |
 | Third Early Access Preview (EAP 3)  | ✅ |    April 2025 |
-| Fourth Early Access Preview (EAP 4) | ✅ |       2025 Q3 |
+| Fourth Early Access Preview (EAP 4) | ⏳ |       2025 Q3 |
 | Incubating Software Types and DCL   | ⏳ |          2026 |
 | Stable Software Types and DCL       | ⏳ |          2027 |
 
