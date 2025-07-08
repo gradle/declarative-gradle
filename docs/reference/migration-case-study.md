@@ -391,7 +391,7 @@ kotlinJvmLibrary {
 }
 ``` 
 
-You can see this implemented in [the Kotlin prototype plugin](https://github.com/gradle/declarative-gradle/tree/v0.1.41/unified-prototype/unified-plugin/plugin-kmp/src/main/java/org/gradle/api/experimental/kmp/KmpLibrary.java`), where the Software Type extends the `HasLibraryDependencies` interface defined in [HasLibraryDependencies.java]( https://github.com/gradle/declarative-gradle/tree/v0.1.41/unified-prototype/unified-plugin/plugin-common/src/main/java/org/gradle/api/experimental/common/HasLibraryDependencies.java):
+You can see this implemented in [the Kotlin prototype plugin](https://github.com/gradle/declarative-gradle/tree/v0.1.41/unified-prototype/unified-plugin/plugin-kmp/src/main/java/org/gradle/api/experimental/kmp/KmpLibrary.java), where the Software Type extends the `HasLibraryDependencies` interface defined in [HasLibraryDependencies.java]( https://github.com/gradle/declarative-gradle/tree/v0.1.41/unified-prototype/unified-plugin/plugin-common/src/main/java/org/gradle/api/experimental/common/HasLibraryDependencies.java):
 
 ```
 public interface HasLibraryDependencies {
