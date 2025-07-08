@@ -12,8 +12,9 @@ Below, you can see the key milestones we anticipate.
 | First Early Access Preview (EAP)    | ✅ |     July 2024 |
 | Second Early Access Preview (EAP 2) | ✅ | November 2024 |
 | Third Early Access Preview (EAP 3)  | ✅ |    April 2025 |
-| Incubating Software Types and DCL   | ⏳ |          2025 |
-| Stable Software Types and DCL       | ⏳ |          2026 |
+| Fourth Early Access Preview (EAP 4) | ✅ |       2025 Q3 |
+| Incubating Software Types and DCL   | ⏳ |          2026 |
+| Stable Software Types and DCL       | ⏳ |          2027 |
 
 The Gradle feature lifecycle is documented in the [user manual](https://docs.gradle.org/current/userguide/feature_lifecycle.html#sec:incubating_state).
 
@@ -60,11 +61,21 @@ To discuss the roadmap and the related initiatives, use the
 * 2025 Q3
 * Validating the Software Types approach for Composability and Extensibility
   * Supporting new software features that are not part of the base software type
-  * Adding/configuring code quality checks
-  * Adding/configuring source-generation/bytecode-manipulation
-* More DCL features
-  * `Map<K, V>` properties
-  * Container defaults
+  * Interraction between software features and with the software type
+  * Defining defaults for composed features
+  * Restricting existing software types
+  * Usage from Kotlin DSL and Groovy DSL
+* Outstanding issues with prototypes are addressed
+  * Builds are limited to a single buildscript classpath
+  * Prototype plugins are implemented with `afterEvaluate`
+  * Declarative Gradle relies on early included build-logic builds
+* Migration story is clarified
+  * Migrating existing plugins
+  * Migrating existing builds
+* Backwards compatibility concerns are addressed
+  * Dealing with different versions of software types over time
+  * Dealing with changes to DCL language over time
+  * Dealing with changes to DCL tooling libraries over time
 
 ## Incubating Software Types and DCL
 
@@ -75,10 +86,6 @@ To discuss the roadmap and the related initiatives, use the
 * DCL Language and Tooling APIs are released as Incubating
   * More language features to support key use cases (version catalogs, polymorphic containers etc.)
   * Built-in opinionated formatter/linter (cli & ide)
-* Backwards compatibility concerns are addressed
-  * Dealing with different versions of software types over time
-  * Dealing with changes to DCL language over time
-  * Dealing with changes to DCL tooling libraries over time
 * IDE language support is enhanced
   * IntelliJ IDEA and Android Studio ship with DCL support
   * Language Server and associated IDE plugins are published
@@ -86,6 +93,6 @@ To discuss the roadmap and the related initiatives, use the
 
 ## Stable Software Types and DCL
 
-* 2026
+* 2027
 * Software Types are promoted to Stable
 * DCL Language and Tooling APIs are promoted to Stable
