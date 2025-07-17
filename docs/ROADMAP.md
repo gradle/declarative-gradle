@@ -7,14 +7,14 @@ Below, you can see the key milestones we anticipate.
     
     The information contained in this Declarative Gradle Roadmap (the "Roadmap") is intended to outline our general product direction, which is subject to change at any time. The content provided in this Roadmap is provided for informational purposes only and is not a commitment, promise or legal obligation to deliver any material, code, or functionality and should not be relied upon in making purchasing or other decisions. The development, release and timing of any features or functionality described in this Roadmap remains at the sole discretion of Gradle, Inc. Product capabilities, timeframes and features are subject to change and should not be viewed as commitments.
 
-| Milestone                           |   | Date          |
-| ----------------------------------- |:-:| ------------: |
-| First Early Access Preview (EAP)    | ✅ |     July 2024 |
-| Second Early Access Preview (EAP 2) | ✅ | November 2024 |
-| Third Early Access Preview (EAP 3)  | ✅ |    April 2025 |
-| Fourth Early Access Preview (EAP 4) | ⏳ |       2025 Q3 |
-| Incubating Software Types and DCL   | ⏳ |          2026 |
-| Stable Software Types and DCL       | ⏳ |          2027 |
+| Milestone                           |   | Date             |
+| ----------------------------------- |:-:| ---------------: |
+| First Early Access Preview (EAP)    | ✅ |        July 2024 |
+| Second Early Access Preview (EAP 2) | ✅ |    November 2024 |
+| Third Early Access Preview (EAP 3)  | ✅ |       April 2025 |
+| Fourth Early Access Preview (EAP 4) | ⏳ |          2025 Q4 |
+| Incubating Software Types and DCL   | ⏳ | To be determined |
+| Stable Software Types and DCL       | ⏳ | To be determined |
 
 The Gradle feature lifecycle is documented in the [user manual](https://docs.gradle.org/current/userguide/feature_lifecycle.html#sec:incubating_state).
 
@@ -58,7 +58,7 @@ To discuss the roadmap and the related initiatives, use the
 
 ## Fourth Early Access Preview (EAP)
 
-* 2025 Q3
+* 2025 Q4
 * Validating the Software Types approach for Composability and Extensibility
   * Supporting new software features that are not part of the base software type
   * Interraction between software features and with the software type
@@ -79,7 +79,6 @@ To discuss the roadmap and the related initiatives, use the
 
 ## Incubating Software Types and DCL
 
-* 2025
 * Software Types APIs are released as Incubating
   * Software Types can be configured from both Kotlin DSL and Groovy DSL
   * Core JVM Plugins expose Software Types
@@ -93,6 +92,5 @@ To discuss the roadmap and the related initiatives, use the
 
 ## Stable Software Types and DCL
 
-* 2027
 * Software Types are promoted to Stable
 * DCL Language and Tooling APIs are promoted to Stable
