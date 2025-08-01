@@ -70,6 +70,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
+@SuppressWarnings("deprecation")
 public class TestFile extends File {
     private boolean useNativeTools;
     private final File relativeBase;

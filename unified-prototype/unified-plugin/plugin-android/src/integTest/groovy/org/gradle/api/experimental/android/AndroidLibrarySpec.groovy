@@ -137,6 +137,10 @@ class AndroidLibrarySpec extends AbstractSpecification {
                 compose {
                     enabled = true
                 }
+                
+                testing {
+                    failOnNoDiscoveredTests = false
+                }
             }
         """
 

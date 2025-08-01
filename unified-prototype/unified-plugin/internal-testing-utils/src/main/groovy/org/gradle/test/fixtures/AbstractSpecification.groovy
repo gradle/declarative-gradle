@@ -1,14 +1,13 @@
 package org.gradle.test.fixtures
 
 
-import org.gradle.internal.impldep.org.junit.Rule
+import org.junit.Rule
 import org.gradle.test.fixtures.file.TestFile
 import org.gradle.test.fixtures.file.TestNameTestDirectoryProvider
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Specification
 
-import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class AbstractSpecification extends Specification {
@@ -51,6 +50,7 @@ class AbstractSpecification extends Specification {
         tasks.each { task ->
             assert result.task(task).outcome == SUCCESS
         }
+        return result
     }
 
     def fails(String... tasks) {
@@ -61,5 +61,6 @@ class AbstractSpecification extends Specification {
                 .withDebug(true)
                 .forwardOutput()
                 .buildAndFail()
+        return result
     }
 }

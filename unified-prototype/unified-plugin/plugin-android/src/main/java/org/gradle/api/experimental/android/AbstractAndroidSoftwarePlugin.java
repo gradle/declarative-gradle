@@ -17,6 +17,7 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.extensions.testing.AndroidTestDependencies;
 import org.gradle.api.experimental.android.extensions.testing.TestOptions;
 import org.gradle.api.experimental.android.extensions.testing.Testing;
+import org.gradle.api.tasks.testing.Test;
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension;
 
 import java.io.File;
@@ -76,6 +77,7 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         dslModel.getTesting().getJacoco().getEnabled().convention(false);
         dslModel.getTesting().getJacoco().getVersion().convention("0.8.7");
         dslModel.getTesting().getRoborazzi().getEnabled().convention(false);
+        dslModel.getTesting().getFailOnNoDiscoveredTests().convention(true);
     }
 
     /**
@@ -235,6 +237,8 @@ public abstract class AbstractAndroidSoftwarePlugin implements Plugin<Project> {
         configurations.getByName("testCompileOnly").fromDependencyCollector(testDependencies.getCompileOnly());
         configurations.getByName("testRuntimeOnly").fromDependencyCollector(testDependencies.getRuntimeOnly());
         configurations.getByName("androidTestImplementation").fromDependencyCollector(testDependencies.getAndroidImplementation());
+
+        project.getTasks().withType(Test.class).configureEach(test -> test.getFailOnNoDiscoveredTests().set(testing.getFailOnNoDiscoveredTests()));
 
         configureRoborazzi(project, dslModel);
     }
