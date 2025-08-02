@@ -53,9 +53,13 @@ abstract class AbstractBuildInitSpecification extends AbstractSpecification {
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
                 .withPluginClasspath()
-                .withArguments("build")
+                .withArguments(buildTasks)
                 .forwardOutput()
                 .build()
+    }
+
+    protected String[] getBuildTasks() {
+        return ["build"]
     }
 
     protected boolean shouldValidateLatestPublishedVersionUsedInSpec() {

@@ -7,4 +7,9 @@ abstract class AbstractAndroidBuildInitSpec extends AbstractBuildInitSpecificati
     protected String getEcosystemPluginId() {
         return "org.gradle.experimental.android-ecosystem-init"
     }
+
+    @Override
+    protected String[] getBuildTasks() {
+        return ["assembleDebug"]
+    }
 }
