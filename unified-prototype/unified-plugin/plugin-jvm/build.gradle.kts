@@ -10,7 +10,7 @@ description = "Implements the declarative JVM DSL prototype"
 
 dependencies {
     implementation(project(":plugin-common"))
-    implementation("org.gradle.toolchains:foojay-resolver:0.8.0")
+    implementation("org.gradle.toolchains:foojay-resolver:1.0.0")
 }
 
 testing {
