@@ -1,8 +1,8 @@
 [versions]
 # Kotlin Libs
 # Find latest version at: https://kotlinlang.org/docs/releases.html#release-details
-kotlin = "2.1.21"
-ksp = "2.1.21-2.0.2"
+kotlin = "2.2.0"
+ksp = "2.2.0-2.0.2"
 
 # Android Libs
 # Find latest version at: https://developer.android.com/reference/tools/gradle-api
