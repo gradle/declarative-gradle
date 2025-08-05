@@ -54,8 +54,8 @@ public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                         project.afterEvaluate(p -> {
                             ifPresent(buildModel.getGroup(), p::setGroup);
                             ifPresent(buildModel.getVersion(), p::setVersion);
+                            linkDslModelToPlugin(definition, buildModel, p.getTasks());
                         });
-                        project.afterEvaluate(p -> linkDslModelToPlugin(definition, buildModel, p.getTasks()));
                     }
             ).withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
         }
