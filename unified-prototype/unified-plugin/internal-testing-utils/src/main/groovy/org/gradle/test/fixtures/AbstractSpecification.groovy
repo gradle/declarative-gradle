@@ -39,10 +39,14 @@ class AbstractSpecification extends Specification {
         temporaryFolder.testDirectory
     }
 
+    protected static String[] withDefaultArguments(String[] tasks) {
+        return ["--stacktrace"] as String[] + tasks
+    }
+
     def succeeds(String... tasks) {
         result = GradleRunner.create()
                 .withProjectDir(getTestDirectory())
-                .withArguments(tasks)
+                .withArguments(withDefaultArguments(tasks))
                 .withPluginClasspath()
                 .withDebug(true)
                 .forwardOutput()
