@@ -3,9 +3,14 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
+import org.gradle.api.internal.plugins.BindsSoftwareType;
+import org.gradle.api.internal.plugins.SoftwareTypeBindingBuilder;
+import org.gradle.api.internal.plugins.SoftwareTypeBindingRegistration;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.TaskContainer;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
 
@@ -14,110 +19,121 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings({"UnstableApiUsage"})
+@BindsSoftwareType(StandaloneKmpLibraryPlugin.Binding.class)
 public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     public static final String KOTLIN_LIBRARY = "kotlinLibrary";
 
-    @SoftwareType(name = KOTLIN_LIBRARY, modelPublicType = KmpLibrary.class)
-    public abstract KmpLibrary getKmpLibrary();
-
     @Override
     public void apply(Project project) {
-        KmpLibrary dslModel = createDslModel(project);
-
-        project.afterEvaluate(p -> linkDslModelToPlugin(p, dslModel));
-
-        // Apply the official KMP plugin
-        project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
-
-        linkDslModelToPluginLazy(project, dslModel);
-    }
-
-    private KmpLibrary createDslModel(Project project) {
-        KmpLibrary dslModel = getKmpLibrary();
-
         // In order for function extraction from the DependencyCollector on the library deps to work, configurations must exist
         // Matching the names of the getters on LibraryDependencies
         project.getConfigurations().dependencyScope("api").get();
         project.getConfigurations().dependencyScope("implementation").get();
         project.getConfigurations().dependencyScope("compileOnly").get();
         project.getConfigurations().dependencyScope("runtimeOnly").get();
-
-        return dslModel;
     }
 
-    /**
-     * Performs linking actions that must occur within an afterEvaluate block.
-     */
-    private void linkDslModelToPlugin(Project project, KmpLibrary dslModel) {
-        KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
+    static class Binding implements SoftwareTypeBindingRegistration {
+        @Override
+        public void register(SoftwareTypeBindingBuilder builder) {
+            builder.bindSoftwareType(KOTLIN_LIBRARY, KmpLibrary.class,
+                    (context, definition, buildModel) -> {
+                        Project project = context.getProject();
 
-        // Link common properties
-        kotlin.getSourceSets().configureEach(sourceSet -> {
-            sourceSet.languageSettings(languageSettings -> {
-                ifPresent(dslModel.getLanguageVersion(), languageSettings::setLanguageVersion);
-                ifPresent(dslModel.getLanguageVersion(), languageSettings::setApiVersion);
-            });
-        });
+                        // Apply the official KMP plugin
+                        project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
+                        ((DefaultKotlinMultiplatformBuildModel)buildModel).setKotlinMultiplatformExtension(
+                                project.getExtensions().getByType(KotlinMultiplatformExtension.class)
+                        );
+                        buildModel.getGroup().convention(definition.getGroup());
+                        buildModel.getVersion().convention(definition.getVersion());
 
-        // TODO - figure out how to get rid of this task
-        project.getTasks().configureEach(task -> {
-            if (task.getName().equals("jvmRun")) {
-                task.setEnabled(false);
-            }
-        });
-    }
+                        // This stuff can be wired up immediately
+                        linkDslModelToPluginLazy(definition, buildModel, project.getConfigurations());
+                        // This stuff must be wired up in an afterEvaluate block
+                        project.afterEvaluate(p -> {
+                            ifPresent(buildModel.getGroup(), p::setGroup);
+                            ifPresent(buildModel.getVersion(), p::setVersion);
+                            linkDslModelToPlugin(definition, buildModel, p.getTasks());
+                        });
+                    }
+            ).withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
+        }
 
-    /**
-     * Performs linking actions that do not need to occur within an afterEvaluate block.
-     */
-    private void linkDslModelToPluginLazy(Project project, KmpLibrary dslModel) {
-        KotlinMultiplatformExtension kotlin = project.getExtensions().getByType(KotlinMultiplatformExtension.class);
+        /**
+         * Performs linking actions that must occur within an afterEvaluate block.
+         */
+        private static void linkDslModelToPlugin(KmpLibrary definition, KotlinMultiplatformBuildModel buildModel, TaskContainer tasks) {
+            KotlinMultiplatformExtension kotlin = buildModel.getKotlinMultiplatformExtension();
 
-        // Link common dependencies
-        KotlinPluginSupport.linkSourceSetToDependencies(project, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
-
-        // Link JVM targets
-        dslModel.getTargetsContainer().withType(KmpLibraryJvmTarget.class).all(target -> {
-            kotlin.jvm(target.getName(), kotlinTarget -> {
-                KotlinPluginSupport.linkSourceSetToDependencies(
-                        project,
-                        kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                        target.getDependencies()
-                );
-                kotlinTarget.getCompilations().configureEach(compilation -> {
-                    compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(value -> JvmTarget.Companion.fromTarget(String.valueOf(value))));
+            // Link common properties
+            kotlin.getSourceSets().configureEach(sourceSet -> {
+                sourceSet.languageSettings(languageSettings -> {
+                    ifPresent(definition.getLanguageVersion(), languageSettings::setLanguageVersion);
+                    ifPresent(definition.getLanguageVersion(), languageSettings::setApiVersion);
                 });
             });
-        });
 
-        // Link JS targets
-        dslModel.getTargetsContainer().withType(KmpLibraryNodeJsTarget.class).all(target -> {
-            kotlin.js(target.getName(), kotlinTarget -> {
-                kotlinTarget.nodejs();
-                KotlinPluginSupport.linkSourceSetToDependencies(
-                        project,
-                        kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                        target.getDependencies()
-                );
+            // TODO - figure out how to get rid of this task
+            tasks.configureEach(task -> {
+                if (task.getName().equals("jvmRun")) {
+                    task.setEnabled(false);
+                }
             });
-        });
+        }
 
-        // Link Native targets
-        dslModel.getTargetsContainer().withType(KmpLibraryNativeTarget.class).all(target -> {
-            kotlin.macosArm64(target.getName(), kotlinTarget -> {
-                KotlinPluginSupport.linkSourceSetToDependencies(
-                        project,
-                        kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                        target.getDependencies()
-                );
+        /**
+         * Performs linking actions that do not need to occur within an afterEvaluate block.
+         */
+        private static void linkDslModelToPluginLazy(KmpLibrary dslModel, KotlinMultiplatformBuildModel buildModel, ConfigurationContainer configurations) {
+            KotlinMultiplatformExtension kotlin = buildModel.getKotlinMultiplatformExtension();
+
+            // Link common dependencies
+            KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
+
+            // Link JVM targets
+            dslModel.getTargetsContainer().withType(KmpLibraryJvmTarget.class).all(target -> {
+                kotlin.jvm(target.getName(), kotlinTarget -> {
+                    KotlinPluginSupport.linkSourceSetToDependencies(
+                            configurations,
+                            kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                            target.getDependencies()
+                    );
+                    kotlinTarget.getCompilations().configureEach(compilation -> {
+                        compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(value -> JvmTarget.Companion.fromTarget(String.valueOf(value))));
+                    });
+                });
             });
-        });
 
-    }
+            // Link JS targets
+            dslModel.getTargetsContainer().withType(KmpLibraryNodeJsTarget.class).all(target -> {
+                kotlin.js(target.getName(), kotlinTarget -> {
+                    kotlinTarget.nodejs();
+                    KotlinPluginSupport.linkSourceSetToDependencies(
+                            configurations,
+                            kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                            target.getDependencies()
+                    );
+                });
+            });
 
-    private static <T> void ifPresent(Property<T> property, Action<T> action) {
-        if (property.isPresent()) {
-            action.execute(property.get());
+            // Link Native targets
+            dslModel.getTargetsContainer().withType(KmpLibraryNativeTarget.class).all(target -> {
+                kotlin.macosArm64(target.getName(), kotlinTarget -> {
+                    KotlinPluginSupport.linkSourceSetToDependencies(
+                            configurations,
+                            kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                            target.getDependencies()
+                    );
+                });
+            });
+
+        }
+
+        private static <T> void ifPresent(Property<T> property, Action<T> action) {
+            if (property.isPresent()) {
+                action.execute(property.get());
+            }
         }
     }
 }

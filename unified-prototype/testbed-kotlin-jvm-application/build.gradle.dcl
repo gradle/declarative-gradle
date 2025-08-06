@@ -11,6 +11,7 @@ kotlinJvmApplication {
     testing {
         dependencies {
             implementation("org.junit.jupiter:junit-jupiter:5.10.2")
+            runtimeOnly("org.junit.platform:junit-platform-launcher")
         }
     }
 }

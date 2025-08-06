@@ -38,7 +38,7 @@ testing {
     suites {
         @Suppress("UnstableApiUsage")
         val integTest by registering(JvmTestSuite::class) {
-            useSpock("2.2-groovy-3.0")
+            useSpock("2.2-groovy-4.0")
 
             dependencies {
                 implementation(project(":internal-testing-utils"))

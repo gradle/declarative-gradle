@@ -15,7 +15,7 @@ dependencies {
     api("com.google.guava:guava:30.1.1-jre")
     api("org.apache.ant:ant:1.10.13")
     api("org.jetbrains:annotations:24.0.1")
-    api("org.spockframework:spock-core:2.2-groovy-3.0")
+    api("org.spockframework:spock-core:2.2-groovy-4.0")
     api(gradleTestKit())
 }
 

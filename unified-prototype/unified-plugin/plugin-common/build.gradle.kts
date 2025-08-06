@@ -16,7 +16,7 @@ dependencies {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useSpock("2.2-groovy-3.0")
+            useSpock("2.2-groovy-4.0")
 
             dependencies {
                 implementation("commons-io:commons-io:2.15.1")
@@ -25,7 +25,7 @@ testing {
         }
 
         val integTest by registering(JvmTestSuite::class) {
-            useSpock("2.2-groovy-3.0")
+            useSpock("2.2-groovy-4.0")
 
             dependencies {
                 implementation("commons-io:commons-io:2.15.1")
