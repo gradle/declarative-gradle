@@ -65,7 +65,6 @@ public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
                     JvmPluginSupport.linkMainSourceSourceSetDependencies(definition.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
                     JvmPluginSupport.linkTestJavaVersion(definition.getTesting(), getJavaToolchainService(), tasks);
                     JvmPluginSupport.linkTestSourceSourceSetDependencies(definition.getTesting().getDependencies(), buildModel.getJavaPluginExtension(), configurations);
-                    //JvmPluginSupport.linkCheckstyle(project, buildModel.getCheckstyle());
                 });
             }
         }

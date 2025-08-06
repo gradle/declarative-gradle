@@ -17,7 +17,9 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("UnstableApiUsage")
 @BindsSoftwareFeature(CheckstyleSoftwareFeaturePlugin.Binding.class)
@@ -63,7 +65,7 @@ public class CheckstyleSoftwareFeaturePlugin implements Plugin<Project> {
         }
 
         private static void createCheckstyleForSourceSet(CheckstyleBuildModel buildModel, SourceSet sourceSet, TaskContainer tasks, ProjectLayout projectLayout) {
-            tasks.register(sourceSet.getTaskName("checkstyle", null), Checkstyle.class, task -> {
+            TaskProvider<@NonNull Checkstyle> checkstyleTask = tasks.register(sourceSet.getTaskName("checkstyle", null), Checkstyle.class, task -> {
                 task.setDescription(String.format("Runs Checkstyle for source set '%s'.", sourceSet.getName()));
                 task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
 
@@ -79,6 +81,10 @@ public class CheckstyleSoftwareFeaturePlugin implements Plugin<Project> {
 
                 task.getReports().getXml().getRequired().convention(task.getReports().getHtml().getRequired());
                 task.getReports().getXml().getOutputLocation().convention(projectLayout.getBuildDirectory().file("reports/checkstyle/" + sourceSet.getName() + ".xml"));
+            });
+
+            tasks.named("check").configure(check -> {
+                check.dependsOn(checkstyleTask);
             });
         }
     }

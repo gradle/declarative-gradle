@@ -2,6 +2,8 @@ package org.gradle.api.experimental.jvm
 
 import org.gradle.test.fixtures.AbstractSpecification
 
+import static org.gradle.testkit.runner.TaskOutcome.*
+
 class JavaLibraryWithCheckstyleIntegrationTest extends AbstractSpecification {
     def setup() {
         settingsFile << """
@@ -63,5 +65,46 @@ class JavaLibraryWithCheckstyleIntegrationTest extends AbstractSpecification {
         result.output.contains("Execution failed for task ':checkstyleMain'.")
         result.output.contains("Checkstyle rule violations were found. See the report at:")
         result.output.contains("Name 'example' must match pattern")
+    }
+
+    def "can suppress checkstyle violations"() {
+        given:
+        buildFile << """
+            javaLibrary {
+                checkstyle { }
+            }    
+        """
+        file('src/main/java/org/example/bad_name.java') << """
+            package org.example;
+
+            // This should be suppressed by the checkstyle configuration
+            public class bad_name { }
+        """
+
+        when:
+        def result = succeeds(":checkstyleMain")
+
+        then:
+        result.task(':checkstyleMain').outcome == SUCCESS
+    }
+
+    def "checkstyle is incorporated into check lifecycle task"() {
+        given:
+        buildFile << """
+            javaLibrary {
+                checkstyle { }
+            }    
+        """
+        file('src/main/java/org/example/NoViolations.java') << """
+            package org.example;
+
+            public class NoViolations { }
+        """
+
+        when:
+        def result = succeeds(":check")
+
+        then:
+        result.task(':checkstyleMain').outcome == SUCCESS
     }
 }
