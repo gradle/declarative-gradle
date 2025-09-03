@@ -2,6 +2,7 @@ package org.gradle.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.InvalidPathException;
 import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -18,6 +20,17 @@ import java.util.jar.JarFile;
  * Static util class containing methods for extracting resource directories from the classpath.
  */
 public final class ResourceLoader {
+    private final ClassLoader classLoader;
+
+    public ResourceLoader() {
+        this.classLoader = ResourceLoader.class.getClassLoader();
+    }
+
+    @VisibleForTesting
+    ResourceLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
     /**
      * Recursively copies the contents of a directory from the classpath (or a jar file on the classpath)
      * to a specified directory.
@@ -27,7 +40,6 @@ public final class ResourceLoader {
      * @throws IOException if an I/O error occurs
      */
     public void extractDirectoryFromResources(String relativePath, File destDir) throws IOException {
-        ClassLoader classLoader = ResourceLoader.class.getClassLoader();
         URL url = classLoader.getResource(relativePath);
         if (url == null) {
             throw new IllegalArgumentException("Directory: '" + relativePath + "' not found (on the classpath loaded by: '" + classLoader + "')!");
@@ -61,6 +73,9 @@ public final class ResourceLoader {
             if (entryName.startsWith(relativePath + "/") || entryName.startsWith(relativePath + "\\")) {
                 String entrySuffix = entryName.substring(relativePath.length());
                 File destFile = new File(destDir, entrySuffix);
+                if (!destFile.toPath().normalize().startsWith(destDir.toPath().normalize())) {
+                    throw new InvalidPathException(entrySuffix, "Entry resolves to a path outside of the target directory");
+                }
 
                 if (entry.isDirectory()) {
                     FileUtils.forceMkdir(destFile);
