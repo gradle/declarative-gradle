@@ -33,5 +33,5 @@ jobs:
           repository: ${{ github.repository }}
           number: ${{ github.event.number }}
           id: deploy-preview
-          message: > 
+          message: >
             🪓 PR closed, deleted preview at https://github.com/${{ env.PREVIEW_REPO }}/tree/gh-pages/${{ env.PR_PATH }}/
