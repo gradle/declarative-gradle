@@ -45,7 +45,7 @@ jobs:
           external_repository: gradle/${{ env.PREVIEW_REPO }}
           publish_dir: ./_site
           destination_dir: ${{ env.PR_PATH }}
-        
+
       - name: Update comment
         uses: hasura/comment-progress@v2.2.0
         if: github.ref != 'refs/heads/main'
@@ -54,9 +54,9 @@ jobs:
           repository: ${{ github.repository }}
           number: ${{ github.event.number }}
           id: deploy-preview
-          message: > 
+          message: >
             A preview of ${{ github.event.after }} is uploaded and can be seen here:
-            
+
             ✨ https://${{ env.DOMAIN }}/${{ env.PREVIEW_REPO }}/${{ env.PR_PATH}}/ ✨
-            
-            Changes may take a few minutes to propagate. 
+
+            Changes may take a few minutes to propagate.

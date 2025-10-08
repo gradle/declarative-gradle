@@ -15,7 +15,7 @@ jobs:
       contents: write
       # Write permission is required for autolabeler
       pull-requests: write
-    
+
     steps:
       - uses: release-drafter/release-drafter@v6
         with:

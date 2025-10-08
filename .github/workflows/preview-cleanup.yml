@@ -5,7 +5,7 @@ on:
 
 jobs:
   delete_preview:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       PR_PATH: ${{ github.event.repository.name }}/pull/${{github.event.number}}
       DOMAIN: gradle.github.io
@@ -33,5 +33,5 @@ jobs:
           repository: ${{ github.repository }}
           number: ${{ github.event.number }}
           id: deploy-preview
-          message: > 
+          message: >
             🪓 PR closed, deleted preview at https://github.com/${{ env.PREVIEW_REPO }}/tree/gh-pages/${{ env.PR_PATH }}/
