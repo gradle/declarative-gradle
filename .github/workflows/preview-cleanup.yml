@@ -27,7 +27,7 @@ jobs:
           destination_dir: ${{ env.PR_PATH }}
 
       - name: Comment on PR
-        uses: hasura/comment-progress@v2.2.0
+        uses: hasura/comment-progress@v2.3.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
