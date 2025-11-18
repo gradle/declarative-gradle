@@ -12,7 +12,7 @@ import org.gradle.api.experimental.android.extensions.testing.TestOptions;
 import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.internal.plugins.software.SoftwareType;
 
-import static org.gradle.api.experimental.android.AbstractAndroidSoftwarePlugin.DEFAULT_MIN_ANDROID_SDK;
+import static org.gradle.api.experimental.android.AndroidBindingSupport.DEFAULT_MIN_ANDROID_SDK;
 import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
 
 /**
