@@ -6,9 +6,9 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyFactory;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.file.ProjectLayout;
-import org.gradle.api.internal.plugins.BindsSoftwareType;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingBuilder;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingRegistration;
+import org.gradle.api.internal.plugins.BindsProjectType;
+import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
+import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JavaPluginHelper;
@@ -24,7 +24,7 @@ import javax.inject.Inject;
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings("UnstableApiUsage")
-@BindsSoftwareType(StandaloneJvmLibraryPlugin.Binding.class)
+@BindsProjectType(StandaloneJvmLibraryPlugin.Binding.class)
 public abstract class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
     public static final String JVM_LIBRARY = "jvmLibrary";
@@ -34,10 +34,10 @@ public abstract class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
     }
 
-    static class Binding implements SoftwareTypeBindingRegistration {
+    static class Binding implements ProjectTypeBinding {
         @Override
-        public void register(SoftwareTypeBindingBuilder builder) {
-            builder.bindSoftwareType(JVM_LIBRARY, JvmLibrary.class,
+        public void bind(ProjectTypeBindingBuilder builder) {
+            builder.bindProjectType(JVM_LIBRARY, JvmLibrary.class,
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
                         project.getPlugins().apply(JavaLibraryPlugin.class);

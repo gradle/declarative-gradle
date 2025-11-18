@@ -9,6 +9,7 @@ import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.internal.plugins.*;
 import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.plugins.JvmTestSuitePlugin;
 import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.plugins.jvm.JvmTestSuite;
 import org.gradle.api.tasks.TaskContainer;
@@ -17,24 +18,27 @@ import org.gradle.testing.base.TestingExtension;
 
 import javax.inject.Inject;
 
+import static org.gradle.api.plugins.JvmTestSuitePlugin.DEFAULT_TEST_SUITE_NAME;
+
 /**
  * Creates a declarative {@link JavaLibrary} DSL model, applies the official Java library plugin,
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings("UnstableApiUsage")
-@BindsSoftwareType(StandaloneJavaLibraryPlugin.Binding.class)
+@BindsProjectType(StandaloneJavaLibraryPlugin.Binding.class)
 public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
     public static final String JAVA_LIBRARY = "javaLibrary";
 
     @Override
     public void apply(Project project) {
-        project.getExtensions().getByType(TestingExtension.class).getSuites().withType(JvmTestSuite.class).named("test").configure(JvmTestSuite::useJUnitJupiter);
+        project.getPluginManager().withPlugin("org.gradle.java",
+            appliedPlugin -> project.getExtensions().getByType(TestingExtension.class).getSuites().withType(JvmTestSuite.class).named(DEFAULT_TEST_SUITE_NAME).configure(JvmTestSuite::useJUnitJupiter));
     }
 
-    public abstract static class Binding implements SoftwareTypeBindingRegistration {
+    public abstract static class Binding implements ProjectTypeBinding {
         @Override
-        public void register(SoftwareTypeBindingBuilder builder) {
-            builder.bindSoftwareType(JAVA_LIBRARY, JavaLibrary.class,
+        public void bind(ProjectTypeBindingBuilder builder) {
+            builder.bindProjectType(JAVA_LIBRARY, JavaLibrary.class,
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
                         project.getPlugins().apply(JavaLibraryPlugin.class);

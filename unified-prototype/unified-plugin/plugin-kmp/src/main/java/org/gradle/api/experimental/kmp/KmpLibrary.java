@@ -3,7 +3,7 @@ package org.gradle.api.experimental.kmp;
 import org.gradle.api.Action;
 import org.gradle.api.experimental.common.HasGroupAndVersion;
 import org.gradle.api.experimental.common.HasLibraryDependencies;
-import org.gradle.api.internal.plugins.HasBuildModel;
+import org.gradle.api.internal.plugins.Definition;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
@@ -13,7 +13,7 @@ import org.gradle.declarative.dsl.model.annotations.Configuring;
 /**
  * The public DSL interface for a declarative KMP library.
  */
-public interface KmpLibrary extends HasLibraryDependencies, HasGroupAndVersion, HasBuildModel<KotlinMultiplatformBuildModel> {
+public interface KmpLibrary extends HasLibraryDependencies, HasGroupAndVersion, Definition<KotlinMultiplatformBuildModel> {
     @Input
     Property<String> getLanguageVersion();
 

@@ -9,9 +9,9 @@ import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.Directory;
-import org.gradle.api.internal.plugins.BindsSoftwareType;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingBuilder;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingRegistration;
+import org.gradle.api.internal.plugins.BindsProjectType;
+import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
+import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -30,7 +30,7 @@ import org.apache.commons.text.WordUtils;
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings({"UnstableApiUsage", "CodeBlock2Expr"})
-@BindsSoftwareType(StandaloneKmpApplicationPlugin.Binding.class)
+@BindsProjectType(StandaloneKmpApplicationPlugin.Binding.class)
 public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> {
     public static final String KOTLIN_APPLICATION = "kotlinApplication";
 
@@ -43,10 +43,10 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
         project.getConfigurations().dependencyScope("runtimeOnly").get();
     }
 
-    static class Binding implements SoftwareTypeBindingRegistration {
+    static class Binding implements ProjectTypeBinding {
         @Override
-        public void register(SoftwareTypeBindingBuilder builder) {
-            builder.bindSoftwareType(KOTLIN_APPLICATION, KmpApplication.class,
+        public void bind(ProjectTypeBindingBuilder builder) {
+            builder.bindProjectType(KOTLIN_APPLICATION, KmpApplication.class,
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
 
