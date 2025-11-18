@@ -2,7 +2,7 @@ package org.gradle.api.experimental.jvm;
 
 import org.gradle.api.plugins.JavaApplication;
 
-public class DefaultJavaApplicationBuildModel extends DefaultJavaBuildModel implements JavaApplicationBuildModel {
+abstract public class DefaultJavaApplicationBuildModel extends DefaultJavaBuildModel implements JavaApplicationBuildModel {
     private JavaApplication javaApplicationExtension;
 
     @Override

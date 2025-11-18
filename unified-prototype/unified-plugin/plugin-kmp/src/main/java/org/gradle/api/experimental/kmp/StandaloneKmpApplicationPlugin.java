@@ -5,7 +5,7 @@ import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
+import org.gradle.api.experimental.common.CliExecutablesSupport;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.Directory;
@@ -60,7 +60,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
 
                         // Apply the official KMP plugin
                         project.getPlugins().apply("org.jetbrains.kotlin.multiplatform");
-                        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
+                        CliExecutablesSupport.configureRunTasks(context.getProject().getTasks(), buildModel);
 
                         ((DefaultKotlinMultiplatformBuildModel)buildModel).setKotlinMultiplatformExtension(
                                 project.getExtensions().getByType(KotlinMultiplatformExtension.class)
@@ -102,7 +102,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                             executable.entryPoint(target.getEntryPoint().get());
                             TaskProvider<AbstractExecTask<?>> runTask = executable.getRunTaskProvider();
                             if (runTask != null) {
-                                definition.getRunTasks().add(runTask);
+                                buildModel.getRunTasks().add(runTask);
                             }
                         });
                     });
@@ -182,7 +182,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                         kotlinJvmRunDsl.getMainClass().set(target.getMainClass());
                         // The task is not registered until this block of code runs, but the block is deferred until some arbitrary point in time
                         // So, wire up the task when this block runs
-                        definition.getRunTasks().add(tasks.named(target.getName() + "Run"));
+                        buildModel.getRunTasks().add(tasks.named(target.getName() + "Run"));
                         return Unit.INSTANCE;
                     });
                 });

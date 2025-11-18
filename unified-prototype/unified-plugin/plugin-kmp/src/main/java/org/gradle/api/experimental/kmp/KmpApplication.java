@@ -15,7 +15,7 @@ import org.jspecify.annotations.NonNull;
 /**
  * The public DSL interface for a declarative KMP application.
  */
-public interface KmpApplication extends HasApplicationDependencies, HasCliExecutables, HasGroupAndVersion, Definition<@NonNull KotlinMultiplatformBuildModel> {
+public interface KmpApplication extends HasApplicationDependencies, HasGroupAndVersion, Definition<@NonNull KotlinMultiplatformBuildModel> {
     @Input
     Property<String> getLanguageVersion();
 

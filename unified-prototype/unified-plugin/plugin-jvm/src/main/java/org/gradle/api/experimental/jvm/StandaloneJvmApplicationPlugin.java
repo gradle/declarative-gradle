@@ -4,8 +4,8 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyFactory;
-import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
 
+import org.gradle.api.experimental.common.CliExecutablesSupport;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.internal.plugins.BindsProjectType;
@@ -46,7 +46,7 @@ public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> 
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
                         project.getPlugins().apply(ApplicationPlugin.class);
-                        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
+                        CliExecutablesSupport.configureRunTasks(context.getProject().getTasks(), buildModel);
                         ((DefaultJavaApplicationBuildModel) buildModel).setJavaPluginExtension(
                                 project.getExtensions().getByType(JavaPluginExtension.class)
                         );
@@ -104,7 +104,7 @@ public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> 
                     task.getJvmArguments().set(dslModel.getJvmArguments());
                     task.setClasspath(sourceSet.getRuntimeClasspath());
                 });
-                dslModel.getRunTasks().add(runTask);
+                buildModel.getRunTasks().add(runTask);
             });
         }
     }

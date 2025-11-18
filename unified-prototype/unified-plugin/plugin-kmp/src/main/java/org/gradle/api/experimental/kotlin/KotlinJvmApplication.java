@@ -13,7 +13,7 @@ import org.jspecify.annotations.NonNull;
 /**
  * An application implemented using Kotlin and that targets a single JVM version.
  */
-public interface KotlinJvmApplication extends HasJavaTarget, HasJvmApplication, HasCliExecutables, Definition<@NonNull KotlinJvmApplicationBuildModel> {
+public interface KotlinJvmApplication extends HasJavaTarget, HasJvmApplication, Definition<@NonNull KotlinJvmApplicationBuildModel> {
     @Nested
     Testing getTesting();
 

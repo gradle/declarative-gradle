@@ -3,7 +3,7 @@ package org.gradle.api.experimental.kotlin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
+import org.gradle.api.experimental.common.CliExecutablesSupport;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
 import org.gradle.api.internal.plugins.BindsProjectType;
@@ -39,7 +39,7 @@ public abstract class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
                         Project project = context.getProject();
                         project.getPlugins().apply(ApplicationPlugin.class);
                         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
-                        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
+                        CliExecutablesSupport.configureRunTasks(context.getProject().getTasks(), buildModel);
                         ((DefaultKotlinJvmApplicationBuildModel) buildModel).setKotlinJvmExtension(
                                 project.getExtensions().getByType(KotlinJvmProjectExtension.class)
                         );
@@ -61,7 +61,7 @@ public abstract class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
             JvmPluginSupport.linkMainSourceSourceSetDependencies(dslModel.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
             configureTesting(dslModel, configurations, tasks);
 
-            dslModel.getRunTasks().add(tasks.named("run"));
+            buildModel.getRunTasks().add(tasks.named("run"));
         }
 
         private void configureTesting(KotlinJvmApplication dslModel, ConfigurationContainer configurations, TaskContainer tasks) {

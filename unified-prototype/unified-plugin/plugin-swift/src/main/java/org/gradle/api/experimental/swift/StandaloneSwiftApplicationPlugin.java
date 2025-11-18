@@ -2,7 +2,7 @@ package org.gradle.api.experimental.swift;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
+import org.gradle.api.experimental.common.CliExecutablesSupport;
 import org.gradle.api.experimental.swift.internal.DefaultSwiftApplicationBuildModel;
 import org.gradle.api.experimental.swift.internal.SwiftPluginSupport;
 import org.gradle.api.file.RegularFile;
@@ -29,7 +29,7 @@ public abstract class StandaloneSwiftApplicationPlugin implements Plugin<Project
         public void bind(ProjectTypeBindingBuilder builder) {
             builder.bindProjectType(SWIFT_APPLICATION, SwiftApplication.class, (context, definition, buildModel) -> {
                 context.getProject().getPlugins().apply(SwiftApplicationPlugin.class);
-                context.getProject().getPlugins().apply(CliApplicationConventionsPlugin.class);
+                CliExecutablesSupport.configureRunTasks(context.getProject().getTasks(), buildModel);
 
                 ((DefaultSwiftApplicationBuildModel)buildModel).setSwiftComponent(context.getProject().getExtensions().getByType(SwiftComponent.class));
 

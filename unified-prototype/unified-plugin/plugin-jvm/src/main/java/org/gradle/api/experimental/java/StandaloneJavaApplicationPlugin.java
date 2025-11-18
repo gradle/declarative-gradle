@@ -3,7 +3,7 @@ package org.gradle.api.experimental.java;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
+import org.gradle.api.experimental.common.CliExecutablesSupport;
 import org.gradle.api.experimental.jvm.DefaultJavaApplicationBuildModel;
 import org.gradle.api.experimental.jvm.DefaultJavaBuildModel;
 import org.gradle.api.experimental.jvm.JavaApplicationBuildModel;
@@ -13,7 +13,6 @@ import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
 import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.plugins.ApplicationPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.api.plugins.JvmTestSuitePlugin;
 import org.gradle.api.plugins.jvm.JvmTestSuite;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.jvm.toolchain.JavaToolchainService;
@@ -45,7 +44,7 @@ public abstract class StandaloneJavaApplicationPlugin implements Plugin<Project>
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
                         project.getPlugins().apply(ApplicationPlugin.class);
-                        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
+                        CliExecutablesSupport.configureRunTasks(context.getProject().getTasks(), buildModel);
                         ((DefaultJavaBuildModel) buildModel).setJavaPluginExtension(
                                 project.getExtensions().getByType(JavaPluginExtension.class)
                         );
@@ -72,14 +71,14 @@ public abstract class StandaloneJavaApplicationPlugin implements Plugin<Project>
         @Inject
         protected abstract JavaToolchainService getJavaToolchainService();
 
-        private void link(JavaApplication dslModel, JavaApplicationBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
-            JvmPluginSupport.linkJavaVersion(dslModel, buildModel.getJavaPluginExtension());
-            JvmPluginSupport.linkApplicationMainClass(dslModel, buildModel.getJavaApplicationExtension());
-            JvmPluginSupport.linkMainSourceSourceSetDependencies(dslModel.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
-            JvmPluginSupport.linkTestJavaVersion(dslModel.getTesting(), getJavaToolchainService(), tasks);
-            JvmPluginSupport.linkTestSourceSourceSetDependencies(dslModel.getTesting().getDependencies(), buildModel.getJavaPluginExtension(), configurations);
+        private void link(JavaApplication definition, JavaApplicationBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
+            JvmPluginSupport.linkJavaVersion(definition, buildModel.getJavaPluginExtension());
+            JvmPluginSupport.linkApplicationMainClass(definition, buildModel.getJavaApplicationExtension());
+            JvmPluginSupport.linkMainSourceSourceSetDependencies(definition.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
+            JvmPluginSupport.linkTestJavaVersion(definition.getTesting(), getJavaToolchainService(), tasks);
+            JvmPluginSupport.linkTestSourceSourceSetDependencies(definition.getTesting().getDependencies(), buildModel.getJavaPluginExtension(), configurations);
 
-            dslModel.getRunTasks().add(tasks.named("run"));
+            buildModel.getRunTasks().add(tasks.named("run"));
         }
     }
 }

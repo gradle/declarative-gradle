@@ -14,7 +14,7 @@ import org.jspecify.annotations.NonNull;
 /**
  * An application implemented using a single version of Java.
  */
-public interface JavaApplication extends HasJavaTarget, HasJvmApplication, HasCliExecutables, Definition<@NonNull JavaApplicationBuildModel> {
+public interface JavaApplication extends HasJavaTarget, HasJvmApplication, Definition<@NonNull JavaApplicationBuildModel> {
     @Nested
     Testing getTesting();
 
