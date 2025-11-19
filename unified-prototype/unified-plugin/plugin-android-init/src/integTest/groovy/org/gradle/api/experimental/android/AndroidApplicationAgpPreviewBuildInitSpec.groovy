@@ -1,5 +1,8 @@
 package org.gradle.api.experimental.android
 
+import spock.lang.Ignore
+
+@Ignore("AGP preview still uses @SoftwareType which is being retired")
 class AndroidApplicationAgpPreviewBuildInitSpec extends AbstractAndroidBuildInitSpec {
     @Override
     protected String getProjectSpecType() {
