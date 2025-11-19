@@ -6,8 +6,6 @@ import org.gradle.api.experimental.cpp.internal.DefaultCppLibraryBuildModel;
 import org.gradle.api.internal.plugins.BindsProjectType;
 import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
-import org.gradle.api.internal.plugins.software.SoftwareType;
-import org.gradle.language.cpp.CppBinary;
 import org.gradle.language.cpp.plugins.CppLibraryPlugin;
 
 @SuppressWarnings("UnstableApiUsage")
