@@ -18,7 +18,6 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("UnstableApiUsage")
 @BindsProjectFeature(CheckstyleSoftwareFeaturePlugin.Binding.class)
@@ -64,7 +63,7 @@ public class CheckstyleSoftwareFeaturePlugin implements Plugin<Project> {
         }
 
         private static void createCheckstyleForSourceSet(CheckstyleBuildModel buildModel, SourceSet sourceSet, TaskContainer tasks, ProjectLayout projectLayout) {
-            TaskProvider<@NonNull Checkstyle> checkstyleTask = tasks.register(sourceSet.getTaskName("checkstyle", null), Checkstyle.class, task -> {
+            TaskProvider<Checkstyle> checkstyleTask = tasks.register(sourceSet.getTaskName("checkstyle", null), Checkstyle.class, task -> {
                 task.setDescription(String.format("Runs Checkstyle for source set '%s'.", sourceSet.getName()));
                 task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
 

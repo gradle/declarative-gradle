@@ -5,9 +5,8 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.internal.plugins.Definition;
 import org.gradle.api.provider.Property;
 import org.gradle.declarative.dsl.model.annotations.Restricted;
-import org.jspecify.annotations.NonNull;
 
-public interface CheckstyleDefinition extends Definition<@NonNull CheckstyleBuildModel> {
+public interface CheckstyleDefinition extends Definition<CheckstyleBuildModel> {
     @Restricted
     Property<String> getCheckstyleVersion();
 

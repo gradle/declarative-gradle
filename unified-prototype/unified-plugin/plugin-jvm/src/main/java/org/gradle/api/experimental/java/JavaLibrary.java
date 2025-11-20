@@ -8,12 +8,11 @@ import org.gradle.api.experimental.jvm.extensions.testing.Testing;
 import org.gradle.api.internal.plugins.Definition;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.jspecify.annotations.NonNull;
 
 /**
  * A library implemented using a single version of Java.
  */
-public interface JavaLibrary extends HasJavaTarget, HasLibraryDependencies, Definition<@NonNull JavaBuildModel> {
+public interface JavaLibrary extends HasJavaTarget, HasLibraryDependencies, Definition<JavaBuildModel> {
     @Nested
     Testing getTesting();
 
