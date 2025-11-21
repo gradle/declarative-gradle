@@ -8,7 +8,6 @@ import org.gradle.api.artifacts.DependencyScopeConfiguration;
 import org.gradle.api.artifacts.ResolvableConfiguration;
 import org.gradle.api.artifacts.dsl.DependencyFactory;
 import org.gradle.api.experimental.jvm.JavaBuildModel;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.internal.plugins.*;
 import org.gradle.api.plugins.quality.Checkstyle;
@@ -19,25 +18,24 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("UnstableApiUsage")
-@BindsSoftwareFeature(CheckstyleSoftwareFeaturePlugin.Binding.class)
+@BindsProjectFeature(CheckstyleSoftwareFeaturePlugin.Binding.class)
 public class CheckstyleSoftwareFeaturePlugin implements Plugin<Project> {
     @Override
     public void apply(Project target) {
 
     }
 
-    static class Binding implements SoftwareFeatureBindingRegistration {
+    static class Binding implements ProjectFeatureBinding {
         @Override
-        public void register(SoftwareFeatureBindingBuilder builder) {
-            builder.bindSoftwareFeature(
+        public void bind(ProjectFeatureBindingBuilder builder) {
+            builder.bindProjectFeature(
                     "checkstyle",
-                    SoftwareFeatureBindingBuilder.bindingToTargetBuildModel(CheckstyleDefinition.class, JavaBuildModel.class),
+                    ProjectFeatureBindingBuilder.bindingToTargetBuildModel(CheckstyleDefinition.class, JavaBuildModel.class),
                     (context, definition, buildModel, parent) -> {
                         Project project = context.getProject();
-                        JavaBuildModel javaBuildModel = context.getOrCreateModel(parent);
+                        JavaBuildModel javaBuildModel = context.getBuildModel(parent);
 
                         definition.getCheckstyleVersion().convention(CheckstylePlugin.DEFAULT_CHECKSTYLE_VERSION);
                         definition.getConfigDirectory().convention(context.getProjectLayout().getSettingsDirectory().dir("config"));
@@ -65,7 +63,7 @@ public class CheckstyleSoftwareFeaturePlugin implements Plugin<Project> {
         }
 
         private static void createCheckstyleForSourceSet(CheckstyleBuildModel buildModel, SourceSet sourceSet, TaskContainer tasks, ProjectLayout projectLayout) {
-            TaskProvider<@NonNull Checkstyle> checkstyleTask = tasks.register(sourceSet.getTaskName("checkstyle", null), Checkstyle.class, task -> {
+            TaskProvider<Checkstyle> checkstyleTask = tasks.register(sourceSet.getTaskName("checkstyle", null), Checkstyle.class, task -> {
                 task.setDescription(String.format("Runs Checkstyle for source set '%s'.", sourceSet.getName()));
                 task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
 

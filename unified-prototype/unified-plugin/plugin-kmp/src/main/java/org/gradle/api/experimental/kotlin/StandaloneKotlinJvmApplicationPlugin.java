@@ -3,13 +3,12 @@ package org.gradle.api.experimental.kotlin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
-import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
+import org.gradle.api.experimental.common.CliExecutablesSupport;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
-import org.gradle.api.internal.plugins.BindsSoftwareType;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingBuilder;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingRegistration;
-import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.gradle.api.internal.plugins.BindsProjectType;
+import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
+import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.plugins.ApplicationPlugin;
 import org.gradle.api.plugins.JavaApplication;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension;
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings("UnstableApiUsage")
-@BindsSoftwareType(StandaloneKotlinJvmApplicationPlugin.Binding.class)
+@BindsProjectType(StandaloneKotlinJvmApplicationPlugin.Binding.class)
 public abstract class StandaloneKotlinJvmApplicationPlugin implements Plugin<Project> {
 
     public static final String KOTLIN_JVM_APPLICATION = "kotlinJvmApplication";
@@ -32,15 +31,15 @@ public abstract class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
 
     }
 
-    static class Binding implements SoftwareTypeBindingRegistration {
+    static class Binding implements ProjectTypeBinding {
         @Override
-        public void register(SoftwareTypeBindingBuilder builder) {
-            builder.bindSoftwareType(KOTLIN_JVM_APPLICATION, KotlinJvmApplication.class,
+        public void bind(ProjectTypeBindingBuilder builder) {
+            builder.bindProjectType(KOTLIN_JVM_APPLICATION, KotlinJvmApplication.class,
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
                         project.getPlugins().apply(ApplicationPlugin.class);
                         project.getPlugins().apply("org.jetbrains.kotlin.jvm");
-                        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
+                        CliExecutablesSupport.configureRunTasks(context.getProject().getTasks(), buildModel);
                         ((DefaultKotlinJvmApplicationBuildModel) buildModel).setKotlinJvmExtension(
                                 project.getExtensions().getByType(KotlinJvmProjectExtension.class)
                         );
@@ -62,7 +61,7 @@ public abstract class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
             JvmPluginSupport.linkMainSourceSourceSetDependencies(dslModel.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
             configureTesting(dslModel, configurations, tasks);
 
-            dslModel.getRunTasks().add(tasks.named("run"));
+            buildModel.getRunTasks().add(tasks.named("run"));
         }
 
         private void configureTesting(KotlinJvmApplication dslModel, ConfigurationContainer configurations, TaskContainer tasks) {

@@ -5,9 +5,9 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
-import org.gradle.api.internal.plugins.BindsSoftwareType;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingBuilder;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingRegistration;
+import org.gradle.api.internal.plugins.BindsProjectType;
+import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
+import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.testing.Test;
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension;
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings("UnstableApiUsage")
-@BindsSoftwareType(StandaloneKotlinJvmLibraryPlugin.Binding.class)
+@BindsProjectType(StandaloneKotlinJvmLibraryPlugin.Binding.class)
 public abstract class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project> {
 
     public static final String KOTLIN_JVM_LIBRARY = "kotlinJvmLibrary";
@@ -28,10 +28,10 @@ public abstract class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project
 
     }
 
-    static class Binding implements SoftwareTypeBindingRegistration {
+    static class Binding implements ProjectTypeBinding {
         @Override
-        public void register(SoftwareTypeBindingBuilder builder) {
-            builder.bindSoftwareType(KOTLIN_JVM_LIBRARY, KotlinJvmLibrary.class,
+        public void bind(ProjectTypeBindingBuilder builder) {
+            builder.bindProjectType(KOTLIN_JVM_LIBRARY, KotlinJvmLibrary.class,
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
                         project.getPlugins().apply("org.jetbrains.kotlin.jvm");

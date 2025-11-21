@@ -5,10 +5,9 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.kmp.internal.KotlinPluginSupport;
-import org.gradle.api.internal.plugins.BindsSoftwareType;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingBuilder;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingRegistration;
-import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.gradle.api.internal.plugins.BindsProjectType;
+import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
+import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskContainer;
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget;
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension;
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings({"UnstableApiUsage"})
-@BindsSoftwareType(StandaloneKmpLibraryPlugin.Binding.class)
+@BindsProjectType(StandaloneKmpLibraryPlugin.Binding.class)
 public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
     public static final String KOTLIN_LIBRARY = "kotlinLibrary";
 
@@ -33,10 +32,10 @@ public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
         project.getConfigurations().dependencyScope("runtimeOnly").get();
     }
 
-    static class Binding implements SoftwareTypeBindingRegistration {
+    static class Binding implements ProjectTypeBinding {
         @Override
-        public void register(SoftwareTypeBindingBuilder builder) {
-            builder.bindSoftwareType(KOTLIN_LIBRARY, KmpLibrary.class,
+        public void bind(ProjectTypeBindingBuilder builder) {
+            builder.bindProjectType(KOTLIN_LIBRARY, KmpLibrary.class,
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
 

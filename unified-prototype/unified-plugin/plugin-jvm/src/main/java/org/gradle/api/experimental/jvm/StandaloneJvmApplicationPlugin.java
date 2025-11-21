@@ -4,13 +4,13 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.dsl.DependencyFactory;
-import org.gradle.api.experimental.common.CliApplicationConventionsPlugin;
 
+import org.gradle.api.experimental.common.CliExecutablesSupport;
 import org.gradle.api.experimental.jvm.internal.JvmPluginSupport;
 import org.gradle.api.file.ProjectLayout;
-import org.gradle.api.internal.plugins.BindsSoftwareType;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingBuilder;
-import org.gradle.api.internal.plugins.SoftwareTypeBindingRegistration;
+import org.gradle.api.internal.plugins.BindsProjectType;
+import org.gradle.api.internal.plugins.ProjectTypeBindingBuilder;
+import org.gradle.api.internal.plugins.ProjectTypeBinding;
 import org.gradle.api.plugins.ApplicationPlugin;
 import org.gradle.api.plugins.JavaApplication;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -29,7 +29,7 @@ import javax.inject.Inject;
  * and links the declarative model to the official plugin.
  */
 @SuppressWarnings("UnstableApiUsage")
-@BindsSoftwareType(StandaloneJvmApplicationPlugin.Binding.class)
+@BindsProjectType(StandaloneJvmApplicationPlugin.Binding.class)
 public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> {
 
     public static final String JVM_APPLICATION = "jvmApplication";
@@ -39,14 +39,14 @@ public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> 
 
     }
 
-    static class Binding implements SoftwareTypeBindingRegistration {
+    static class Binding implements ProjectTypeBinding {
         @Override
-        public void register(SoftwareTypeBindingBuilder builder) {
-            builder.bindSoftwareType(JVM_APPLICATION, JvmApplication.class,
+        public void bind(ProjectTypeBindingBuilder builder) {
+            builder.bindProjectType(JVM_APPLICATION, JvmApplication.class,
                     (context, definition, buildModel) -> {
                         Project project = context.getProject();
                         project.getPlugins().apply(ApplicationPlugin.class);
-                        project.getPlugins().apply(CliApplicationConventionsPlugin.class);
+                        CliExecutablesSupport.configureRunTasks(context.getProject().getTasks(), buildModel);
                         ((DefaultJavaApplicationBuildModel) buildModel).setJavaPluginExtension(
                                 project.getExtensions().getByType(JavaPluginExtension.class)
                         );
@@ -104,7 +104,7 @@ public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> 
                     task.getJvmArguments().set(dslModel.getJvmArguments());
                     task.setClasspath(sourceSet.getRuntimeClasspath());
                 });
-                dslModel.getRunTasks().add(runTask);
+                buildModel.getRunTasks().add(runTask);
             });
         }
     }

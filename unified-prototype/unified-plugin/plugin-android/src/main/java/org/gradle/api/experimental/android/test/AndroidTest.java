@@ -8,6 +8,7 @@ import org.gradle.api.experimental.android.ExperimentalProperty;
 import org.gradle.api.experimental.android.extensions.BaselineProfile;
 import org.gradle.api.experimental.android.extensions.testing.AndroidTestDependencies;
 import org.gradle.api.experimental.android.extensions.testing.TestOptions;
+import org.gradle.api.internal.plugins.Definition;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
 import org.gradle.declarative.dsl.model.annotations.Configuring;
@@ -17,7 +18,7 @@ import org.gradle.declarative.dsl.model.annotations.Restricted;
 // represent a project the produces production software.  There should be a
 // common AbstractAndroidPlugin that AndroidSoftwarePlugin and this plugin
 // both extend that folds these commonalities back into it
-public interface AndroidTest {
+public interface AndroidTest extends Definition<AndroidTestBuildModel> {
     /**
      * JDK version to use for compilation.
      */
