@@ -12,7 +12,7 @@ copyright: >
   <br/>Some code samples may be licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> or other permissive OSI-compliant licenses.
   <br/>The original content licenses and copyrights from the included repositories are preserved,
   you can find them in the linked repositories.
-  <br/>Gradle®, Develocity®, Build Scan®, and the Gradlephant logo are registered trademarks of Gradle, Inc. 
+  <br/>Gradle®, Develocity®, Build Scan®, and the Gradlephant logo are registered trademarks of Gradle, Inc.
   On this resource, "Gradle" typically means "Gradle Build Tool" and does not reference Gradle, Inc. and/or its subsidiaries.
 docs_dir: .
 repo_url: https://github.com/gradle/declarative-gradle
@@ -93,7 +93,7 @@ nav:
   - Documentation:
     - Overview: docs/reference/README.md
     - Generate new builds: docs/reference/build-init.md
-    - Software Features: docs/reference/software-features.md
+    - Software Features: docs/reference/project-features.md
     - Migration Guide: docs/reference/migration-guide.md
     - Example Project Migration: docs/reference/migration-case-study.md
     - Roadmap: docs/ROADMAP.md

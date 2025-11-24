@@ -19,28 +19,19 @@ After picking a sample, read about new [Declarative Gradle features](./features.
 
 ## Java Application
 
-A sample Java application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `javaApplication` Software Type defined in the `org.gradle.experimental.jvm-ecosystem` ecosystem plugin.
+A sample Java application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `javaApplication` Project Type defined in the `org.gradle.experimental.jvm-ecosystem` ecosystem plugin.
 
 Please follow the README available at [gradle/declarative-samples-java-app](https://github.com/gradle/declarative-samples-java-app) to try this sample.
 
 ## Kotlin Application
 
-A sample Kotlin application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `kotlinJvmApplication` Software Type defined in the `org.gradle.experimental.kmp-ecosystem` ecosystem plugin.
+A sample Kotlin application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `kotlinJvmApplication` Project Type defined in the `org.gradle.experimental.kmp-ecosystem` ecosystem plugin.
 
 Please follow the README available at [gradle/declarative-samples-kotlin-app](https://github.com/gradle/declarative-samples-kotlin-app) to try this sample.
 
 ## Android Application
 
-### Using the Official Android Software Types (Preview)
-
-A sample Android application written in the Declarative Gradle DSL, using the official Android Software Types Preview `androidApp` and `androidLibrary` defined in the `com.android.ecosystem` ecosystem plugin.
-
-Please follow the README available at [gradle/declarative-samples-agp-app](https://github.com/gradle/declarative-samples-agp-app) to try this sample.
-
-
-### Using Prototype Declarative Plugins
-
-A sample Android application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `androidApplication` Software Type defined in the `org.gradle.experimental.android-ecosystem` ecosystem plugin.
+A sample Android application written in the Declarative Gradle DSL, using the prototype Declarative Gradle `androidApplication` Project Type defined in the `org.gradle.experimental.android-ecosystem` ecosystem plugin.
 
 Please follow the README available at [gradle/declarative-samples-android-app](https://github.com/gradle/declarative-samples-android-app) to try this sample.
 
