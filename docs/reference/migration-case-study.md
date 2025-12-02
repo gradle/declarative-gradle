@@ -2,13 +2,14 @@
 
 ## Introduction
 
-In February and March 2025, using the version of Declarative Gradle available as EAP 3, we migrated the [`gradle client`](https://github.com/gradle/gradle-client) application to Declarative Gradle.
-This migration included defining a custom Project Type to represent the plugins and tools used by one of its projects, and replacing all Kotlin buildscripts with DCL files.
+In 2025 we migrated the [`gradle client`](https://github.com/gradle/gradle-client) application to use Declarative Gradle build scripts.
+
+This migration included defining several custom Project Features to represent the plugins and tools used by one of its projects, and replacing all Kotlin buildscripts with DCL files.
 Doing this gave us the opportunity to explore the DCL migration process in depth and identify common stumbling blocks and areas for improvement.
 
 This document captures our experiences and presents them as a case study.
 It highlights pain points, gotchas, and other insights surfaced by an actual migration.
-You can view the results of the migration by comparing [the initial state of the repository](https://github.com/gradle/gradle-client/tree/8d5c4fefb10d7feae402fcae3106310a0495f535) with the [final post-migration state](https://github.com/gradle/gradle-client/tree/96d2b0adecfc9d622b77f1d67bbad33e8d752da3).
+You can view the results of the migration by comparing [the initial state of the repository](https://github.com/gradle/gradle-client/tree/8d5c4fefb10d7feae402fcae3106310a0495f535) with the [final post-migration state](https://github.com/gradle/gradle-client/tree/8a322e6e5f8878fe1228dea7e2e1e3683ef219f0).
 
 ## Overview
 
@@ -16,6 +17,7 @@ The Gradle Client is a desktop application built with Kotlin Compose Desktop tha
 The particulars of what this application does when run aren’t especially relevant to the migration process, however.  
 
 The project is structured as a multi-project build that comprises 3 Gradle subprojects:
+
 - `:build-action` - a plain Java library 
 - `:mutations-demo` - a Kotlin JVM library 
 - `:gradle-client` - the main Kotlin JVM application
@@ -31,16 +33,15 @@ These are more likely to work with minimal effort and help build confidence befo
 
 ## Preparing for Migration
 
-For the migration of the Gradle Client project, and to support the latest Declarative Gradle Configuration Language (DCL), we eventually upgraded the Gradle wrapper to version [gradle-8.14-milestone-4](https://services.gradle.org/distributions/gradle-8.14-milestone-4-bin.zip).
-During the migration, we often used nightly snapshot versions to access DCL features that were still under active development.
-By the time you read this, a later milestone or release candidate of Gradle 8.14 may be available for use in your own migrations.
+For the migration of the Gradle Client project, and to support the latest Declarative Gradle Configuration Language (DCL), we often used nightly snapshot versions to access DCL features that were still under active development.
+By the time you read this, a later milestone or release candidate of Gradle  may be available for use in your own migrations.  See the [Gradle releases page](https://gradle.org/releases/) to find the latest versions available.
 
 The Declarative Gradle prototype includes a Kotlin Multiplatform (KMP) prototype plugin.
 As the `:gradle-client` project is a Kotlin Multiplatform project (which only actually targets the JVM), we applied the corresponding Ecosystem Plugin in the root project's existing `settings.gradle.kts` file:
 
 ```
 plugins {
-    id("org.gradle.experimental.kmp-ecosystem").version("0.1.41")
+    id("org.gradle.experimental.kmp-ecosystem").version("0.1.48")
 }
 ```
 
@@ -49,10 +50,12 @@ Next, we renamed  `settings.gradle.kts` to `settings.gradle.dcl`.
 Because the formats are similar for most common settings, the contents didn’t change significantly during the conversion.
 
 You can compare the changes directly:
-- [Resulting `settings.gradle.dcl` file](https://github.com/gradle/gradle-client/blob/96d2b0adecfc9d622b77f1d67bbad33e8d752da3/settings.gradle.dcl)
+
+- [Resulting `settings.gradle.dcl` file](https://github.com/gradle/gradle-client/blob/856e92c3746be5c0ab2a3c8fac8e5b88066c0bcf/settings.gradle.dcl)
 - [Original `settings.gradle.kts` file](https://github.com/gradle/gradle-client/blob/8d5c4fefb10d7feae402fcae3106310a0495f535/settings.gradle.kts)
 
 A few changes stand out in the converted settings file:
+
 - There’s no need for `@file:Suppress("UnstableApiUsage")`, this is done automatically for Declarative files
 - We’ve added an included build and applied the `org.gradle.client.ecosystem.custom-ecosystem` plugin (more on these changes below)
 - Content filtering of repositories isn’t available in DCL yet 
@@ -70,13 +73,15 @@ Inside each individual project’s buildscript, you can incrementally introduce 
 
 To get started, we set the `org.gradle.kotlin.dsl.dcl=true` flag in the root project's `gradle.properties` file.
 We could then add a Project Type to an existing build file and move configuration code into that Project Type piece-by-piece while deleting the corresponding code from the remaining “imperative” part of our build script outside its declaration.
+
 This workflow made it easy to confirm correctness along the way, such as ensuring dependencies were still available for compilation after moving them into the Project Type.
 
-This approach is also helpful because there is always a clear visual boundary between what parts of the build have already been “declarativized” and what parts are still pending.
+This approach is also helpful because there is always a clear visual boundary between what parts of the build have already been made declarative and what parts are still pending.
 
 ## Using Existing Prototype Plugins
 
 Core functionality, such as typical `implementation`, `api`, and test dependencies for library projects in common ecosystems, is already supported by the existing Project Types provided by Gradle's prototype plugins.
+
 Migrating project dependencies declared in the top-level `dependencies` block to the dependency support provided by Project Types served as a good test of our DCL setup.
 
 In the `gradle-client` build, the `:build-action` project was a straightforward candidate for migration. 
@@ -88,8 +93,8 @@ javaLibrary {
     javaVersion = 8
 
     dependencies {
-        implementation("org.gradle:gradle-tooling-api:8.14-milestone-4")
-        implementation("org.gradle:gradle-declarative-dsl-tooling-models:8.14-milestone-4")
+        implementation("org.gradle:gradle-tooling-api:9.2.0-milestone-2")
+        implementation("org.gradle:gradle-declarative-dsl-tooling-models:9.2.0-milestone-2")
     }
 }
 ```
@@ -113,7 +118,7 @@ java {
 }
 ```
 
-The DCL version is more concise and communicates the same intented "project definition".
+The DCL version is more concise and communicates the same intended "project definition".
 The main disadvantage is the use of hardcoded GAV (Group:Artifact:Version) strings for dependencies, rather than the type-safe references provided by the Version Catalog in the original. 
 This is a temporary limitation, and support for shared version declarations is expected in a future EAP.
 
@@ -125,7 +130,7 @@ The new `mutations-demo/build.gradle.dcl`:
 ```
 kotlinJvmLibrary {
     dependencies {
-        implementation("org.gradle:gradle-declarative-dsl-core:8.14-milestone-7")
+        implementation("org.gradle:gradle-declarative-dsl-core:9.2.0-milestone-2")
     }
 }
 ```
@@ -151,16 +156,10 @@ The existing prototype plugins were insufficient for a more complex project, suc
 While `:gradle-client` is a Kotlin application (technically a KMP application that only targets the JVM), it uses features and plugins that fall outside the scope of the existing prototype plugins.
 For example, SQL Delight, Detekt, Compose, and other functionality is not part of KMP, so support for this is not present.  
 
-As a result, we could not simply apply ad configure the existing `kotlinApplication` Project Type without removing vital features from the project.
-Like all our prototype declarative plugins, that plugin does not yet support composition or extensibility, features that would allow combining functionality like `kotlinApplication` with SQLDelight or Detekt in a modular way.
+As a result, we could not simply apply and configure the existing `kotlinApplication` Project Type without removing vital features from the project.
 
-Support for Composition and Extensibility is a highly requested and essential feature for the DCL. 
-It is actively in development and expected in a future EAP.
-
-The approach we used for this project is the one outlined in our [Migration Guide](migration-guide.md): 
-We setup an included build to define a new plugin.
-This plugin implements a new Project Type that contains built-in support for _all_ the specific features used by this project.
-We also defined a new Ecosystem Plugin that exposes this Project Type so that we can use it for projects in our build.
+To address this, we set up an included build to define some new plugins that would provide the necessary project features for SQL Delight, Detekt, and Compose.
+We also defined a new Ecosystem Plugin that exposes these Project Features so that we can use them for projects in our build.
 
 ### Setting up the Included Build
 
@@ -181,119 +180,123 @@ Then, we added a `build-logic/settings.gradle.dcl` file and applied the `org.gra
 
 ```
 plugins {
-    id("org.gradle.experimental.plugin-ecosystem") version("0.1.41")
+    id("org.gradle.experimental.plugin-ecosystem") version("0.1.48")
 }
 ```
 
-This allows us to use the `javaGradlePlugin` plugin, which is necessary for _declaratively_ writing Gradle plugins—like the custom Project Types we’re about to create here.
+This allows us to use the `javaGradlePlugin` plugin, which is necessary for _declaratively_ writing Gradle plugins—like the custom Project Features we’re about to create here.
 
 
-Next, we created a `build-logic/plugins` subproject that contains our new Project Types.  
+Next, we created a `build-logic/plugins` subproject that contains our new Project Features.  
 We included the project in the included build’s `settings.gradle.dcl` as usual.
 In `build-logic/plugins`, we created a `build.gradle.dcl` file with an empty top-level `javaGradlePlugin {}` block. 
 This is where we will register our new plugins.
 
-While we could have registered the plugins directly in the root project of the `:build-logic` build, this extra level of separation could be useful if you have other imperative logic to migrate that wouldn’t be entirely contained in new Project Types.
+While we could have registered the plugins directly in the root project of the `:build-logic` build, this extra level of separation could be useful if you have other imperative logic to migrate that wouldn’t be entirely contained in new Project Features.
 
 This structure allows for:
+
 - Creating other plugins, such as other settings plugins that provide additional task types or global configuration that you could then apply to your build.
-- Keeping different types of logic isolated from the projects that produce your Project Type plugins.
+- Keeping different types of logic isolated from the projects that produce your Project Feature plugins.
 
-### Writing a New Project Type Plugin
-
-An initial idea for implementing our custom Project Type might be to extend an existing one like `kotlinApplication`, to take advantage of support for dependencies and SDK versioning already implemented there. 
-However, due to a technical limitation, each Project Type plugin can expose only one Project Type.
-So we'll have to create a brand new plugin.
+### Writing a New Project Feature Plugin
 
 The project we’re migrating is a Compose Desktop application written in Kotlin.
-To support it declaratively, we’ll define a custom Project Type plugin tailored to its needs. 
-In `build-logic/plugins/src/main/java`, we begin by adding a new plugin class: `org.gradle.client.softwaretype.CustomDesktopComposeApplicationPlugin` that implements `Plugin<Project>` and has a `public void apply(Project)` - just like every Gradle project-based plugin.
+To support it declaratively, we’ll define a custom Project Feature plugin that provides Compose functionality. 
+In `build-logic/plugins/src/main/java`, we begin by adding a new plugin class: `org.gradle.client.projectfeatures.compose.ComposeProjectFeaturePlugin` that implements `Plugin<Project>` and has a `public void apply(Project)` - just like every Gradle project-based plugin.
 
-The `build-logic/plugins/src/main/java/org/gradle/client/softwaretype
-/CustomDesktopComposeApplicationPlugin.java` file begins like this:
-
+The `build-logic/plugins/src/main/java/org/gradle/client/projectfeatures/compose/ComposeProjectFeaturePlugin.java` file begins like this:
 
 ```
-package org.gradle.client.softwaretype;
+package org.gradle.client.projectfeatures.compose;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
-public abstract class CustomDesktopComposeApplicationPlugin implements Plugin<Project> {
+public abstract class ComposeProjectFeaturePlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {}
 }
 ```
 
-The name of the Project Type class itself does not need to be concise since it is not visible to consumer builds.
-What the consumer will see is the name of the declarative extension exposed by the plugin. 
-For clarity and usability, we chose a short but descriptive extension name: `desktopComposeApp`.
+The name of the Project Feature class itself does not need to be concise since it is not visible to consumer builds.
+What the consumer will see is the name of the declarative definition exposed by the plugin. 
+For clarity and usability, we chose a short but descriptive definition name: `compose`.
 
-To support configuring our Project Type, we need to define a model interface (i.e., the extension type) that backs it. 
-This interface defines the DSL that consumers will use declaratively.
+To support configuring our Project Feature, we need to define a definition interface that represents the DSL that consumers will configure declaratively, and a build model interface that represents the low-level details of what configuration the feature exposes to build logic.
 
-In `build-logic/plugins/src/main/java/org/gradle/client/softwaretype/CustomDesktopComposeApplication.java` we add an empty interface:
+In `build-logic/plugins/src/main/java/org/gradle/client/projectfeatures/compose/Compose.java` we add an empty interface that extends the `Definition` interface:
 
 ```
-package org.gradle.client.softwaretype;
+package org.gradle.client.projectfeatures.compose;
 
-public interface CustomDesktopComposeApplication {}
+import org.gradle.api.internal.plugins.Definition;
+
+public interface Compose extends Definition<ComposeBuildModel>{}
+```
+
+In `build-logic/plugins/src/main/java/org/gradle/client/projectfeatures/compose/ComposeBuildModel.java` we add an empty interface that extends the `BuildModel` interface:
+
+```
+package org.gradle.client.projectfeatures.compose;
+
+import org.gradle.api.internal.plugins.BuildModel;
+
+public interface ComposeBuildModel extends BuildModel {}
 ```
 
 That’s all we need to get started.
 
-Next we need to connect the plugin class to the extension.
-We do this by annotating a getter on the plugin class with `@SoftwareType`.
+Next we need to connect the plugin class to the feature.
+We do this by annotating the plugin class with `@BindsProjectFeature` specifying a `ProjectFeatureBinding` class that connects the definition and build model types and registers the feature name that will be used in DCL files.
 
-This gives us the following `build-logic/plugins/src/main/java/org/gradle/client/softwaretype/CustomDesktopComposeApplicationPlugin.java`:
+This gives us the following `build-logic/plugins/src/main/java/org/gradle/client/projectfeatures/compose/ComposeProjectFeaturePlugin.java`:
 
 ```
-package org.gradle.client.softwaretype;
+package org.gradle.client.projectfeatures.compose;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.internal.plugins.software.SoftwareType;
+import org.gradle.api.internal.plugins.BindsProjectFeature;
 
 @SuppressWarnings("UnstableApiUsage")
+@BindsProjectFeature(ComposeProjectFeaturePlugin.Binding.class)
 public abstract class CustomDesktopComposeApplicationPlugin implements Plugin<Project> {
-    public static final String DESKTOP_COMPOSE_APP = "desktopComposeApp";
-
-    @SoftwareType(name = DESKTOP_COMPOSE_APP, modelPublicType = CustomDesktopComposeApplication.class)
-    public abstract CustomDesktopComposeApplication getDesktopComposeApp();
-
     @Override
     public void apply(Project project) {}
-}
-```
-
-We add `@SuppressWarnings("UnstableApiUsage")` to the plugin class to silence distracting IDE warnings related to the use of in-development Declarative API types.
-It’s a good idea to add this annotation to most of the Java classes in your plugin so that other actionable warnings are more visible.
-
-Note that we haven’t yet written a concrete class - only interfaces and abstract classes. 
-The getter method is left abstract as well.
-In our own migration, the only concrete types in the plugin project were static utility classes — which could have been abstract too.
-This is expected when writing a Declarative Project Type plugin - it should rely on Gradle to instantiate everything automatically, including providing implementations for abstract methods like `getDesktopComposeApp()` that the plugin will use to access the data configured in the extension by a build using it in a DCL file.
-
-At this point, we’ve completed the minimum setup needed to define a (currently empty) Project Type. 
-All that remains is to package the plugin for use.
-
-In `build-logic/plugins/build.gradle.dcl`, we add:
-
-```
-javaGradlePlugin {
-    description = "Declarative plugins containing custom project types for the gradle-client project."
-
-    registers {
-        id("org.gradle.client.softwaretype.desktop-compose-application") {
-            description = "A custom project type for the Gradle Client's desktop Compose application"
-            implementationClass = "org.gradle.client.softwaretype.CustomDesktopComposeApplicationPlugin"
+    
+    static class Binding implements ProjectFeatureBinding {
+        @Override
+        public void bind(ProjectFeatureBindingBuilder builder) {
+            builder.bindProjectFeatureToBuildModel("compose", Compose.class, KotlinMultiplatformBuildModel.class,
+                (context, definition, buildModel, parent) -> {
+                }
+            );
         }
     }
 }
 ```
 
-This is how we use the Declarative prototype version of the Java Gradle Plugin Plugin (provided by the prototype ecosystem) to publish our custom Project Type plugin.
-At this point, the plugin is usable from any project in the Gradle Client build.
+Notice that the call to the binding method provides all the necessary information to connect our feature to the declarative DSL.
+First, we specify the name of the feature as it will appear in DCL files: `compose`.
+Second, we specify the definition type of our feature: `Compose.class`.
+Third, we specify the target type that the feature can be bound to: `KotlinMultiplatformBuildModel.class` (since our feature is intended to be used with KMP projects).
+Finally, we provide a lambda that will be called to configure the build model based on the definition.
+
+We specified the target type as `KotlinMultiplatformBuildModel.class` because we want this feature to be available for KMP projects.
+We are binding to a _build model_ type, rather than a _definition_ type.
+We _could_ bind to a definition type if we wanted to be very specific, but we should be interacting with our target through its build model, so as long as the build model conforms to our expectations, we don't actually care what the target definition is.
+So instead, we are saying that this feature will work with _any_ definition that has a `KotlinMultiplatformBuildModel` build model type (or subtype).
+This means that our feature can be used with a `KmpApplication` definition, a `KmpLibrary` definition, or any other KMP-based definition that has a `KotlinMultiplatformBuildModel` build model.
+
+We add `@SuppressWarnings("UnstableApiUsage")` to the plugin class to silence distracting IDE warnings related to the use of in-development Declarative API types.
+It’s a good idea to add this annotation to most of the Java classes in your plugin so that other actionable warnings are more visible.
+
+Note that our definition is not a concrete class, nor is our build model.
+This is expected when writing a Declarative Project Feature plugin - it should rely on Gradle to instantiate most objects automatically.
+
+At this point, we’ve completed the minimum setup needed to define a (currently empty) Project Feature. 
+All that remains is to package the plugin for use.
 
 ### Writing a New Ecosystem Plugin
 
@@ -306,11 +309,12 @@ Plugins contain imperative logic and are applied imperatively, so they do not be
 
 You can read more about Declarative Gradle design principles in our [blog post](https://blog.gradle.org/declarative-gradle-first-eap#developer-first-configuration).
 
-To make a Project Type available to a project, you apply an Ecosystem Plugin.
+To make a Project Feature available to a project, you apply an Ecosystem Plugin.
 An Ecosystem Plugin:
+
 - Implements `Plugin<Settings>`
 - Is applied prior to project configuration
-- Tells Gradle about Project Type(s) that will be used by projects in a build
+- Tells Gradle about Project Types and/or Features that will be used by projects in a build
 
 In our case, we create our Ecosystem Plugin in  `build-logic/plugins/src/main/java/org/gradle/client/ecosystem/CustomEcosystemPlugin.java`:
 
@@ -319,34 +323,40 @@ package org.gradle.client.ecosystem;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.initialization.Settings;
-import org.gradle.api.internal.plugins.software.RegistersSoftwareTypes;
+import org.gradle.api.internal.plugins.software.RegistersProjectFeatures;
 import org.gradle.client.softwaretype.CustomDesktopComposeApplicationPlugin;
 
 
-@RegistersSoftwareTypes({CustomDesktopComposeApplicationPlugin.class})
+@RegistersProjectFeatures({ComposeProjectFeaturePlugin.class})
 public abstract class CustomEcosystemPlugin implements Plugin<Settings> {
     @Override
     public void apply(Settings settings) {}
 }
 ```
 
-Although this is a complete implementation of a plugin, everything important is accomplished via the @RegistersSoftwareTypes annotation so the `apply(Settings)` method is left empty.
+Although this is a complete implementation of a plugin, everything important is accomplished via the `@RegistersProjectFeatures` annotation so the `apply(Settings)` method is left empty.
 This is typical for Ecosystem Plugins, and in the future, we may streamline this boilerplate even further.
 
-Next, we register the Ecosystem Plugin in `build-logic/plugins/build.gradle.dcl` by adding another entry to the `registers` block:
+Next, we register the Ecosystem Plugin in `build-logic/plugins/build.gradle.dcl` by adding an entry to the `registers` block:
  
 ```
-id("org.gradle.client.ecosystem.custom-ecosystem") {
-    description = "A custom ecosystem plugin registering the Project Type plugins provided by this project"
-    implementationClass = "org.gradle.client.ecosystem.CustomEcosystemPlugin"
+javaGradlePlugin {
+    description = "Declarative plugins containing custom project features for the gradle-client project."
+
+    registers {
+        id("org.gradle.client.ecosystem.custom-ecosystem") {
+            description = "A custom ecosystem plugin registering the Project Feature plugins provided by this project"
+            implementationClass = "org.gradle.client.ecosystem.CustomEcosystemPlugin"
+        }
+    }
 }
 ```
 
-That’s actually all that’s needed for our Ecosystem Plugin — its sole purpose is to register Project Type plugins so they can be used declaratively in the build.
+That’s actually all that’s needed for our Ecosystem Plugin — its sole purpose is to register Project Feature plugins so they can be used declaratively in the build.
 
-It’s important to keep in mind that if our vision for Declarative Gradle succeeds then writing your own Ecosystem Plugins won’t be something you’ll need to do for every project.
+It’s important to understand that if our vision for Declarative Gradle comes to fruition, then writing your own Ecosystem Plugins won’t be something you’ll need to do for every project.
 Our long-term goal is to offer a large assortment of Ecosystem Plugins available for popular frameworks and project types.
-Combined with our pending work on Composability and Extensibility, migrating to a Declarative build should feel more like ordering a multi-course meal from a curated menu than cooking everything from scratch yourself.
+Combined with our work on Composability and Extensibility, migrating to a Declarative build should feel more like ordering a multi-course meal from a curated menu than cooking everything from scratch yourself.
 
 Before going any further, now is a good time to sanity check our setup by applying our new Project Type to the `:gradle-client` project.
 Even though the plugin currently does absolutely nothing, that’s expected and is not a problem.
@@ -365,19 +375,23 @@ plugins {
 In the `gradle-client/build.gradle.kts` file, we add to following line to the bottom of the file:
 
 ```
-desktopComposeApp {}
+kotlinApplication {
+    compose {
+        // No configuration yet
+    }
+}
 ```
 
 At this point, we should be able to build the project as usual.
 
-While our Project Type isn’t doing anything yet, a successful build confirms that Gradle has properly detected and configured it.
+While our Project Feature isn’t doing anything yet, a successful build confirms that Gradle has properly detected and configured it.
 
 ### Beginning to Migrate The Project’s Configuration: Dependencies
 
 We started our migration with dependencies. 
 This is often the best place to begin — dependencies are foundational to any build, and it's relatively easy to verify their correctness.
 
-To migrate dependencies to the new DSL, we need a location within the SoftwareType’s extension where they can be declared.
+To migrate dependencies to the new DSL, we need a location within the DSL where they can be declared.
 For example, in a typical Kotlin project (like `:mutations-demo`), you’d see:
 
 ```
@@ -425,124 +439,13 @@ public interface BasicDependencies extends Dependencies, PlatformDependencyModif
 
 There is a degree of abstraction and reuse here that adds some complexity, but the core idea is simple.
 In essence, to declare dependencies declaratively, we expose a nested extension that:
+
 - Implements `org.gradle.api.artifacts.dsl.Dependencies`, and
 - Provides one or more getters that return a `org.gradle.api.artifacts.dsl.DependencyCollector`
 
 When Gradle processes a DCL (or Kotlin DSL) file and finds Project Types it looks within their extension classes for any `@Nested` types that implement `Dependencies`, and records the `DependencyCollector` getter methods.
 This allows method calls like `implementation(<some coordinates string>)` or `api(project(<some project>))` to map correctly to overloads of the `DependencyCollector.add(...)` present on the collectors returned by those getters.
 It may look like magic, but it’s well-supported, and tools like IDEs understand these conventions through the Gradle Tooling API.
-
-#### Option 1: Create a new custom Dependencies type
-
-To get dependencies working in our custom Project Type, we can define a simplified dependencies type and expose it from our plugin. 
-We start by creating a new interface at `build-logic/plugins/src/main/java/org/gradle/client/softwaretype/CustomDependencies.java`:
-
-```
-package org.gradle.client.softwaretype;
-
-import org.gradle.api.artifacts.dsl.Dependencies;
-import org.gradle.api.artifacts.dsl.DependencyCollector;
-import org.gradle.api.plugins.jvm.PlatformDependencyModifiers;
-
-public interface CustomDependencies extends Dependencies {
-    DependencyCollector getImplementation();
-    DependencyCollector getRuntimeOnly();
-    DependencyCollector getCompileOnly();
-}
-```
-
-We expose this from the SoftwareType extension, in `build-logic/plugins/src/main/java/org/gradle/client/softwaretype/CustomDesktopComposeApplication.java`:
-
-```
-public interface CustomDesktopComposeApplication {
-    @Nested
-    CustomDependencies getDependencies();
-
-    @Configuring
-    default void dependencies(Action<? super CustomDependencies> action) {
-        action.execute(getDependencies());
-    }
-}
-```
-
-Now in `gradle-client/build.gradle.kts`, you can declare dependencies using the new custom SoftwareType:
-
-```
-desktopComposeApp {
-    dependencies {
-        implmentation(“myGroup:myModule:myVersion”)
-        compileOnly(“myGroup2:myModule2:myVersion2”)
-    }
-}
-```
-
-DCL files do not currently support Version Catalogs, which many modern projects rely on.
-However, Kotlin DSL files (*.kts) _do_ support them.
-So, if you’ve verified everything works in Kotlin DSL, you may need to manually replace Version Catalog references with inline strings to transition to a DCL file.
-
-This can feel like a step backward, but it’s a known limitation. 
-We're actively exploring solutions. 
-In the meantime, AI tools can help: if you copy an existing Version Catalog and a dependencies block using it into one and ask it to inline the use of the catalog, the translations are often perfectly correct. 
-
-At this stage we can declare dependencies using the new nested blocks, but these declarations don’t yet affect the build.
-That’s because `DependencyCollector` does exactly what it says: it collects dependency declarations. 
-It does not resolve them or apply them to a project. 
-To make these dependencies functional, we must wire them into the appropriate `Configuration` that will resolve them.
-
-You can see how this is done in the [prototype JVM plugin](https://github.com/gradle/declarative-gradle/tree/v0.1.41/unified-prototype/unified-plugin/plugin-jvm/src/main/java/org/gradle/api/experimental/jvm/internal/JvmPluginSupport.java#L50):
-
-
-```
-project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-            .getDependencies().addAllLater(dependencies.getImplementation().getDependencies());
-```
-
-For every collector, we must find the appropriate resolvable `Configuration` and use `addAllLater` so that Gradle knows to lazily add the collected dependencies from that collector to that configuration during dependency resolution.
-
-Once this wiring is in place, we can move dependency declarations from the imperative top-level `dependencies` block to the corresponding collector in our Project Type’s new nested `dependencies` block.
-If everything is wired correctly, our build should continue to function identically after each dependency is moved.
-
-#### Option 2: Reuse an existing Dependencies type
-
-While creating a custom dependencies block is useful, many projects may not need to define one from scratch.
-In fact, the existing `dependencies` blocks defined in our prototype plugins should be sufficient for most use cases.
-
-If your build already includes a dependency on one of our prototype plugins (e.g., our included build’s `:plugins`): 
-
-```
-api("org.gradle.experimental.kmp-ecosystem:org.gradle.experimental.kmp-ecosystem.gradle.plugin:0.1.40")
-``` 
-
-Then you can reuse these types in the extensions you write for your own custom Project Types:
-
-```
-import org.gradle.api.experimental.common.BasicDependencies;
-// ... more imports
-
-
-public interface MyUniqueApplication {
-    @Nested
-    BasicDependencies getDependencies();
-
-    @Configuring
-    default void dependencies(Action<? super BasicDependencies> action) {
-        action.execute(getDependencies());
-    }
-}
-```
-
-With this approach, wiring the `DependencyCollectors` to the corresponding configurations works exactly the same as described in Option 1. 
-
-#### Option 3: Reuse an existing Project Type
-
-Ultimately, we chose not to go with either of the previous options.
-Instead, we opted to reuse the complete pre-existing `kotlinApplication` Project Type we had already built as part of the prototype plugin.
-
-This approach allowed us to take advantage of more than just the `dependencies` block, we could also leverage the broader project configuration logic already implemented in the prototype.
-
-### Reusing an Existing Project Type
-
-To demonstrate our goal, we can undo the changes to the `gradle-client/build.gradle.kts` that introduced our custom Project Type, and instead explore how the existing prototype would work in its place.
 
 By adding the following to the `/gradle-client/build.gradle.kts` file:
 
@@ -585,106 +488,146 @@ With this minimal setup, the prototype plugin now takes care of wiring these dep
 
 This is exactly the kind of reuse we’re aiming for—not just dependency declarations, but for other logic already built into the prototype plugin, like the JDK version declaration. 
 
-Now the question becomes: How can we reuse all of this logic in our custom `desktopComposeApp` type without duplicating the implementation?
-
-#### Attempt 1: Inheritance
-
-At first glance, this seems like an ideal use case for inheritance.
-We already have a working  `kotlinApplication` and just want to extend it with custom functionality (like SQL Delight and Detekt).
-The `StandaloneKmpApplicationPlugin` plugin class is even marked `abstract`, perhaps suggesting it is designed for inheritance.
-So we’ll try the natural thing: subclass this plugin, override `apply(Project)` to add new logic, and call `super.apply(project)` to retain everything from the original.
-
-Unfortunately, this approach fails from the start.
-
-Each Project Type plugin can only expose a single Project Type.
-The `StandaloneKmpApplicationPlugin` already exposes the `kotlinApplication` type via a getter annotated with `@SoftwareType`. 
-If we try to add another getter annotated with `@SoftwareType` to this plugin or a subtype of it, Gradle throws an error like:
-
-```
-  > A problem was found with the DesktopComposeApplicationPlugin plugin.
-      > Type 'org.gradle.client.softwaretype.DesktopComposeApplicationPlugin' is registered as a project type plugin, but it exposes multiple project types.
-```
-
-As of now, Declarative Gradle enforces a one-software-type-per-plugin rule. 
-That may change in a future release, but for now, inheritance won’t work if your goal is to define a new Project Type based on an existing one.
-We’ll need to find another way.
-
-#### Attempt 2: Brute-Force Composition
-
-Since we can’t use inheritance, we turned to composition instead.
-
-The idea is simple, have our `desktopComposeApp` contain a nested `kotlinApplication` block.
-This gives us access to all the existing functionality already defined in that Project Type like dependencies, target configurations, nested blocks, and more.
-Once that’s working, we can incrementally add new nested blocks for the specific features (SQL Delight, Detekt) used by the `:gradle-client` project. 
-
-To start, we added the nested extension to `CustomDesktopComposeApplication`:
-
-```
-public interface CustomDesktopComposeApplication {
-    @Nested
-    KmpApplication getKotlinApplication();
-
-    @Configuring
-    default void kotlinApplication(Action<? super KmpApplication> action) {
-        action.execute(getKotlinApplication());
-    }
-}
-```
-
-This will result in new usable blocks (`kotlinApplication {}` inside `desktopComposeApp {}`) in our DCL file that do...absolutely nothing.
-
-We needed to wire the nested block up so that it behaved like the original `kotlinApplication` Sotfware Type. 
-That logic for that wiring lived inside the `StandaloneKmpApplicationPlugin`’s apply method. 
-To reuse it, we first had to refactor that logic into a separate utility method that we could access.
-
-We created a `PluginWiring` class with a public static `wirePlugin` method (later renamed to `wireKMPApplication`). 
-This method accepted 2 arguments: the current `Project` and the nested extension interface we would configure in the DCL file. 
-
-This allowed us to isolate the wiring of the nested type from applying its plugin and resue that logic.
-[This commit](https://github.com/gradle/declarative-gradle/commit/1e9e66ffb59048b977de21b55f099f288f4cedd3) shows the change.
-
-With that refactoring in place, our plugin became:
-
-```
-import static org.gradle.api.experimental.kmp.StandaloneKmpApplicationPlugin.PluginWiring.wireKMPApplication;
-
-@SuppressWarnings("UnstableApiUsage")
-public abstract class CustomDesktopComposeApplicationPlugin implements Plugin<Project> {
-    public static final String DESKTOP_COMPOSE_APP = "desktopComposeApp";
-
-    @SoftwareType(name = DESKTOP_COMPOSE_APP, modelPublicType = CustomDesktopComposeApplication.class)
-    public abstract CustomDesktopComposeApplication getDesktopComposeApp();
-
-    @Override
-    public void apply(Project project) {
-        CustomDesktopComposeApplication dslModel = getDesktopComposeApp();
-        wireKMPApplication(project, dslModel.getKotlinApplication());
-    }
-}
-``` 
-
-After making these changes, we were able to move most of the “basic” logic of our KMP application to our new plugin using the nested `kotlinApplication` block.
-[This commit](https://github.com/gradle/gradle-client/blob/e0b98007a8a1b337729b2df3fb40c80a0fa59e0e/gradle-client/build.gradle.dcl) reflects those changes.
-If you’ve been following our earlier EAPs, much of this configuration should look familiar — it’s exactly what the prototype plugins supported before.
-Once these declarations are moved into our new nested block, we can remove them from the imperative part of this file (everything that remains outside the `desktopComposeApp` block), and still have a buildable project.
-
-It’s important to note that that is almost certainly *not* how composition will ultimately work in Declarative Gradle.
-Our long-term goal is to make plugin composition first-class, flexible, and far less manual.
-But for now, with EAP, this brute-force composition approach gets us the reuse we need without duplicating the logic we’ve already built.
-
 ### Wiring Additional Functionality from Plugins
 
 This still leaves a significant portion of our application’s functionality unaccounted for — specifically, the “custom” parts: Compose, SQLDelight, and Detekt.
 
-To address this, we gradually built support for each feature within our declarative desktopComposeApp Project Type. 
+To address this, we gradually built support for each with a Project Feature. 
 The goal is to migrate all functionality from the imperative parts of the build script into this unified declarative model until nothing imperative remains.
 At this stage, there are multiple ways to approach the problem, and which one works best will depend on your specific needs and constraints.
 
-Let’s start with something relatively simple: Detekt.
+Let’s continue our implementation of the Compose feature.
+
+#### Supporting Compose
+
+To support Compose, we used multiple levels of nesting to build a DSL that simplifies some of the Compose plugin’s extensions but is, in some ways, limited by our DCL's current feature set.
+
+Designing Compose support involves the following:
+
+1. Build new DSL definition objects to hold the configuration data needed by the plugin
+2. Move the configuration from the imperative part of our buildscript into the new blocks using the definition types
+3. Write code to be called by our plugin during application to wire values from our definition into the (Compose) plugin’s extension in an `afterEvaluate` closure
+
+You can see the original Compose DSL configuration in the imperative buildscript [before migration](https://github.com/gradle/gradle-client/blob/b498fd896d858aecf4403ab077a4ea14bcd484d0/gradle-client/build.gradle.kts#L97-L147) and the resulting DCL [after migration](https://github.com/gradle/gradle-client/blob/2b52c756913e201e283eed9ccbed9ce95e53004e/gradle-client/build.gradle.dcl#L87-L155).
+Rather than walk through the full implementation line-by-line (which closely mirrors the structure of the Detekt and SQLDelight support), we’ll highlight a few notable aspects of our Compose support.
+
+##### Representing JVM arguments with `NDOC`s
+
+One element in the Compose DCL block that might catch your eye is the `jvmArgs` section:
+
+```
+jvmArgs {
+    jvmArg("-Xms") {
+        value = "35m"
+    }
+    jvmArg("-Xmx") {
+        value = "128m"
+    }
+
+    // This was originally added at an inner nesting level, but it's not clear why
+    jvmArg("-splash") {
+        value = ":\"\$APPDIR/resources/splash.png\""
+    }
+}
+```
+
+When you look at the [Compose definition](https://github.com/gradle/gradle-client/blob/119811ff8b44dfb7b812fc8428dd30d5f680959b/build-logic/plugins/src/main/java/org/gradle/client/projectfeatures/compose/Compose.java), you’ll see that this block is modeled using an `NDOC`.
+That might seem like a strange choice, given that not all JVM arguments manifest in a similar manner.
+For instance, some JVM arguments are flags that don’t take a value, while others are a name-value pair that are concatenated into a single argument on the command line, and yet other arguments are name-value pairs that are passed as two separate command line arguments.
+In other words, a collection of JVM arguments would be better represented as a more nuanced data structure.
+In fact, arguments for a JVM are a cross-cutting concern that could be expressed by a common building-block type and reused in many different places in the DSL.
+
+So if you’re looking at this bit of code and thinking it’s both more complex and more limited than it should be — don’t worry, we feel the same.
+In future versions of Gradle, we expect to provide better support for concepts like polymorphic domain object containers and common building blocks that can be reused across different Project Types and/or Features.
+
+##### BuildTypes Simplified
+
+An area that might give the opposite impression is the support for configuring the `release` build type:
+
+```
+buildTypes {
+    release {
+        proguard {
+            optimize = false
+            obfuscate = false
+            configurationFiles = listOf(layout.projectDirectory.file("proguard-desktop.pro"))
+        }
+    }
+}
+```
+
+Behind the scenes, this isn’t modeled as a container of user-defined build types (like you might see with NDOCs elsewhere) by the 3rd party Compose plugin.
+Instead, it's implemented using several static nested extensions.
+That’s because the `org.jetbrains.compose.desktop.application.dsl.JvmApplicationBuildTypes` extension provides a static list of methods that expose predefined build types such as release.
+You can see this in our feature [on this line](https://github.com/gradle/gradle-client/blob/119811ff8b44dfb7b812fc8428dd30d5f680959b/build-logic/plugins/src/main/java/org/gradle/client/projectfeatures/compose/ComposeProjectFeaturePlugin.java#L68) where we call the parameter-less `buildTypes.getRelease()` method directly.
+
+##### Defining a Build Model
+
+In order to implement our compose feature, we need to define a build model for it.
+The build model represents how we want to deal with the low-level details of the compose plugin internally, and how we want other build logic to potentially interact with our feature.
+In many ways, it represents the "API" of our feature.
+
+However, unlike a completely new feature, we’re building a feature on top of an existing 3rd party plugin.
+This means our feature mostly exists to configure the existing plugin, and implements little to no build logic itself.
+Our interface to the legacy plugin is the extension it provides, so the `ComposeExtension` object is essentially our build model.
+
+```
+package org.gradle.client.projectfeatures.compose;
+
+import org.gradle.api.internal.plugins.BuildModel;
+import org.jetbrains.compose.ComposeExtension;
+
+public interface ComposeBuildModel extends BuildModel {
+    ComposeExtension getComposeExtension();
+}
+```
+
+We also need to be able to set the extension in our build model, but we don't want to expose the ability to set the extension to other build logic.
+To achieve this, we provide an implementation type for our build model that exposes a setter for the extension, but we keep the interface clean by only exposing the getter to other build logic.
+
+```
+package org.gradle.client.projectfeatures.compose;
+
+import org.jetbrains.compose.ComposeExtension;
+
+public class DefaultComposeBuildModel implements ComposeBuildModel {
+    private ComposeExtension composeExtension;
+
+    @Override
+    public ComposeExtension getComposeExtension() {
+        return composeExtension;
+    }
+
+    public void setComposeExtension(ComposeExtension composeExtension) {
+        this.composeExtension = composeExtension;
+    }
+}
+```
+
+Finally, we need to tell Gradle to use our implementation type when instantiating the build model.
+We do this by setting the implementation class in the binding:
+
+```
+static class Binding implements ProjectFeatureBinding {
+    @Override
+    public void bind(ProjectFeatureBindingBuilder builder) {
+        builder.bindProjectFeatureToBuildModel("compose", Compose.class, KotlinMultiplatformBuildModel.class,
+                (context, definition, buildModel, parent) -> {
+                    ...
+                }
+        ).withBuildModelImplementationType(DefaultComposeBuildModel.class);
+    }
+```
+
+We can now query and set the `ComposeExtension` instance from the third party plugin when applying the feature.  
+However, this seems like a lot of ceremony in order to wire an existing extension into our build model, doesn't it?
+In future versions of Gradle, we expect to provide simpler ways to wrap existing plugin extensions into build models.
+Ideally, this would be as simple as declaring that a specific property in the build model represents a project extension and then there would be no need for a separate implementation type - Gradle would simply handle the wiring automatically when instantiating the build model.
 
 #### Supporting Detekt
 
 When supporting a third-party plugin like Detekt, there are typically two steps involved:
+
 1. We need to create a new nested block in our Project Type to hold configuration data for that plugin
 2. We need to apply the plugin wiring that configuration data as needed
 
@@ -698,7 +641,7 @@ detekt {
 }
 ```
 
-We [translated](https://github.com/gradle/gradle-client/blob/e0b98007a8a1b337729b2df3fb40c80a0fa59e0e/build-logic/plugins/src/main/java/org/gradle/client/softwaretype/detekt/Detekt.java) this into a simple extension type that uses `Property` types compatible with DCL:
+We [translated](https://github.com/gradle/gradle-client/blob/119811ff8b44dfb7b812fc8428dd30d5f680959b/build-logic/plugins/src/main/java/org/gradle/client/projectfeatures/detekt/Detekt.java) this into a simple definition type that uses `Property` types compatible with DCL:
 
 
 ```
@@ -714,24 +657,11 @@ public interface Detekt {
 }
 ```
 
-This new Detekt block was added as a `@Nested` block inside our `CustomDesktopComposeApplication` Project Type:
-
-
-```
-@Nested
-    Detekt getDetekt();
-
-    @Configuring
-    default void detekt(Action<? super Detekt> action) {
-        action.execute(getDetekt());
-    }
-```
-
 We’re not _recreating_ the exact types from the Detekt Gradle plugin, but modeling the inputs we need in a way that makes sense for our project and is compatible with the DCL.
 That’s why we use lists of files and directories rather than `ConfigurableFileCollection` for the source and configuration files.
 We fully utlize Gradle’s Lazy Provider APIs and wrap each data type in the appropriate type of `Property`.
 
-If you compare the before and after commits for the `:gradle-client` project’s build script, you can see how the Detekt configuration was migrated from the original imperative style to the new declarative form nested under the `desktopComposeApp` block.
+If you compare the before and after commits for the `:gradle-client` project’s build script, you can see how the Detekt configuration was migrated from the original imperative style to the new declarative form nested under the `detekt` feature definition.
 
 ```
 detekt {
@@ -741,33 +671,40 @@ detekt {
 }
 ```
 
-In general, creating new extensions like this is straightforward. 
+In general, creating new definitions like this is straightforward. 
 You can reference the existing DSL to see which values are being set, then define matching `Property` getters and configure methods with the appropriate DCL annotations.
 
-At this point, though, builds don’t actually run Detekt yet. We’ve only modeled the configuration — we still need to wire this extension to the plugin.
+At this point, though, builds don’t actually run Detekt yet. We’ve only modeled the configuration — we still need to wire the configured definition to the existing plugin extension.
+We do this in the apply action we provide when binding the Detekt feature.
 
-To keep our code organized, we followed the pattern used for wiring the KMP Application support and created a new dedicated support class `DetektSupport`. 
-[Here’s the `wireDetekt` method](https://github.com/gradle/gradle-client/blob/e0b98007a8a1b337729b2df3fb40c80a0fa59e0e/build-logic/plugins/src/main/java/org/gradle/client/softwaretype/detekt/DetektSupport.java):
+Here is our feature binding for Detekt, implemented in `DetektProjectFeaturePlugin.java`:
 
 ```
-public static void wireDetekt(Project project, CustomDesktopComposeApplication projectDefinition) {
-        project.getPluginManager().apply("io.gitlab.arturbosch.detekt");
+static class Binding implements ProjectFeatureBinding {
+    @Override
+    public void bind(ProjectFeatureBindingBuilder builder) {
+        builder.bindProjectFeatureToBuildModel("detekt", Detekt.class, KotlinMultiplatformBuildModel.class,
+                (context, definition, buildModel, parent) -> {
 
-        project.afterEvaluate(p -> {
-            Detekt detektDefinition = projectDefinition.getDetekt();
-            DetektExtension detekt = project.getExtensions().findByType(DetektExtension.class);
-            assert detekt != null;
-            detekt.getSource().from(detektDefinition.getSource());
-            detekt.getConfig().from(detektDefinition.getConfig());
+                    Project project = context.getProject();
+                    project.getPluginManager().apply("io.gitlab.arturbosch.detekt");
+                    ((DefaultDetektBuildModel)buildModel).setDetektExtension(project.getExtensions().findByType(DetektExtension.class));
 
-            // This is not a property, need to wire this in afterEvaluate, so might as well wait to wire the rest of detekt with it
-            detekt.setParallel(detektDefinition.getParallel().get());
-        });
+                    buildModel.getDetektExtension().getSource().from(definition.getSource());
+                    buildModel.getDetektExtension().getConfig().from(definition.getConfig());
+
+                    project.afterEvaluate(p -> {
+                        // This is not a property, need to wire this in afterEvaluate
+                        buildModel.getDetektExtension().setParallel(definition.getParallel().get());
+                    });
+                }
+        ).withBuildModelImplementationType(DefaultDetektBuildModel.class);
     }
+}
 ```
 
 We apply the Detekt plugin programmatically, which means it must be available on the classpath when our Project Type is applied.
-To make that possible,, we add it as an `api` dependency in our plugin’s [buildscript](https://github.com/gradle/gradle-client/blob/96d2b0adecfc9d622b77f1d67bbad33e8d752da3/build-logic/plugins/build.gradle.dcl):
+To make that possible, we add it as an `api` dependency in our plugin’s [buildscript](https://github.com/gradle/gradle-client/blob/119811ff8b44dfb7b812fc8428dd30d5f680959b/build-logic/plugins/build.gradle.dcl):
 
 ```
 javaGradlePlugin {
@@ -779,14 +716,14 @@ javaGradlePlugin {
 }
 ```
 
-With this in place, applying our custom `desktopComposeApp` Project Type gives the project full Detekt support—with the configuration fully migrated to the declarative model.
+With this in place, applying our custom `detekt` Project Feature gives the project full Detekt support, with the configuration fully migrated to the declarative model.
 
 ##### The Need for `afterEvaluate`
 
-One key detail in our wiring method is the use of `Project.afterEvaluate` to wrap the wiring of the data in our new extension (`Detekt detektDefinition`) to the Detekt plugin’s extension (`DetektExtenstion detekt`).
+One key detail in our wiring method is the use of `Project.afterEvaluate` to wrap the wiring of the data in our new extension (`Detekt`) to the Detekt plugin’s extension (`DetektExtenstion`).
 
 If you look at the `setParallel` method on the `detekt` instance (the Detekt plugin’s extension) and you’ll notice it only accepts a boolean value.
-There is no overloaded that accepts a `Property<Boolean>`, which is what we’ve used to model this value in our DCL extension.
+There is no overload that accepts a `Property<Boolean>`, which is what we’ve used to model this value in our DCL extension.
 To work around this, we need to retrieve the value of our lazy `Property` via `get()` and call `setParallel()` using the result - but this can only be done once the model has been populated with data configured in the DCL.
 
 Since the DCL runtime applies the plugin that configures the Project Type first and only then fills the model with the data from the `build.gradle.dcl` file, the plugin application code (starting from the `apply` method) cannot rely on the full model content being present at that time. 
@@ -797,11 +734,21 @@ This is a necessary workaround at the moment and a common pattern when building 
 Because we need to delay setting the parallel value, we wrapped all of the Detekt configuration in `afterEvaluate` (even the source and config `FileCollection` properties, which are amenable to lazy wiring - note there is no call to `get()` involved in the DSL types here).
 When reading this code, keep in mind that as the comment explains, this is only _necessary_ when a plugin does not make use of Gradle’s Lazy Provider API.
 
-With this logic in place, we can now simply call our `wireDetekt` method from our custom Project Type plugin’s `apply` method, just like we did for `wireKMPApplication` — creating a consistent and maintainable pattern across plugin integrations.
+With this logic in place, we can now simply reference the `detekt` block in our DCL file, and the Detekt plugin will be applied and configured.
+
+```
+kotlinApplication {
+    detekt {
+        source = listOf(layout.projectDirectory.dir("src/jvmMain/kotlin"), layout.projectDirectory.dir("src/jvmTest/kotlin"))
+        config = listOf(layout.settingsDirectory.file("gradle/detekt/detekt.conf"))
+        parallel = true
+    }
+}
+```
 
 #### Supporting SQLDelight
 
-Supporting SQLDelight follows the same process we used for Detek, with one key difference: the SQLDelight plugin models its configuration using a `NamedDomainObjectContainer` (NDOC).
+Supporting SQLDelight follows the same process we used for Detekt, with one key difference: the SQLDelight plugin models its configuration using a `NamedDomainObjectContainer` (NDOC).
 
 Let’s look at the original DSL used to configure SQLDelight:
 
@@ -821,18 +768,20 @@ sqldelight {
 
 Even at a glance, it's clear that the `sqldelight` extension defines a container named `databases` which provides a `create` method to add and configure new elements.
 
-To replicate this structure in our DCL-based Project Type, we model the databases block using a `NDOC`.
-This allows us to preserve much of the original DSL structure, now nesting a `sqlDelight` block inside our `desktopComposeApp` top-level block:
+To replicate this structure in our DCL-based feature definition, we model the databases block using a `NDOC`.
+This allows us to preserve much of the original DSL structure, now providing a `sqlDelight` block that can be added to a `kotlinApplication` definition:
 
 ```
-sqlDelight {
-    databases {
-        database("ApplicationDatabase") {
-            packageName = "org.gradle.client.core.database.sqldelight.generated"
-            verifyDefinitions = true
-            verifyMigrations = true
-            deriveSchemaFromMigrations = true
-            generateAsync = false
+kotlinApplication {
+    sqlDelight {
+        databases {
+            database("ApplicationDatabase") {
+                packageName = "org.gradle.client.core.database.sqldelight.generated"
+                verifyDefinitions = true
+                verifyMigrations = true
+                deriveSchemaFromMigrations = true
+                generateAsync = false
+            }
         }
     }
 }
@@ -840,9 +789,9 @@ sqlDelight {
 
 Note that by default, an `NDOC` named `databases` will assume the method used to create a new element is called `database`. 
 This can be customized, but the default behavior is sufficient for our needs.
-We kept the name `database` instead of using `create`, because it sounds more declarative and aligns better with the style we’re aiming for than a method called `create`, which has imperative conotations.
+We kept the name `database` instead of using `create`, because it sounds more declarative and aligns better with the style we’re aiming for than a method called `create`, which has imperative connotations.
 
-The DCL model for the sqlDelight block is simple:
+The DCL definition for the sqlDelight block is simple:
 
 ```
 public interface SqlDelight {
@@ -850,7 +799,7 @@ public interface SqlDelight {
 }
 ```
 
-Notice that the `NDOC` doesn’t require any special annotation - Declarative Gradle understands how `NDOC`s work and handles them automatically when parsing the model.
+Notice that the `NDOC` doesn’t require any special annotation - Declarative Gradle understands how `NDOC`s work and handles them automatically.
 
 A database is a simple container that holds the properties we use to configure our SQLDelight database.
 Though it is a fully abstract interface, it can be thought of as a simple value type - it exists to hold information about each database in our container:
@@ -875,43 +824,52 @@ public interface Database extends Named {
 ```
 
 As with Detekt, we also need to wire our DCL configuration to the actual SQLDelight plugin at runtime.
-The wiring is handled in another [support class](https://github.com/gradle/gradle-client/blob/e0b98007a8a1b337729b2df3fb40c80a0fa59e0e/build-logic/plugins/src/main/java/org/gradle/client/softwaretype/sqldelight/SqlDelightSupport.java):
+
+The wiring is handled in the `SqlDelightProjectFeaturePlugin.Binding` class:
 
 ```
-public static void wireSqlDelight(Project project, CustomDesktopComposeApplication projectDefinition) {
-        /*
-         * It's necessary to defer checking the NDOC in our extension for contents until after project evaluation.
-         * If you move the check below outside of afterEvaluate, it fails.  Inside, it succeeds.
-         * Without the afterEvaluate, the databases is seen as empty, and the plugin fails, with this warning:
-         * https://github.com/plangrid/sqldelight/blob/917cb8e5ee437d37bfdbdcbb3fded09b683fe826/sqldelight-gradle-plugin/src/main/kotlin/app/cash/sqldelight/gradle/SqlDelightPlugin.kt#L112
-         */
-        project.afterEvaluate(p -> {
-            if (needToWireSqlDelight(projectDefinition)) {
-                project.getPluginManager().apply("app.cash.sqldelight");
+static class Binding implements ProjectFeatureBinding {
+    @Override
+    public void bind(ProjectFeatureBindingBuilder builder) {
+        builder.bindProjectFeatureToBuildModel("sqlDelight", SqlDelight.class, KotlinMultiplatformBuildModel.class,
+            (context, definition, buildModel, parent) -> {
+                Project project = context.getProject();
 
-                projectDefinition.getKotlinApplication().getTargets().jvm(jvmTarget -> {
-                    jvmTarget.getDependencies().getImplementation().add("app.cash.sqldelight:runtime:2.0.2");
-                    jvmTarget.getDependencies().getImplementation().add("app.cash.sqldelight:coroutines-extensions:2.0.2");
-                    jvmTarget.getDependencies().getImplementation().add("app.cash.sqldelight:sqlite-driver:2.0.2");
+                definition.getVersion().convention("2.0.2");
+
+                KotlinMultiplatformBuildModel parentBuildModel = context.getBuildModel(parent);
+                parentBuildModel.getKotlinMultiplatformExtension().jvm(jvmTarget -> {
+                    NamedDomainObjectProvider<DependencyScopeConfiguration> sqlDelightConfiguration = project.getConfigurations().dependencyScope("sqlDelightTool", conf -> {
+                        stream(SQLDELIGHT_DEPENDENCY_MODULES).forEach(module ->
+                            conf.getDependencies().addLater(definition.getVersion().map(version -> project.getDependencyFactory().create(SQLDELIGHT_GROUP + ":" +module + ":" + version)))
+                        );
+                    });
+
+                    project.getConfigurations().named(jvmTarget.getCompilations().getByName("main").getDefaultSourceSet().getImplementationConfigurationName(), conf ->
+                            conf.extendsFrom(sqlDelightConfiguration.get())
+                    );
                 });
 
-                SqlDelightExtension sqlDelight = project.getExtensions().getByType(SqlDelightExtension.class);
-                projectDefinition.getSqlDelight().getDatabases().forEach(dslModelDatabase -> {
-                    sqlDelight.getDatabases().create(dslModelDatabase.getName(), database -> {
-                        database.getPackageName().set(dslModelDatabase.getPackageName());
-                        database.getVerifyDefinitions().set(dslModelDatabase.getVerifyDefinitions());
-                        database.getVerifyMigrations().set(dslModelDatabase.getVerifyMigrations());
-                        database.getDeriveSchemaFromMigrations().set(dslModelDatabase.getDeriveSchemaFromMigrations());
-                        database.getGenerateAsync().set(dslModelDatabase.getGenerateAsync());
+                project.afterEvaluate(p -> {
+                    project.getPluginManager().apply("app.cash.sqldelight");
+                    ((DefaultSqlDelightBuildModel)buildModel).setSqlDelightExtension(project.getExtensions().getByType(SqlDelightExtension.class));
+
+                    definition.getDatabases().forEach(featureDatabase -> {
+                        buildModel.getSqlDelightExtension().getDatabases().create(featureDatabase.getName(), database -> {
+                            database.getPackageName().set(featureDatabase.getPackageName());
+                            database.getVerifyDefinitions().set(featureDatabase.getVerifyDefinitions());
+                            database.getVerifyMigrations().set(featureDatabase.getVerifyMigrations());
+                            database.getDeriveSchemaFromMigrations().set(featureDatabase.getDeriveSchemaFromMigrations());
+                            database.getGenerateAsync().set(featureDatabase.getGenerateAsync());
+                        });
                     });
                 });
             }
-        });
+        ).withBuildModelImplementationType(DefaultSqlDelightBuildModel.class);
     }
+}
 ```
 
-The `needToWireSqlDelight` method simply checks if `getDatabases().isEmpty()`.
-Initially, we wanted our wiring logic to avoid using `project.afterEvaluate` at all until _after_ calling this method to check for databases in the container.
 We thought: Why add an extra `project.afterEvaluate` callback unless we know we’re actually making use of SQLDelight by adding a database to the container in our extension?
 Because the contents of the `NDOC` are only available _after_ project evaluation, this won’t work.
 Assuming they will be ready earlier is an easy mistake to make when using an `NDOC`.
@@ -922,71 +880,9 @@ This is how we envision most wiring working when the Provider API is present on 
 
 In addition to applying the plugin and configuring its extension, we add the runtime dependencies needed by SQLDelight to the implementation configuration of the project’s JVM target.
 
-#### Supporting Compose
+### Finish making the build declarative
 
-Supporting Compose follows same foundational process we used for Detek or SQLDelightt. 
-However, the Compose plugin’s configuration introduces significatly more complexity.
-To support this, we’ve used multiple levels of nesting to build a DSL that simplifies some of the Compose plugin’s extensions but is, in some ways, limited by our DCL's current feature set. 
-
-But designing Compose support for our `desktopComposeApp` Project Type still remains the same core process:
-1. Build new DSL extensions to hold the configuration data needed by the plugin
-2. Move the configuration from the imperative part of our buildscript into the new blocks using the property types
-3. Write code to be called by our plugin during application to wire values from our DCL extension into the (Compose) plugin’s extension in an `afterEvaluate` closure
-
-You can see the original Compose DSL configuration in the imperative buildscript [before migration](https://github.com/gradle/gradle-client/blob/b498fd896d858aecf4403ab077a4ea14bcd484d0/gradle-client/build.gradle.kts) and the resulting DCL DSL [after migration](https://github.com/gradle/gradle-client/blob/e0b98007a8a1b337729b2df3fb40c80a0fa59e0e/build-logic/plugins/src/main/java/org/gradle/client/softwaretype/detekt/DetektSupport.java).
-Rather than walk through the full implementation line-by-line (which closely mirrors the structure of the Detekt and SQLDelight support), we’ll highlight a few notable aspects of our Compose support.
-
-##### Simulating Map Support with `NDOC`s
-
-One element in the Compose DCL block that might catch your eye is the `jvmArgs` section:
-
-```
-jvmArgs {
-    jvmArg("-Xms") {
-        value = "35m"
-    }
-    jvmArg("-Xmx") {
-        value = "128m"
-    }
-
-    // This was originally added at an inner nesting level, but it's not clear why
-    jvmArg("-splash") {
-        value = ":\"\$APPDIR/resources/splash.png\""
-    }
-}
-```
-
-When you look at the [Compose extension](https://github.com/gradle/gradle-client/blob/e0b98007a8a1b337729b2df3fb40c80a0fa59e0e/build-logic/plugins/src/main/java/org/gradle/client/softwaretype/compose/Compose.java), you’ll see that this block is modeled using an `NDOC`. 
-That might seem like a strange choice, given that pairs of JVM argument names and their corresponding values are a natural fit for a Map.
-Unfortunately, native `Map` support was not available at the time of EAP3 (it is targeted for EAP4).
-
-So if you’re looking at this bit of code and thinking it’s more complex than it should be — don’t worry, we feel the same.
-Once map support lands in a future EAP, we plan to revisit this and simplify the structure considerably.
-
-##### BuildTypes Simplified
-
-An area that might give the opposite impression is the support for configuring the `release` build type:
-
-```
-buildTypes {
-    release {
-        proguard {
-            optimize = false
-            obfuscate = false
-            configurationFiles = listOf(layout.projectDirectory.file("proguard-desktop.pro"))
-        }
-    }
-}
-```
-
-Behind the scenes, this isn’t modeled as a container of user-defined build types (like you might see with NDOCs elsewhere) by the 3rd party Compose plugin.
-Instead, it's implemented using several static nested extensions.
-That’s because the `org.jetbrains.compose.desktop.application.dsl.JvmApplicationBuildTypes` extension provides a static list of methods that expose predefined build types such as release.
-You can see this in our plugin's support code [on this line](https://github.com/gradle/gradle-client/blob/e0b98007a8a1b337729b2df3fb40c80a0fa59e0e/build-logic/plugins/src/main/java/org/gradle/client/softwaretype/compose/ComposeSupport.java#L52) where we call the parameterless `buildTypes.getRelease()` method directly. 
-
-### Finish Declarativizing
-
-With support for Detekt, SQLDelight, and Compose fully modeled and wired into our custom Project Type, we’re able to migrate all remaining configuration from the imperative parts of our buildscripts into the declarative `desktopComposeApp` block.
+With support for Detekt, SQLDelight, and Compose fully modeled and represented as Project Features, we’re able to migrate all remaining configuration from the imperative parts of our buildscripts into the declarative `kotlinApplication` block.
 
 At this point, we can rename the buildscripts from `build.gradle.kts` to `build.gradle.dcl` and run the build again to verify that everything has been properly wired.
 
@@ -1000,9 +896,6 @@ The biggest compromise we currently face when supporting features from 3rd party
 Ideally, plugin authors would use Gradle’s lazy Provider API for configuration. That would allow us to connect the lazy properties in our declarative extensions directly to the plugin’s own extension properties immediately when we apply a plugin.
 Unfortunately, most plugins don’t yet support this, so we’re often forced to wire things up in `afterEvaluate` once all the values set in buildscripts are available programmatically. 
 We hope this situation improves in the future, and we’re actively exploring more elegant solutions through our ongoing Composability and Extensibility work.
-
-In a more mature Declarative Gradle ecosystem, we envision finding existing Project Type Feature plugins for Detekt, Compose, and SQLDelight. 
-These could be composed together with the existing Kotlin ecosystem plugin to create the equivalent of our `desktopComposeApp` with a minimum of coding.
 
 The original project used a `compose` object, provided by the compose plugin, to access dependency declarations related to the Compose framework.
 Using this object isn’t possible in DCL, because it is not available early enough to be understood when parsing the schema.
