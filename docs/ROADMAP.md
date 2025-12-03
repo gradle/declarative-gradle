@@ -8,13 +8,13 @@ Below, you can see the key milestones we anticipate.
     The information contained in this Declarative Gradle Roadmap (the "Roadmap") is intended to outline our general product direction, which is subject to change at any time. The content provided in this Roadmap is provided for informational purposes only and is not a commitment, promise or legal obligation to deliver any material, code, or functionality and should not be relied upon in making purchasing or other decisions. The development, release and timing of any features or functionality described in this Roadmap remains at the sole discretion of Gradle, Inc. Product capabilities, timeframes and features are subject to change and should not be viewed as commitments.
 
 | Milestone                           |   | Date             |
-| ----------------------------------- |:-:| ---------------: |
+|-------------------------------------|:-:| ---------------: |
 | First Early Access Preview (EAP)    | ✅ |        July 2024 |
 | Second Early Access Preview (EAP 2) | ✅ |    November 2024 |
 | Third Early Access Preview (EAP 3)  | ✅ |       April 2025 |
 | Fourth Early Access Preview (EAP 4) | ⏳ |          2025 Q4 |
-| Incubating Software Types and DCL   | ⏳ | To be determined |
-| Stable Software Types and DCL       | ⏳ | To be determined |
+| Incubating Project Types and DCL    | ⏳ | To be determined |
+| Stable Project Types and DCL        | ⏳ | To be determined |
 
 The Gradle feature lifecycle is documented in the [user manual](https://docs.gradle.org/current/userguide/feature_lifecycle.html#sec:incubating_state).
 
@@ -28,7 +28,7 @@ To discuss the roadmap and the related initiatives, use the
 * Early feedback from software developers and build engineers from the community
 * Demonstrating end to end workflows with [Now In Android](https://github.com/gradle/nowinandroid) sample and [other prototypes](https://github.com/gradle/declarative-gradle)
   * Declarative Configuration Language (DCL) preview
-  * Software Types support preview
+  * Project Types support preview
   * Android Studio DCL support preview
   * Toolability demonstrations (IDE integration, mutations)
 
@@ -36,11 +36,11 @@ To discuss the roadmap and the related initiatives, use the
 ## Second Early Access Preview (EAP)
 
 * November 2024
-* Official Android Software Type Preview
+* Official Android Project Type Preview
 * New DCL Language Features
   * Enum properties
   * Named domain object containers
-* Configuring Software Types from Kotlin DSL
+* Configuring Project Types from Kotlin DSL
 * Prototype Plugins for C++ and Swift
 * IntelliJ IDEA DCL support preview
 * Support for VS Code and Eclipse IDE
@@ -51,7 +51,7 @@ To discuss the roadmap and the related initiatives, use the
 * April 2025
 * Declarative Gradle can be used by early adopters for simple projects
   * Add support for testing to our prototype plugins
-* More DCL features to support the official Android Software Type
+* More DCL features to support the official Android Project Type
   * File and directory properties
   * `List<T>` properties
 * Discovery work on the migration of existing builds
@@ -59,11 +59,11 @@ To discuss the roadmap and the related initiatives, use the
 ## Fourth Early Access Preview (EAP)
 
 * 2025 Q4
-* Validating the Software Types approach for Composability and Extensibility
-  * Supporting new software features that are not part of the base software type
-  * Interraction between software features and with the software type
+* Validating the Project Types approach for Composability and Extensibility
+  * Supporting new Project Features that are not part of the base project type
+  * Interraction between Project Features and with the project type
   * Defining defaults for composed features
-  * Restricting existing software types
+  * Restricting existing project types
   * Usage from Kotlin DSL and Groovy DSL
 * Outstanding issues with prototypes are addressed
   * Builds are limited to a single buildscript classpath
@@ -73,15 +73,15 @@ To discuss the roadmap and the related initiatives, use the
   * Migrating existing plugins
   * Migrating existing builds
 * Backwards compatibility concerns are addressed
-  * Dealing with different versions of software types over time
+  * Dealing with different versions of project types over time
   * Dealing with changes to DCL language over time
   * Dealing with changes to DCL tooling libraries over time
 
-## Incubating Software Types and DCL
+## Incubating Project Types and DCL
 
-* Software Types APIs are released as Incubating
-  * Software Types can be configured from both Kotlin DSL and Groovy DSL
-  * Core JVM Plugins expose Software Types
+* Project Types APIs are released as Incubating
+  * Project Types can be configured from both Kotlin DSL and Groovy DSL
+  * Core JVM Plugins expose Project Types
 * DCL Language and Tooling APIs are released as Incubating
   * More language features to support key use cases (version catalogs, polymorphic containers etc.)
   * Built-in opinionated formatter/linter (cli & ide)
@@ -90,7 +90,7 @@ To discuss the roadmap and the related initiatives, use the
   * Language Server and associated IDE plugins are published
   * Better assistance by IDE (e.g. completion for values, refactorings)
 
-## Stable Software Types and DCL
+## Stable Project Types and DCL
 
-* Software Types are promoted to Stable
+* Project Types are promoted to Stable
 * DCL Language and Tooling APIs are promoted to Stable
