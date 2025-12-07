@@ -19,16 +19,7 @@ This video demonstrates the support for the Declarative Configuration Language (
 Thanks to the strictness of DCL, the IDE assistance is exempt of noise.
 Code completion only suggests the properties and nested blocks available in the current scope.
 
-<script src="https://fast.wistia.com/embed/medias/7sgdqj7lcn.jsonp" async></script>
-<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
-    <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
-        <div class="wistia_embed wistia_async_7sgdqj7lcn seo=true videoFoam=true" style="height:100%;position:relative;width:100%">
-            <div class="wistia_swatch" style="height:100%;left:0;opacity:0;overflow:hidden;position:absolute;top:0;transition:opacity 200ms;width:100%;">
-                <img src="https://fast.wistia.com/embed/medias/7sgdqj7lcn/swatch" style="filter:blur(5px);height:100%;object-fit:contain;width:100%;" alt="" aria-hidden="true" onload="this.parentNode.style.opacity=1;" />
-            </div>
-        </div>
-    </div>
-</div>
+<iframe width="709" height="400" src="https://www.youtube.com/embed/KOQWazRU8fc" title="Declarative Gradle - Android Studio" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 This video demonstrates the enhanced support for DCL in Android Studio, covering enum properties and named domain object containers.
 
@@ -36,16 +27,7 @@ The same level of support should be expected in [IntelliJ IDEA](./setup.md#intel
 
 ### Visual Studio Code
 
-<script src="https://fast.wistia.com/embed/medias/8t8appyr68.jsonp" async></script>
-<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
-    <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
-        <div class="wistia_embed wistia_async_8t8appyr68 seo=true videoFoam=true" style="height:100%;position:relative;width:100%">
-            <div class="wistia_swatch" style="height:100%;left:0;opacity:0;overflow:hidden;position:absolute;top:0;transition:opacity 200ms;width:100%;">
-                <img src="https://fast.wistia.com/embed/medias/8t8appyr68/swatch" style="filter:blur(5px);height:100%;object-fit:contain;width:100%;" alt="" aria-hidden="true" onload="this.parentNode.style.opacity=1;" />
-            </div>
-        </div>
-    </div>
-</div>
+<iframe width="709" height="400" src="https://www.youtube.com/embed/7x_nZfwSV4A" title="Declarative Gradle - Visual Studio Code" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 This video demonstrates the support for the Declarative Configuration Language (DCL) available in [Visual Studio Code](./setup.md#visual-studio-code): syntax highlighting, semantic analysis and code completion.
 Thanks to the strictness of DCL, the IDE assistance is exempt of noise.
@@ -54,16 +36,7 @@ Moreover, semantic [mutations](#mutations), or refactorings, are available direc
 
 ### Eclipse IDE
 
-<script src="https://fast.wistia.com/embed/medias/mosuja84ou.jsonp" async></script>
-<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
-    <div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
-        <div class="wistia_embed wistia_async_mosuja84ou seo=true videoFoam=true" style="height:100%;position:relative;width:100%">
-            <div class="wistia_swatch" style="height:100%;left:0;opacity:0;overflow:hidden;position:absolute;top:0;transition:opacity 200ms;width:100%;">
-                <img src="https://fast.wistia.com/embed/medias/mosuja84ou/swatch" style="filter:blur(5px);height:100%;object-fit:contain;width:100%;" alt="" aria-hidden="true" onload="this.parentNode.style.opacity=1;" />
-            </div>
-        </div>
-    </div>
-</div>
+<iframe width="709" height="400" src="https://www.youtube.com/embed/VupP_gLLdj4" title="Declarative Gradle - Android Studio" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 This video demonstrates the support for the Declarative Configuration Language (DCL) available in the [Eclipse IDE](./setup.md#eclipse-ide): syntax highlighting, semantic analysis and code completion.
 Thanks to the strictness of DCL, the IDE assistance is exempt of noise.
