@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
 
     env:
-      PR_PATH: ${{ github.event.repository.name }}/pull/${{github.event.number}}
+      PR_PATH: ${{ github.event.repository.name }}/pull/${{ github.event.number }}
       DOMAIN: gradle.github.io
       PREVIEW_REPO: community-site-preview
 
@@ -57,6 +57,6 @@ jobs:
           message: >
             A preview of ${{ github.event.after }} is uploaded and can be seen here:
 
-            ✨ https://${{ env.DOMAIN }}/${{ env.PREVIEW_REPO }}/${{ env.PR_PATH}}/ ✨
+            ✨ https://${{ env.DOMAIN }}/${{ env.PREVIEW_REPO }}/${{ env.PR_PATH }}/ ✨
 
             Changes may take a few minutes to propagate.
