@@ -51,7 +51,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                         Project project = context.getProject();
 
                         // Set conventional custom test suit locations as src/<SUITE_NAME>
-                        definition.getTargetsContainer().withType(KmpApplicationJvmTarget.class).all(target -> {
+                        definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
                             target.getTesting().getTestSuites().forEach((name, testSuite) -> {
                                 Directory srcRoot = project.getLayout().getProjectDirectory().dir("src/jvm" + WordUtils.capitalize(name));
                                 testSuite.getSourceRoot().convention(srcRoot);
@@ -77,7 +77,9 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
                             linkDslModelToPlugin(definition, buildModel, project.getConfigurations(), project.getTasks(), project.getObjects());
                         });
                     }
-            ).withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
+            )
+            .withUnsafeDefinition()
+            .withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
         }
 
         /**
@@ -95,7 +97,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
             });
 
             // Link Native targets
-            definition.getTargetsContainer().withType(KmpApplicationNativeTarget.class).all(target -> {
+            definition.getTargetsContainer().getStore().withType(KmpApplicationNativeTarget.class).all(target -> {
                 kotlin.macosArm64(target.getName(), kotlinTarget -> {
                     kotlinTarget.binaries(nativeBinaries -> {
                         nativeBinaries.executable(executable -> {
@@ -111,12 +113,12 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
 
             // Add common JVM testing dependencies if the JVM target is a part of this build
             if (null != kotlin.getSourceSets().findByName("jvmTest")) {
-                KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("jvmTest"), definition.getTargetsContainer().getByName("jvm").getTesting().getDependencies());
+                KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("jvmTest"), definition.getTargetsContainer().getStore().getByName("jvm").getTesting().getDependencies());
                 tasks.withType(KotlinJvmTest.class).forEach(Test::useJUnitPlatform);
             }
 
             // Create all custom JVM test suites
-            definition.getTargetsContainer().withType(KmpApplicationJvmTarget.class).all(target -> {
+            definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
                 kotlin.jvm(target.getName(), kotlinTarget -> {
                     target.getTesting().getTestSuites().forEach((name, testSuite) -> {
                         // Create a new compilation for the test suite
@@ -168,7 +170,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
             KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("commonMain"), definition.getDependencies());
 
             // Link JVM targets
-            definition.getTargetsContainer().withType(KmpApplicationJvmTarget.class).all(target -> {
+            definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
                 kotlin.jvm(target.getName(), kotlinTarget -> {
                     KotlinPluginSupport.linkSourceSetToDependencies(
                             configurations,
@@ -189,7 +191,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
             });
 
             // Link JS targets
-            definition.getTargetsContainer().withType(KmpApplicationNodeJsTarget.class).all(target -> {
+            definition.getTargetsContainer().getStore().withType(KmpApplicationNodeJsTarget.class).all(target -> {
                 kotlin.js(target.getName(), kotlinTarget -> {
                     kotlinTarget.nodejs();
                     KotlinPluginSupport.linkSourceSetToDependencies(
@@ -201,7 +203,7 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
             });
 
             // Link Native targets
-            definition.getTargetsContainer().withType(KmpApplicationNativeTarget.class).all(target -> {
+            definition.getTargetsContainer().getStore().withType(KmpApplicationNativeTarget.class).all(target -> {
                 kotlin.macosArm64(target.getName(), kotlinTarget -> {
                     KotlinPluginSupport.linkSourceSetToDependencies(
                             configurations,

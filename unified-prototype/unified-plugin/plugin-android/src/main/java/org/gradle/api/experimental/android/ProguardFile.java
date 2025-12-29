@@ -17,9 +17,7 @@
 package org.gradle.api.experimental.android;
 
 import org.gradle.api.provider.Property;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 public interface ProguardFile {
-    @Restricted
     Property<String> getName();
 }

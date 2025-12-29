@@ -41,6 +41,7 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
                     });
                 });
             })
+            .withUnsafeDefinition()
             .withBuildModelImplementationType(DefaultJaveGradlePluginBuildModel.class);
         }
     }

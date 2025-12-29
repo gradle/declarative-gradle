@@ -56,7 +56,9 @@ public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
                             linkDslModelToPlugin(definition, buildModel, p.getTasks());
                         });
                     }
-            ).withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
+            )
+            .withUnsafeDefinition()
+            .withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
         }
 
         /**
@@ -91,7 +93,7 @@ public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
             KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("commonMain"), dslModel.getDependencies());
 
             // Link JVM targets
-            dslModel.getTargetsContainer().withType(KmpLibraryJvmTarget.class).all(target -> {
+            dslModel.getTargetsContainer().getStore().withType(KmpLibraryJvmTarget.class).all(target -> {
                 kotlin.jvm(target.getName(), kotlinTarget -> {
                     KotlinPluginSupport.linkSourceSetToDependencies(
                             configurations,
@@ -105,7 +107,7 @@ public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
             });
 
             // Link JS targets
-            dslModel.getTargetsContainer().withType(KmpLibraryNodeJsTarget.class).all(target -> {
+            dslModel.getTargetsContainer().getStore().withType(KmpLibraryNodeJsTarget.class).all(target -> {
                 kotlin.js(target.getName(), kotlinTarget -> {
                     kotlinTarget.nodejs();
                     KotlinPluginSupport.linkSourceSetToDependencies(
@@ -117,7 +119,7 @@ public abstract class StandaloneKmpLibraryPlugin implements Plugin<Project> {
             });
 
             // Link Native targets
-            dslModel.getTargetsContainer().withType(KmpLibraryNativeTarget.class).all(target -> {
+            dslModel.getTargetsContainer().getStore().withType(KmpLibraryNativeTarget.class).all(target -> {
                 kotlin.macosArm64(target.getName(), kotlinTarget -> {
                     KotlinPluginSupport.linkSourceSetToDependencies(
                             configurations,

@@ -16,7 +16,6 @@
 
 package org.gradle.api.experimental.android.library;
 
-import org.gradle.api.Action;
 import org.gradle.api.experimental.android.AndroidSoftware;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.internal.plugins.Definition;
@@ -24,44 +23,25 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.experimental.android.extensions.Protobuf;
 import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 public interface AndroidLibrary extends AndroidSoftware, Definition<AndroidLibraryBuildModel> {
     @Override
     @Nested
     AndroidLibraryDependencies getDependencies();
 
-    @Configuring
-    default void dependencies(Action<? super AndroidLibraryDependencies> action) {
-        action.execute(getDependencies());
-    }
-
     @Override
     @Nested
     AndroidLibraryBuildTypes getBuildTypes();
 
-    @Configuring
-    default void buildTypes(Action<? super AndroidLibraryBuildTypes> action) {
-        action.execute(getBuildTypes());
-    }
-
-    @Restricted
     ListProperty<RegularFile> getConsumerProguardFiles();
 
     @Nested
     Protobuf getProtobuf();
-
-    @Configuring
-    default void protobuf(Action<? super Protobuf> action) {
-        action.execute(getProtobuf());
-    }
 
     /**
      * Flag to enable/disable generation of the `BuildConfig` class.
      * <p>
      * Default value is `false`.
      */
-    @Restricted
     Property<Boolean> getBuildConfig();
 }

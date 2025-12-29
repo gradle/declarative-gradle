@@ -56,7 +56,9 @@ public abstract class StandaloneJvmLibraryPlugin implements Plugin<Project> {
                                 JavaPluginHelper.getJavaComponent(project).getMainFeature().getSourceSet()
                         );
                     }
-            ).withBuildModelImplementationType(DefaultJavaBuildModel.class);
+            )
+            .withUnsafeDefinition()
+            .withBuildModelImplementationType(DefaultJavaBuildModel.class);
         }
     }
 
@@ -83,7 +85,7 @@ public abstract class StandaloneJvmLibraryPlugin implements Plugin<Project> {
 
             JvmPluginSupport.linkJavaVersion(dslModel, buildModel.getJavaPluginExtension(), providers);
 
-            dslModel.getTargets().withType(JavaTarget.class).all(target -> {
+            dslModel.getTargets().getStore().withType(JavaTarget.class).all(target -> {
                 SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(target, commonSources, getJavaToolchainService(), buildModel.getJavaPluginExtension(), tasks, configurations, dependencyFactory);
 
                 // Link dependencies to DSL

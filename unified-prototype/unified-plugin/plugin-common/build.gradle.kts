@@ -11,6 +11,7 @@ description = "Common APIs and implementation classes shared by the ecosystem sp
 
 dependencies {
     implementation("commons-io:commons-io:2.15.1")
+    testFixturesImplementation("commons-io:commons-io:2.15.1")
 }
 
 testing {

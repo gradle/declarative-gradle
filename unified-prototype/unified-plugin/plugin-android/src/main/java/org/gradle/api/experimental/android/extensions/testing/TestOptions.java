@@ -19,16 +19,12 @@ package org.gradle.api.experimental.android.extensions.testing;
 import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 public interface TestOptions {
-    @Restricted
     Property<Boolean> getIncludeAndroidResources();
 
-    @Restricted
     Property<Boolean> getReturnDefaultValues();
 
-    @Restricted
     Property<String> getTestInstrumentationRunner();
 
     @Nested

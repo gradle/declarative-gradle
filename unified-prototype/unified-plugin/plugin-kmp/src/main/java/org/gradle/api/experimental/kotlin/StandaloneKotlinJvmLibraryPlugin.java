@@ -43,7 +43,9 @@ public abstract class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project
                         );
 
                         linkDslModelToPlugin(definition, buildModel, project.getConfigurations(), project.getTasks());
-                    }).withBuildModelImplementationType(DefaultKotlinJvmLibraryBuildModel.class);
+                    })
+                .withUnsafeDefinition()
+                .withBuildModelImplementationType(DefaultKotlinJvmLibraryBuildModel.class);
         }
 
 
