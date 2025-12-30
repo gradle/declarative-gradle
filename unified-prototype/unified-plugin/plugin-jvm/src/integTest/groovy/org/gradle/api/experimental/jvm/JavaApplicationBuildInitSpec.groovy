@@ -3,9 +3,7 @@ package org.gradle.api.experimental.jvm
 
 import org.gradle.integtests.fixtures.AbstractBuildInitSpecification
 import org.gradle.testkit.runner.GradleRunner
-import spock.lang.Ignore
 
-@Ignore("Temporarily disabled until new versions of prototype plugins are published")
 class JavaApplicationBuildInitSpec extends AbstractBuildInitSpecification {
     @Override
     protected String getEcosystemPluginId() {
