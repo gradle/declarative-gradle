@@ -35,6 +35,7 @@ public abstract class StandaloneSwiftApplicationPlugin implements Plugin<Project
 
                 linkDefinitionToPlugin(context.getProject(), definition, buildModel);
             })
+            .withUnsafeDefinition()
             .withBuildModelImplementationType(DefaultSwiftApplicationBuildModel.class);
         }
 

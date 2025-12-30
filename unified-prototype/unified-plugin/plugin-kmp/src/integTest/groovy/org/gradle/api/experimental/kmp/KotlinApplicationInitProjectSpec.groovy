@@ -2,7 +2,9 @@ package org.gradle.api.experimental.kmp
 
 import org.gradle.integtests.fixtures.AbstractBuildInitSpecification
 import org.gradle.testkit.runner.GradleRunner
+import spock.lang.Ignore
 
+@Ignore("Temporarily disabled until new versions of prototype plugins are published")
 class KotlinApplicationInitProjectSpec extends AbstractBuildInitSpecification {
     @Override
     protected String getEcosystemPluginId() {

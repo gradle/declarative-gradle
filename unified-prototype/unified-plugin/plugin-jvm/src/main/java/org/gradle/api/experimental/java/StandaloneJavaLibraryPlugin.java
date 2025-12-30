@@ -52,7 +52,9 @@ public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
                                 project.getTasks()
                         );
                     }
-            ).withBuildModelImplementationType(DefaultJavaBuildModel.class);
+            )
+            .withUnsafeDefinition()
+            .withBuildModelImplementationType(DefaultJavaBuildModel.class);
         }
 
         static abstract class ModelToPluginLinker {

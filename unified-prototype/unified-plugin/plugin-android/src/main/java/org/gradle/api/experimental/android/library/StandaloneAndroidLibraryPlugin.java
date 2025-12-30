@@ -55,6 +55,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
                 // After AGP creates configurations, link deps to the collectors
                 linkCommonDependencies(definition.getDependencies(), context.getProject().getConfigurations());
             })
+            .withUnsafeDefinition()
             .withBuildModelImplementationType(DefaultAndroidLibraryBuildModel.class);
         }
 

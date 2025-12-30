@@ -16,16 +16,9 @@
 
 package org.gradle.api.experimental.kotlin.testing;
 
-import org.gradle.api.Action;
 import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Configuring;
 
 public interface Testing {
     @Nested
     KotlinTestDependencies getDependencies();
-
-    @Configuring
-    default void dependencies(Action<? super KotlinTestDependencies> action) {
-        action.execute(getDependencies());
-    }
 }

@@ -23,6 +23,7 @@ public abstract class StandaloneCppLibraryPlugin implements Plugin<Project> {
 
                 linkDefinitionToPlugin(context.getProject(), definition, buildModel);
             })
+            .withUnsafeDefinition()
             .withBuildModelImplementationType(DefaultCppLibraryBuildModel.class);
         }
 

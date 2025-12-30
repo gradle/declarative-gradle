@@ -17,12 +17,9 @@
 package org.gradle.api.experimental.android.nia;
 
 import org.gradle.api.provider.Property;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 public interface DimensionStrategy {
-    @Restricted
     Property<String> getName();
 
-    @Restricted
     Property<String> getValue();
 }

@@ -16,31 +16,19 @@
 
 package org.gradle.api.experimental.android.extensions;
 
-import org.gradle.api.Action;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Nested;
-import org.gradle.declarative.dsl.model.annotations.Configuring;
-import org.gradle.declarative.dsl.model.annotations.Restricted;
 
 // TODO: This might be better split into separate producer/consumer parts
 public interface BaselineProfile {
-    @Restricted
     Property<Boolean> getEnabled();
 
-    @Restricted
     Property<Boolean> getAutomaticGenerationDuringBuild();
 
     @Nested
     BaselineProfileDependencies getDependencies();
 
-    @Configuring
-    default void dependencies(Action<? super BaselineProfileDependencies> action) {
-        action.execute(getDependencies());
-    }
-
-    @Restricted
     Property<String> getAdditionalManagedDevice();
 
-    @Restricted
     Property<Boolean> getUseConnectedDevices();
 }

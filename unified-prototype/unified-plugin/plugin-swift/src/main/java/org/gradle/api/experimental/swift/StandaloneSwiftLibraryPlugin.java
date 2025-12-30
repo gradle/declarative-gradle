@@ -25,6 +25,7 @@ public abstract class StandaloneSwiftLibraryPlugin implements Plugin<Project> {
 
                 linkDefinitionToPlugin(definition, buildModel);
             })
+            .withUnsafeDefinition()
             .withBuildModelImplementationType(DefaultSwiftLibraryBuildModel.class);
         }
 

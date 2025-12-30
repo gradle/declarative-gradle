@@ -16,6 +16,6 @@ kotlinLibrary {
                 implementation("com.squareup.sqldelight:runtime:1.5.5")
             }
         }
-        macOsArm64()
+        macOsArm64() { }
     }
 }

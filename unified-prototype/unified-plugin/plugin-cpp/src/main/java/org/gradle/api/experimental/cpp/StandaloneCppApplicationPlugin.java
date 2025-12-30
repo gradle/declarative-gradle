@@ -32,6 +32,7 @@ public abstract class StandaloneCppApplicationPlugin implements Plugin<Project> 
 
                 linkDefinitionToPlugin(context.getProject(), definition, buildModel);
             })
+            .withUnsafeDefinition()
             .withBuildModelImplementationType(DefaultCppApplicationBuildModel.class);
         }
 

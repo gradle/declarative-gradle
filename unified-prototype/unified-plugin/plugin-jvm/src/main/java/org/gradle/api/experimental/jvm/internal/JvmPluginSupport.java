@@ -74,7 +74,7 @@ public class JvmPluginSupport {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static void linkJavaVersion(HasJavaTargets dslModel, JavaPluginExtension javaExtension, ProviderFactory providerFactory) {
         javaExtension.getToolchain().getLanguageVersion().set(providerFactory.provider(() ->
-                JavaLanguageVersion.of(dslModel.getTargets().withType(JavaTarget.class).stream().mapToInt(JavaTarget::getJavaVersion).min().getAsInt())
+                JavaLanguageVersion.of(dslModel.getTargets().getStore().withType(JavaTarget.class).stream().mapToInt(JavaTarget::getJavaVersion).min().getAsInt())
         ));
     }
 

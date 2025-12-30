@@ -1,6 +1,7 @@
 package org.gradle.test.util
 
-import org.gradle.internal.impldep.org.apache.commons.io.FileUtils
+import org.apache.commons.io.FileUtils
+
 
 /**
  * Static util class containing test assertions.

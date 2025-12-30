@@ -52,6 +52,7 @@ public abstract class StandaloneAndroidTestPlugin implements Plugin<Project> {
                 definition.getTestOptions().getIncludeAndroidResources().convention(false);
                 definition.getTestOptions().getReturnDefaultValues().convention(false);
             })
+            .withUnsafeDefinition()
             .withBuildModelImplementationType(DefaultAndroidTestBuildModel.class);
         }
 

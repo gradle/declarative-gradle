@@ -59,7 +59,9 @@ public abstract class StandaloneJavaApplicationPlugin implements Plugin<Project>
                                 project.getTasks()
                         );
                     }
-            ).withBuildModelImplementationType(DefaultJavaApplicationBuildModel.class);
+            )
+            .withUnsafeDefinition()
+            .withBuildModelImplementationType(DefaultJavaApplicationBuildModel.class);
         }
     }
 
