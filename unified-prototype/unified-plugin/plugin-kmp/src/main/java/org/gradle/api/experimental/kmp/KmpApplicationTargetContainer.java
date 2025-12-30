@@ -24,30 +24,15 @@ public abstract class KmpApplicationTargetContainer implements StaticKmpApplicat
     }
 
     @Override
-    public void jvm() {
-        container.maybeCreate("jvm", KmpApplicationJvmTarget.class);
-    }
-
-    @Override
     public void jvm(Action<? super KmpApplicationJvmTarget> action) {
         KmpApplicationJvmTarget target = container.maybeCreate("jvm", KmpApplicationJvmTarget.class);
         action.execute(target);
     }
 
     @Override
-    public void nodeJs() {
-        container.maybeCreate("nodeJs", KmpApplicationNodeJsTarget.class);
-    }
-
-    @Override
     public void nodeJs(Action<? super KmpApplicationNodeJsTarget> action) {
         KmpApplicationNodeJsTarget target = container.maybeCreate("nodeJs", KmpApplicationNodeJsTarget.class);
         action.execute(target);
-    }
-
-    @Override
-    public void macOsArm64() {
-        container.maybeCreate("macOsArm64", KmpApplicationNativeTarget.class);
     }
 
     @Override

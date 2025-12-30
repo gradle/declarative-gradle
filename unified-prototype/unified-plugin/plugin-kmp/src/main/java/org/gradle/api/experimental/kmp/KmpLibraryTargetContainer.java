@@ -20,30 +20,15 @@ public abstract class KmpLibraryTargetContainer implements StaticKmpLibraryTarge
     }
 
     @Override
-    public void jvm() {
-        container.maybeCreate("jvm", KmpLibraryJvmTarget.class);
-    }
-
-    @Override
     public void jvm(Action<? super KmpLibraryJvmTarget> action) {
         KmpLibraryJvmTarget target = container.maybeCreate("jvm", KmpLibraryJvmTarget.class);
         action.execute(target);
     }
 
     @Override
-    public void nodeJs() {
-        container.maybeCreate("nodeJs", KmpLibraryNodeJsTarget.class);
-    }
-
-    @Override
     public void nodeJs(Action<? super KmpLibraryNodeJsTarget> action) {
         KmpLibraryNodeJsTarget target = container.maybeCreate("nodeJs", KmpLibraryNodeJsTarget.class);
         action.execute(target);
-    }
-
-    @Override
-    public void macOsArm64() {
-        container.maybeCreate("macOsArm64", KmpLibraryNativeTarget.class);
     }
 
     @Override

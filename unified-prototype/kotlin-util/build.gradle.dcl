@@ -3,7 +3,7 @@ kotlinLibrary {
         jvm {
             jdkVersion = 17
         }
-        nodeJs()
-        macOsArm64()
+        nodeJs() { }
+        macOsArm64() { }
     }
 }
