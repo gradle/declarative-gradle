@@ -88,6 +88,9 @@ abstract class AbstractBuildInitSpecification extends AbstractSpecification {
         if (version.endsWith("-SNAPSHOT")) {
             version = version - "-SNAPSHOT"
         }
-        return version[0..-2] + (version[-1].toInteger() - 1)
+
+        def splitVersion = version.tokenize('.')
+        def previous = splitVersion[-1].toInteger() - 1
+        return (splitVersion[0..-2] + previous.toString()).join('.')
     }
 }
