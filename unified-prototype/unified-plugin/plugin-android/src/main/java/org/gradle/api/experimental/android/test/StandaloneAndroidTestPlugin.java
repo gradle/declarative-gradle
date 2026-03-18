@@ -18,7 +18,6 @@ import org.gradle.features.binding.ProjectTypeBindingBuilder;
 
 import javax.inject.Inject;
 
-import static org.gradle.api.experimental.android.AndroidBindingSupport.DEFAULT_MIN_ANDROID_SDK;
 import static org.gradle.api.experimental.android.AndroidSupport.ifPresent;
 
 /**
@@ -35,10 +34,6 @@ public abstract class StandaloneAndroidTestPlugin implements Plugin<Project> {
             builder.bindProjectType(ANDROID_TEST, AndroidTest.class, (context, definition, buildModel) -> {
                 Services services = context.getObjectFactory().newInstance(Services.class);
 
-                // Setup Android software conventions
-                definition.getMinSdk().convention(DEFAULT_MIN_ANDROID_SDK);
-                definition.getBuildConfig().convention(false);
-
                 // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
                 // run actions before Android does.
                 services.getProject().afterEvaluate(p -> linkDefinitionToPlugin(p, definition, buildModel));
@@ -48,14 +43,6 @@ public abstract class StandaloneAndroidTestPlugin implements Plugin<Project> {
                 services.getPluginManager().apply("org.jetbrains.kotlin.android");
 
                 ((DefaultAndroidTestBuildModel)buildModel).setTestExtension(services.getProject().getExtensions().getByType(TestExtension.class));
-
-                // Setup other feature extension conventions
-                definition.getBaselineProfile().getEnabled().convention(false);
-                definition.getBaselineProfile().getUseConnectedDevices().convention(true);
-
-                // Setup Test Options conventions
-                definition.getTestOptions().getIncludeAndroidResources().convention(false);
-                definition.getTestOptions().getReturnDefaultValues().convention(false);
             })
             .withUnsafeDefinition()
             .withUnsafeApplyAction()

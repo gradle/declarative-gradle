@@ -8,7 +8,6 @@ import org.gradle.api.experimental.android.application.internal.DefaultAndroidAp
 import org.gradle.api.experimental.android.extensions.linting.LintSupport;
 import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.plugins.PluginManager;
-import org.gradle.api.provider.ProviderFactory;
 import org.gradle.features.annotations.BindsProjectType;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
@@ -32,21 +31,6 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         public void bind(ProjectTypeBindingBuilder builder) {
             builder.bindProjectType(ANDROID_APPLICATION, AndroidApplication.class, (context, definition, buildModel) -> {
                 Services services = context.getObjectFactory().newInstance(Services.class);
-
-                AndroidBindingSupport.bindCommon(services.getProviderFactory(), definition);
-
-                // Setup application-specific conventions
-                definition.getDependencyGuard().getEnabled().convention(false);
-
-                definition.getFirebase().getEnabled().convention(false);
-                definition.getFirebase().getVersion().convention("32.4.0");
-
-                definition.getBuildTypes().getDebug().getApplicationIdSuffix().convention((String) null);
-                definition.getBuildTypes().getRelease().getApplicationIdSuffix().convention((String) null);
-
-                definition.getFlavors().getEnabled().convention(false);
-                definition.getViewBinding().getEnabled().convention(false);
-                definition.getDataBinding().getEnabled().convention(false);
 
                 // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
                 // run actions before Android does.
@@ -95,9 +79,6 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         interface Services {
             @Inject
             PluginManager getPluginManager();
-
-            @Inject
-            ProviderFactory getProviderFactory();
 
             @Inject
             Project getProject();
