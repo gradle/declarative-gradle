@@ -42,23 +42,20 @@ public class CheckstyleSoftwareFeaturePlugin implements Plugin<Project> {
 
                     JavaBuildModel javaBuildModel = context.getBuildModel(parent);
 
-                    definition.getCheckstyleVersion().convention(CheckstylePlugin.DEFAULT_CHECKSTYLE_VERSION);
-                    definition.getConfigDirectory().convention(services.getProjectFeatureLayout().getSettingsDirectory().dir("config"));
-                    definition.getConfigFile().convention(definition.getConfigDirectory().file("checkstyle.xml"));
+                    buildModel.getCheckstyleVersion().set(definition.getCheckstyleVersion().orElse(CheckstylePlugin.DEFAULT_CHECKSTYLE_VERSION));
+                    buildModel.getConfigDirectory().set(definition.getConfigDirectory().orElse(services.getProjectFeatureLayout().getSettingsDirectory().dir("config")));
+                    buildModel.getConfigFile().set(definition.getConfigFile().orElse(buildModel.getConfigDirectory().file("checkstyle.xml")));
 
-                    buildModel.getConfigDirectory().convention(definition.getConfigDirectory());
-                    buildModel.getConfigFile().convention(definition.getConfigFile());
-
-                    linkCheckstyle(buildModel, definition.getCheckstyleVersion(), javaBuildModel, services.getConfigurationRegistrar(), services.getProject().getTasks(), services.getDependencyFactory(), services.getProjectFeatureLayout());
+                    linkCheckstyle(buildModel, javaBuildModel, services.getConfigurationRegistrar(), services.getProject().getTasks(), services.getDependencyFactory(), services.getProjectFeatureLayout());
                 }
             )
             .withUnsafeApplyAction();
         }
 
-        public static void linkCheckstyle(CheckstyleBuildModel buildModel, Property<String> checkStyleVersion, JavaBuildModel javaBuildModel, ConfigurationRegistrar configurations, TaskContainer tasks, DependencyFactory dependencyFactory, ProjectFeatureLayout projectLayout) {
+        public static void linkCheckstyle(CheckstyleBuildModel buildModel, JavaBuildModel javaBuildModel, ConfigurationRegistrar configurations, TaskContainer tasks, DependencyFactory dependencyFactory, ProjectFeatureLayout projectLayout) {
             // Half implementation of org.gradle.checkstyle
             NamedDomainObjectProvider<DependencyScopeConfiguration> checkstyleTool = configurations.dependencyScope("checkstyleTool", conf -> {
-                conf.getDependencies().addLater(checkStyleVersion.map(v -> dependencyFactory.create("com.puppycrawl.tools:checkstyle:" + v)));
+                conf.getDependencies().addLater(buildModel.getCheckstyleVersion().map(v -> dependencyFactory.create("com.puppycrawl.tools:checkstyle:" + v)));
             });
             NamedDomainObjectProvider<ResolvableConfiguration> checkstyleClasspath = configurations.resolvable("checkstyleClasspath", conf -> {
                 conf.extendsFrom(checkstyleTool.get());
