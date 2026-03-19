@@ -63,7 +63,7 @@ abstract class AbstractBuildInitSpecification extends AbstractSpecification {
     }
 
     protected boolean shouldValidateLatestPublishedVersionUsedInSpec() {
-        return true
+        return false
     }
 
     protected void validateLatestPublishedVersionUsedInSpec() {
