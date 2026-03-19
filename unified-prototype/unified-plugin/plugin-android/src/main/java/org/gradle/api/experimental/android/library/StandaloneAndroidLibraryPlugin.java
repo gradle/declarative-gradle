@@ -12,7 +12,6 @@ import org.gradle.api.experimental.android.extensions.linting.LintSupport;
 import org.gradle.api.experimental.android.library.internal.DefaultAndroidLibraryBuildModel;
 import org.gradle.api.experimental.android.nia.NiaSupport;
 import org.gradle.api.plugins.PluginManager;
-import org.gradle.api.provider.ProviderFactory;
 import org.gradle.features.annotations.BindsProjectType;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
@@ -39,12 +38,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         public void bind(ProjectTypeBindingBuilder builder) {
             builder.bindProjectType(ANDROID_LIBRARY, AndroidLibrary.class, (context, definition, buildModel) -> {
                 Services services = context.getObjectFactory().newInstance(Services.class);
-
-                AndroidBindingSupport.bindCommon(services.getProviderFactory(), definition);
-
-                // Setup library-specific conventions
-                definition.getProtobuf().getEnabled().convention(false);
-                definition.getBuildConfig().convention(false);
 
                 // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
                 // run actions before Android does.
@@ -125,9 +118,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         interface Services {
             @Inject
             PluginManager getPluginManager();
-
-            @Inject
-            ProviderFactory getProviderFactory();
 
             @Inject
             Project getProject();
