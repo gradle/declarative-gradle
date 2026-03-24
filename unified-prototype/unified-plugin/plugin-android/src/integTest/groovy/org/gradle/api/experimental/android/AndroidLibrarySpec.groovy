@@ -9,7 +9,7 @@ class AndroidLibrarySpec extends AbstractSpecification {
             androidLibrary {
                 jdkVersion = 17
                 compileSdk = 34
-                
+
                 namespace = "org.example.android.library"
             }
         """
@@ -31,7 +31,7 @@ class AndroidLibrarySpec extends AbstractSpecification {
                 androidLibrary {
                     jdkVersion = 17
                     compileSdk = 34
-                    
+
                     namespace = "org.example.android.library"
                 }
             }
@@ -47,6 +47,7 @@ class AndroidLibrarySpec extends AbstractSpecification {
         given:
         file("gradle.properties") << """
             android.useAndroidX=true
+            android.disallowKotlinSourceSets=false
         """
 
         buildFile << """
@@ -62,9 +63,9 @@ class AndroidLibrarySpec extends AbstractSpecification {
                 androidLibrary {
                     jdkVersion = 17
                     compileSdk = 34
-                    
+
                     namespace = "org.example.android.library"
-                    
+
                     hilt {
                         enabled = false
                     }
@@ -74,9 +75,9 @@ class AndroidLibrarySpec extends AbstractSpecification {
 
         file("src/main/kotlin/org/example/TestHiltSupport.kt") << """
             package org.example
-            
+
             import dagger.Module // Should be able to import this class
-            
+
             class TestSupport {}
         """
 
@@ -103,9 +104,9 @@ class AndroidLibrarySpec extends AbstractSpecification {
                 androidLibrary {
                     jdkVersion = 17
                     compileSdk = 34
-                    
+
                     namespace = "org.example.android.library"
-                    
+
                     hilt {
                         enabled = false
                     }
@@ -115,9 +116,9 @@ class AndroidLibrarySpec extends AbstractSpecification {
 
         file("src/main/kotlin/org/example/TestHiltSupport.kt") << """
             package org.example
-            
+
             import dagger.Module // Should be able to import this class
-            
+
             class TestSupport {}
         """
 
@@ -131,13 +132,13 @@ class AndroidLibrarySpec extends AbstractSpecification {
             androidLibrary {
                 jdkVersion = 17
                 compileSdk = 34
-                
+
                 namespace = "org.example.android.library"
-                
+
                 compose {
                     enabled = true
                 }
-                
+
                 testing {
                     failOnNoDiscoveredTests = false
                 }
@@ -155,13 +156,13 @@ class AndroidLibrarySpec extends AbstractSpecification {
             plugins {
                 id("org.gradle.experimental.android-ecosystem")
             }
-    
+
             dependencyResolutionManagement {
                 repositories {
                     mavenCentral()
                 }
             }
-    
+
             rootProject.name = "example"
         """
 

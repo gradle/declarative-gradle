@@ -45,7 +45,6 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
 
                 // Apply the official Android plugin and support for Kotlin
                 services.getPluginManager().apply("com.android.library");
-                services.getPluginManager().apply("org.jetbrains.kotlin.android");
 
                 ((DefaultAndroidLibraryBuildModel) buildModel).setLibraryExtension(
                         services.getProject().getExtensions().getByType(LibraryExtension.class)
@@ -77,7 +76,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             ifPresent(dslModel.getBuildConfig(), android.getBuildFeatures()::setBuildConfig);
         }
 
-        protected void configureProtobuf(Project project, AndroidLibrary dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        protected void configureProtobuf(Project project, AndroidLibrary dslModel, CommonExtension android) {
             if (dslModel.getProtobuf().getEnabled().get()) {
                 project.getPlugins().apply("com.google.protobuf");
 

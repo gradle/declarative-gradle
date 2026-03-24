@@ -79,7 +79,7 @@ public abstract class StandaloneAndroidTestPlugin implements Plugin<Project> {
             TestOptions testOptions = definition.getTestOptions();
             ifPresent(testOptions.getTestInstrumentationRunner(), android.getDefaultConfig()::setTestInstrumentationRunner);
             testOptions.getManagedDevices().forEach(device -> {
-                ManagedVirtualDevice managedVirtualDevice = android.getTestOptions().getManagedDevices().getDevices().create(device.getName(), ManagedVirtualDevice.class);
+                ManagedVirtualDevice managedVirtualDevice = android.getTestOptions().getManagedDevices().getAllDevices().create(device.getName(), ManagedVirtualDevice.class);
                 ifPresent(device.getDevice(), managedVirtualDevice::setDevice);
                 ifPresent(device.getApiLevel(), managedVirtualDevice::setApiLevel);
                 ifPresent(device.getSystemImageSource(), managedVirtualDevice::setSystemImageSource);

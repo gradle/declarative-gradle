@@ -115,10 +115,7 @@ public final class NiaSupport {
     public static void configureNiaLibrary(Project project, AndroidLibrary dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
-
-        //noinspection deprecation
-        androidLib.getDefaultConfig().setTargetSdkPreview(dslModel.getTargetSdk().getOrElse(DEFAULT_TARGET_SDK).toString());
-
+        
         configureFlavors(androidLib);
 
         androidLib.setResourcePrefix(buildResourcePrefix(project));
@@ -156,7 +153,7 @@ public final class NiaSupport {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static void configureNia(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android, AndroidComponentsExtension<?, ?, ?> androidComponents) {
+    private static void configureNia(Project project, AndroidSoftware dslModel, CommonExtension android, AndroidComponentsExtension<?, ?, ?> androidComponents) {
         dslModel.getDependencies().getImplementation().add("androidx.tracing:tracing-ktx:1.3.0-alpha02");
         dslModel.getTesting().getDependencies().getImplementation().add("org.jetbrains.kotlin:kotlin-test");
 
@@ -230,7 +227,7 @@ public final class NiaSupport {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static void configureFeature(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    private static void configureFeature(Project project, AndroidSoftware dslModel, CommonExtension android) {
         if (dslModel.getFeature().getEnabled().get()) {
             project.getLogger().info(project.getPath() + " is a conventional Now In Android Feature project");
 
@@ -254,7 +251,7 @@ public final class NiaSupport {
      *
      * @param android the Android extension to configure
      */
-    private static void configureFlavors(CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    private static void configureFlavors(CommonExtension android) {
         configureFlavors(android, (dimension, flavor) -> {});
     }
 
@@ -265,7 +262,7 @@ public final class NiaSupport {
      * @param android the Android extension to configure
      * @param flavorConfigurationBlock additional configuration to perform on each flavor
      */
-    public static void configureFlavors(CommonExtension<?, ?, ?, ?, ?, ?> android,
+    public static void configureFlavors(CommonExtension android,
                                         BiConsumer<VariantDimension, NiaFlavor> flavorConfigurationBlock) {
         android.getFlavorDimensions().add(FlavorDimension.contentType.name());
 
@@ -351,7 +348,7 @@ public final class NiaSupport {
      * Configure project for Gradle managed devices
      */
     @SuppressWarnings("UnstableApiUsage")
-    private static void configureGradleManagedDevices(CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    private static void configureGradleManagedDevices(CommonExtension android) {
         DeviceConfig pixel4 = new DeviceConfig("Pixel 4", 30, "aosp-atd");
         DeviceConfig pixel6 = new DeviceConfig("Pixel 6", 31, "aosp");
         DeviceConfig pixelC = new DeviceConfig("Pixel C", 30, "aosp-atd");
@@ -361,7 +358,7 @@ public final class NiaSupport {
 
         TestOptions testOptions = android.getTestOptions();
 
-        ExtensiblePolymorphicDomainObjectContainer<Device> devices = testOptions.getManagedDevices().getDevices();
+        ExtensiblePolymorphicDomainObjectContainer<Device> devices = testOptions.getManagedDevices().getAllDevices();
         allDevices.forEach(deviceConfig -> {
             ManagedVirtualDevice newDevice = devices.maybeCreate(deviceConfig.getTaskName(), ManagedVirtualDevice.class);
             newDevice.setDevice(deviceConfig.getDevice());
@@ -424,7 +421,7 @@ public final class NiaSupport {
         );
     }
 
-    private static void configureJacoco(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    private static void configureJacoco(Project project, AndroidSoftware dslModel, CommonExtension android) {
         if (dslModel.getTesting().getJacoco().getEnabled().get()) {
             project.getLogger().info("JaCoCo is enabled in: " + project.getPath());
 

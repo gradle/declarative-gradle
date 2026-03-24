@@ -38,7 +38,6 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
 
                 // Apply the official Android plugin.
                 services.getPluginManager().apply("com.android.application");
-                services.getPluginManager().apply("org.jetbrains.kotlin.android");
 
                 ((DefaultAndroidApplicationBuildModel)buildModel).setApplicationExtension(
                         services.getProject().getExtensions().getByType(ApplicationExtension.class)

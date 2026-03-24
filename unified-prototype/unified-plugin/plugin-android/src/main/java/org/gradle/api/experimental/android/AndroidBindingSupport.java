@@ -3,10 +3,7 @@ package org.gradle.api.experimental.android;
 import androidx.baselineprofile.gradle.consumer.BaselineProfileConsumerExtension;
 import androidx.baselineprofile.gradle.producer.BaselineProfileProducerExtension;
 import androidx.room.gradle.RoomExtension;
-import com.android.build.api.dsl.BuildType;
-import com.android.build.api.dsl.CommonExtension;
-import com.android.build.api.dsl.ManagedVirtualDevice;
-import com.android.build.api.dsl.UnitTestOptions;
+import com.android.build.api.dsl.*;
 import com.google.android.libraries.mapsplatform.secrets_gradle_plugin.SecretsPluginExtension;
 import com.google.devtools.ksp.gradle.KspExtension;
 import org.gradle.api.JavaVersion;
@@ -90,24 +87,23 @@ public abstract class AndroidBindingSupport {
     /**
      * Performs linking actions that must occur within an afterEvaluate block.
      */
-    public static void linkDefinitionToPlugin(Project project, AndroidSoftware definition, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    public static void linkDefinitionToPlugin(Project project, AndroidSoftware definition, CommonExtension android) {
         KotlinAndroidProjectExtension kotlin = project.getExtensions().getByType(KotlinAndroidProjectExtension.class);
 
         // Link common properties
         ifPresent(definition.getNamespace(), android::setNamespace);
         ifPresent(definition.getCompileSdk(), android::setCompileSdk);
-        android.defaultConfig(defaultConfig -> {
-            ifPresent(definition.getMinSdk(), defaultConfig::setMinSdk);
-            ifPresent(definition.getVectorDrawablesUseSupportLibrary(), defaultConfig.getVectorDrawables()::setUseSupportLibrary);
-            return null;
-        });
-        android.compileOptions(compileOptions -> {
-            // Up to Java 11 APIs are available through desugaring
-            // https://developer.android.com/studio/write/java11-minimal-support-table
-            compileOptions.setSourceCompatibility(JavaVersion.toVersion(definition.getJdkVersion().get()));
-            compileOptions.setTargetCompatibility(JavaVersion.toVersion(definition.getJdkVersion().get()));
-            return null;
-        });
+
+        DefaultConfig defaultConfig = android.getDefaultConfig();
+        ifPresent(definition.getMinSdk(), defaultConfig::setMinSdk);
+        ifPresent(definition.getVectorDrawablesUseSupportLibrary(), defaultConfig.getVectorDrawables()::setUseSupportLibrary);
+
+        // Up to Java 11 APIs are available through desugaring
+        // https://developer.android.com/studio/write/java11-minimal-support-table
+        CompileOptions compileOptions = android.getCompileOptions();
+        compileOptions.setSourceCompatibility(JavaVersion.toVersion(definition.getJdkVersion().get()));
+        compileOptions.setTargetCompatibility(JavaVersion.toVersion(definition.getJdkVersion().get()));
+
         ifPresent(definition.getJdkVersion(), jdkVersion -> {
             kotlin.jvmToolchain(jdkVersion);
             android.getCompileOptions().setSourceCompatibility(JavaVersion.toVersion(jdkVersion));
@@ -162,13 +158,13 @@ public abstract class AndroidBindingSupport {
 
             // Add support for KSP
             project.getPlugins().apply("com.google.devtools.ksp");
-            project.getDependencies().add("ksp", "com.google.dagger:hilt-android-compiler:2.52");
+            project.getDependencies().add("ksp", "com.google.dagger:hilt-android-compiler:2.59.2");
 
             // Add support for Hilt
             project.getPlugins().apply("dagger.hilt.android.plugin");
-            project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.52");
+            project.getDependencies().add("implementation", "com.google.dagger:hilt-android:2.59.2");
 
-            project.getDependencies().add("kspTest", "com.google.dagger:hilt-android-compiler:2.52");
+            project.getDependencies().add("kspTest", "com.google.dagger:hilt-android-compiler:2.59.2");
         }
     }
 
@@ -196,28 +192,26 @@ public abstract class AndroidBindingSupport {
         }
     }
 
-    public static void configureDesugaring(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    public static void configureDesugaring(Project project, AndroidSoftware dslModel, CommonExtension android) {
         if (dslModel.getCoreLibraryDesugaring().getEnabled().get()) {
             project.getLogger().info("Core library desugaring is enabled in: " + project.getPath());
 
-            android.compileOptions(compileOptions -> {
-                compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
-                return null;
-            });
+            CompileOptions compileOptions = android.getCompileOptions();
+            compileOptions.setCoreLibraryDesugaringEnabled(dslModel.getCoreLibraryDesugaring().getEnabled().get());
 
             project.getDependencies().addProvider("coreLibraryDesugaring", dslModel.getCoreLibraryDesugaring().getLibVersion().map(version -> "com.android.tools:desugar_jdk_libs:" + version));
         }
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static void configureTesting(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    public static void configureTesting(Project project, AndroidSoftware dslModel, CommonExtension android) {
         Testing testing = dslModel.getTesting();
         AndroidTestDependencies testDependencies = testing.getDependencies();
 
         TestOptions testOptions = testing.getTestOptions();
         ifPresent(testOptions.getTestInstrumentationRunner(), android.getDefaultConfig()::setTestInstrumentationRunner);
         testOptions.getManagedDevices().forEach(device -> {
-            ManagedVirtualDevice managedVirtualDevice = android.getTestOptions().getManagedDevices().getDevices().create(device.getName(), ManagedVirtualDevice.class);
+            ManagedVirtualDevice managedVirtualDevice = android.getTestOptions().getManagedDevices().getAllDevices().create(device.getName(), ManagedVirtualDevice.class);
             ifPresent(device.getDevice(), managedVirtualDevice::setDevice);
             ifPresent(device.getApiLevel(), managedVirtualDevice::setApiLevel);
             ifPresent(device.getSystemImageSource(), managedVirtualDevice::setSystemImageSource);
@@ -261,7 +255,7 @@ public abstract class AndroidBindingSupport {
     /**
      * Links build types from the model to the android extension.
      */
-    public static void linkBuildType(Project project, BuildType buildType, AndroidSoftwareBuildType model, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+    public static void linkBuildType(Project project, BuildType buildType, AndroidSoftwareBuildType model, CommonExtension android) {
         buildType.setMinifyEnabled(model.getMinify().getEnabled().get());
         linkBuildTypeDependencies(buildType, model.getDependencies(), project.getConfigurations());
 

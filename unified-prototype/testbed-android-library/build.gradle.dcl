@@ -21,7 +21,7 @@ androidLibrary {
             proguardFiles = listOf(proguardFile("proguard-rules.pro"), proguardFile("some_other_file.txt"))
 
             minify {
-                enabled = true
+                enabled = false
             }
         }
     }
