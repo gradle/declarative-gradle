@@ -73,7 +73,7 @@ public abstract class AndroidBindingSupport {
     }
 
     /**
-     * Performs common dependency linking actions that do not need to occur within an afterEvaluate block.
+     * Performs common dependency linking actions
      */
     @SuppressWarnings("UnstableApiUsage")
     public static void linkCommonDependencies(AndroidSoftwareDependencies dependencies, ConfigurationContainer configurations) {
@@ -85,7 +85,7 @@ public abstract class AndroidBindingSupport {
     }
 
     /**
-     * Performs linking actions that must occur within an afterEvaluate block.
+     * Performs linking actions
      */
     public static void linkDefinitionToPlugin(Project project, AndroidSoftware definition, CommonExtension android) {
         KotlinAndroidProjectExtension kotlin = project.getExtensions().getByType(KotlinAndroidProjectExtension.class);

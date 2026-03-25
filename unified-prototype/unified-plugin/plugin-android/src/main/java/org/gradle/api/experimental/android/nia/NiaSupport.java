@@ -115,7 +115,7 @@ public final class NiaSupport {
     public static void configureNiaLibrary(Project project, AndroidLibrary dslModel) {
         LibraryExtension androidLib = project.getExtensions().getByType(LibraryExtension.class);
         LibraryAndroidComponentsExtension androidLibComponents = project.getExtensions().getByType(LibraryAndroidComponentsExtension.class);
-        
+
         configureFlavors(androidLib);
 
         androidLib.setResourcePrefix(buildResourcePrefix(project));

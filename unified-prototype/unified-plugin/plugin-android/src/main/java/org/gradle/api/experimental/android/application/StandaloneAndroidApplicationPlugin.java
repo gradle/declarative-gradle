@@ -3,6 +3,7 @@ package org.gradle.api.experimental.android.application;
 import com.android.build.api.dsl.ApplicationExtension;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.experimental.android.AndroidBindingSupport;
 import org.gradle.api.experimental.android.application.internal.DefaultAndroidApplicationBuildModel;
 import org.gradle.api.experimental.android.extensions.linting.LintSupport;
@@ -32,19 +33,16 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
             builder.bindProjectType(ANDROID_APPLICATION, AndroidApplication.class, (context, definition, buildModel) -> {
                 Services services = context.getObjectFactory().newInstance(Services.class);
 
-                // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
-                // run actions before Android does.
-                services.getProject().afterEvaluate(p -> linkDefinitionToPlugin(p, definition, buildModel));
-
                 // Apply the official Android plugin.
                 services.getPluginManager().apply("com.android.application");
 
+                // Add the legacy extension to the build model
                 ((DefaultAndroidApplicationBuildModel)buildModel).setApplicationExtension(
                         services.getProject().getExtensions().getByType(ApplicationExtension.class)
                 );
 
-                // After AGP creates configurations, link deps to the collectors
-                AndroidBindingSupport.linkCommonDependencies(definition.getDependencies(), services.getProject().getConfigurations());
+                // Configure android extension from the definition
+                linkDefinitionToPlugin(services.getProject(), definition, buildModel, services.getProject().getConfigurations());
             })
             .withUnsafeDefinition()
             .withUnsafeApplyAction()
@@ -54,8 +52,9 @@ public abstract class StandaloneAndroidApplicationPlugin implements Plugin<Proje
         /**
          * Performs linking actions that must occur within an afterEvaluate block.
          */
-        private void linkDefinitionToPlugin(Project project, AndroidApplication definition, AndroidApplicationBuildModel buildModel) {
+        private void linkDefinitionToPlugin(Project project, AndroidApplication definition, AndroidApplicationBuildModel buildModel, ConfigurationContainer configurations) {
             ApplicationExtension android = buildModel.getApplicationExtension();
+            AndroidBindingSupport.linkCommonDependencies(definition.getDependencies(), configurations);
             AndroidBindingSupport.linkDefinitionToPlugin(project, definition, android);
 
             android.defaultConfig(defaultConfig -> {
