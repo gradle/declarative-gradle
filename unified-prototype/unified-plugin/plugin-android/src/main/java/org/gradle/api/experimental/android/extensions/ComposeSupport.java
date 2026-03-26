@@ -19,7 +19,7 @@ public final class ComposeSupport {
     private ComposeSupport() { /* Not instantiable */ }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static void configureCompose(Project project, AndroidSoftware dslModel, CommonExtension<?, ?, ?, ?, ?, ?> androidLib) {
+    public static void configureCompose(Project project, AndroidSoftware dslModel, CommonExtension androidLib) {
         if (dslModel.getCompose().getEnabled().get()) {
             project.getLogger().info("Compose is enabled in: " + project.getPath());
             androidLib.getBuildFeatures().setCompose(true);

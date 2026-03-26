@@ -39,20 +39,16 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             builder.bindProjectType(ANDROID_LIBRARY, AndroidLibrary.class, (context, definition, buildModel) -> {
                 Services services = context.getObjectFactory().newInstance(Services.class);
 
-                // Register an afterEvaluate listener before we apply the Android plugin to ensure we can
-                // run actions before Android does.
-                services.getProject().afterEvaluate(p -> linkDefinitionToPlugin(p, definition, buildModel));
-
                 // Apply the official Android plugin and support for Kotlin
                 services.getPluginManager().apply("com.android.library");
-                services.getPluginManager().apply("org.jetbrains.kotlin.android");
 
+                // Add the legacy extension to the build model
                 ((DefaultAndroidLibraryBuildModel) buildModel).setLibraryExtension(
                         services.getProject().getExtensions().getByType(LibraryExtension.class)
                 );
 
-                // After AGP creates configurations, link deps to the collectors
-                linkCommonDependencies(definition.getDependencies(), services.getProject().getConfigurations());
+                // Configure android extension from the definition
+                linkDefinitionToPlugin(services.getProject(), definition, buildModel, services.getProject().getConfigurations());
             })
             .withUnsafeDefinition()
             .withUnsafeApplyAction()
@@ -62,8 +58,9 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
         /**
          * Performs linking actions that must occur within an afterEvaluate block.
          */
-        private void linkDefinitionToPlugin(Project project, AndroidLibrary dslModel, AndroidLibraryBuildModel buildModel) {
+        private void linkDefinitionToPlugin(Project project, AndroidLibrary dslModel, AndroidLibraryBuildModel buildModel, ConfigurationContainer configurations) {
             LibraryExtension android = buildModel.getLibraryExtension();
+            linkCommonDependencies(dslModel.getDependencies(), configurations);
             AndroidBindingSupport.linkDefinitionToPlugin(project, dslModel, android);
 
             configureProtobuf(project, dslModel, android);
@@ -77,7 +74,7 @@ public abstract class StandaloneAndroidLibraryPlugin implements Plugin<Project> 
             ifPresent(dslModel.getBuildConfig(), android.getBuildFeatures()::setBuildConfig);
         }
 
-        protected void configureProtobuf(Project project, AndroidLibrary dslModel, CommonExtension<?, ?, ?, ?, ?, ?> android) {
+        protected void configureProtobuf(Project project, AndroidLibrary dslModel, CommonExtension android) {
             if (dslModel.getProtobuf().getEnabled().get()) {
                 project.getPlugins().apply("com.google.protobuf");
 
