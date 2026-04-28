@@ -12,6 +12,8 @@ import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.plugins.jvm.JvmTestSuite;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.jvm.toolchain.JavaToolchainService;
@@ -39,33 +41,34 @@ public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
     public abstract static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(JAVA_LIBRARY, JavaLibrary.class,
-                    (context, definition, buildModel) -> {
-                        Services services = context.getObjectFactory().newInstance(Services.class);
-                        services.getPluginManager().apply(JavaLibraryPlugin.class);
-                        ((DefaultJavaBuildModel) buildModel).setJavaPluginExtension(services.getProject().getExtensions().getByType(JavaPluginExtension.class));
-
-                        context.getObjectFactory().newInstance(ModelToPluginLinker.class).link(
-                                definition,
-                                buildModel,
-                                services.getPluginManager(),
-                                services.getProject().getConfigurations(),
-                                services.getProject().getTasks()
-                        );
-                    }
-            )
-            .withUnsafeDefinition()
-            .withUnsafeApplyAction()
-            .withBuildModelImplementationType(DefaultJavaBuildModel.class);
+            builder.bindProjectType(JAVA_LIBRARY, JavaLibrary.class, ApplyAction.class)
+                .withUnsafeDefinition()
+                .withUnsafeApplyAction()
+                .withBuildModelImplementationType(DefaultJavaBuildModel.class);
         }
 
-        static abstract class ModelToPluginLinker {
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<JavaLibrary, JavaBuildModel> {
             @Inject
-            public ModelToPluginLinker() {
+            public ApplyAction() {
             }
 
             @Inject
+            protected abstract PluginManager getPluginManager();
+
+            @Inject
+            protected abstract Project getProject();
+
+            @Inject
             protected abstract JavaToolchainService getJavaToolchainService();
+
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, JavaLibrary definition, JavaBuildModel buildModel) {
+                getPluginManager().apply(JavaLibraryPlugin.class);
+                ((DefaultJavaBuildModel) buildModel).setJavaPluginExtension(getProject().getExtensions().getByType(JavaPluginExtension.class));
+
+                link(definition, buildModel, getPluginManager(), getProject().getConfigurations(), getProject().getTasks());
+            }
 
             private void link(JavaLibrary definition, JavaBuildModel buildModel, PluginManager pluginManager, ConfigurationContainer configurations, TaskContainer tasks) {
                 pluginManager.withPlugin("java", plugin -> {
@@ -75,14 +78,6 @@ public abstract class StandaloneJavaLibraryPlugin implements Plugin<Project> {
                     JvmPluginSupport.linkTestSourceSourceSetDependencies(definition.getTesting().getDependencies(), buildModel.getJavaPluginExtension(), configurations);
                 });
             }
-        }
-
-        interface Services {
-            @Inject
-            PluginManager getPluginManager();
-
-            @Inject
-            Project getProject();
         }
     }
 }

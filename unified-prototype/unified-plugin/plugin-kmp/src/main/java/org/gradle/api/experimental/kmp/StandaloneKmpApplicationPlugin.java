@@ -19,6 +19,8 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.features.file.ProjectFeatureLayout;
@@ -51,196 +53,200 @@ public abstract class StandaloneKmpApplicationPlugin implements Plugin<Project> 
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(KOTLIN_APPLICATION, KmpApplication.class,
-                    (context, definition, buildModel) -> {
-                        Services services = context.getObjectFactory().newInstance(Services.class);
+            builder.bindProjectType(KOTLIN_APPLICATION, KmpApplication.class, ApplyAction.class)
+                .withUnsafeDefinition()
+                .withUnsafeApplyAction()
+                .withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
+        }
 
-                        // Set conventional custom test suit locations as src/<SUITE_NAME>
-                        definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
-                            target.getTesting().getTestSuites().forEach((name, testSuite) -> {
-                                Directory srcRoot = services.getProjectFeatureLayout().getProjectDirectory().dir("src/jvm" + WordUtils.capitalize(name));
-                                testSuite.getSourceRoot().convention(srcRoot);
+        @SuppressWarnings({"UnstableApiUsage", "CodeBlock2Expr"})
+        static abstract class ApplyAction implements ProjectTypeApplyAction<KmpApplication, KotlinMultiplatformBuildModel> {
+            @Inject
+            public ApplyAction() {
+            }
+
+            @Inject
+            protected abstract PluginManager getPluginManager();
+
+            @Inject
+            protected abstract TaskRegistrar getTaskRegistrar();
+
+            @Inject
+            protected abstract ProjectFeatureLayout getProjectFeatureLayout();
+
+            @Inject
+            protected abstract ObjectFactory getObjectFactory();
+
+            @Inject
+            protected abstract Project getProject();
+
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, KmpApplication definition, KotlinMultiplatformBuildModel buildModel) {
+                // Set conventional custom test suit locations as src/<SUITE_NAME>
+                definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
+                    target.getTesting().getTestSuites().forEach((name, testSuite) -> {
+                        Directory srcRoot = getProjectFeatureLayout().getProjectDirectory().dir("src/jvm" + WordUtils.capitalize(name));
+                        testSuite.getSourceRoot().convention(srcRoot);
+                    });
+                });
+
+                // Apply the official KMP plugin
+                getPluginManager().apply("org.jetbrains.kotlin.multiplatform");
+                CliExecutablesSupport.configureRunTasks(getTaskRegistrar(), buildModel);
+
+                ((DefaultKotlinMultiplatformBuildModel) buildModel).setKotlinMultiplatformExtension(
+                        getProject().getExtensions().getByType(KotlinMultiplatformExtension.class)
+                );
+                buildModel.getGroup().convention(definition.getGroup());
+                buildModel.getVersion().convention(definition.getVersion());
+
+                // This stuff can be wired up immediately
+                linkDslModelToPluginLazy(definition, buildModel, getProject().getConfigurations(), getProject().getTasks());
+                // This stuff must be wired up in an afterEvaluate block
+                getProject().afterEvaluate(p -> {
+                    ifPresent(buildModel.getGroup(), p::setGroup);
+                    ifPresent(buildModel.getVersion(), p::setVersion);
+                    linkDslModelToPlugin(definition, buildModel, getProject().getConfigurations(), getProject().getTasks(), getObjectFactory());
+                });
+            }
+
+            /**
+             * Performs linking actions that must occur within an afterEvaluate block.
+             */
+            private static void linkDslModelToPlugin(KmpApplication definition, KotlinMultiplatformBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks, ObjectFactory objects) {
+                KotlinMultiplatformExtension kotlin = buildModel.getKotlinMultiplatformExtension();
+
+                // Link common properties
+                kotlin.getSourceSets().configureEach(sourceSet -> {
+                    sourceSet.languageSettings(languageSettings -> {
+                        ifPresent(definition.getLanguageVersion(), languageSettings::setLanguageVersion);
+                        ifPresent(definition.getLanguageVersion(), languageSettings::setApiVersion);
+                    });
+                });
+
+                // Link Native targets
+                definition.getTargetsContainer().getStore().withType(KmpApplicationNativeTarget.class).all(target -> {
+                    kotlin.macosArm64(target.getName(), kotlinTarget -> {
+                        kotlinTarget.binaries(nativeBinaries -> {
+                            nativeBinaries.executable(executable -> {
+                                executable.entryPoint(target.getEntryPoint().get());
+                                TaskProvider<AbstractExecTask<?>> runTask = executable.getRunTaskProvider();
+                                if (runTask != null) {
+                                    buildModel.getRunTasks().add(runTask);
+                                }
                             });
                         });
+                    });
+                });
 
-                        // Apply the official KMP plugin
-                        services.getPluginManager().apply("org.jetbrains.kotlin.multiplatform");
-                        CliExecutablesSupport.configureRunTasks(services.getTaskRegistrar(), buildModel);
+                // Add common JVM testing dependencies if the JVM target is a part of this build
+                if (null != kotlin.getSourceSets().findByName("jvmTest")) {
+                    KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("jvmTest"), definition.getTargetsContainer().getStore().getByName("jvm").getTesting().getDependencies());
+                    tasks.withType(KotlinJvmTest.class).forEach(Test::useJUnitPlatform);
+                }
 
-                        ((DefaultKotlinMultiplatformBuildModel)buildModel).setKotlinMultiplatformExtension(
-                                services.getProject().getExtensions().getByType(KotlinMultiplatformExtension.class)
+                // Create all custom JVM test suites
+                definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
+                    kotlin.jvm(target.getName(), kotlinTarget -> {
+                        target.getTesting().getTestSuites().forEach((name, testSuite) -> {
+                            // Create a new compilation for the test suite
+                            String suiteCompilationName = "suite" + WordUtils.capitalize(name) + "Compilation";
+                            // Note: "register" won't work here, lazy APIs not working right on this container, just create
+                            KotlinJvmCompilation suiteCompilation = kotlinTarget.getCompilations().create(suiteCompilationName, compilation -> {
+                                compilation.associateWith(kotlin.jvm().compilations.getByName("test"));
+                                compilation.getDefaultSourceSet().getKotlin().srcDir(testSuite.getSourceRoot());
+
+                                // Add testing dependencies specific to each JVM test suite
+                                KotlinPluginSupport.linkSourceSetToDependencies(
+                                        configurations,
+                                        compilation.getDefaultSourceSet(),
+                                        testSuite.getDependencies()
+                                );
+                            });
+
+                            // Create test task for the new compilation
+                            String suiteTestTaskName = "suite" + WordUtils.capitalize(name) + "Test";
+                            Provider<KotlinJvmTest> suiteTestTask = tasks.register(suiteTestTaskName, KotlinJvmTest.class, task -> {
+                                task.setTargetName(suiteCompilation.getTarget().getName());
+                                task.useJUnitPlatform();
+                                task.dependsOn(suiteCompilation.getCompileTaskProvider());
+                                task.setTestClassesDirs(suiteCompilation.getCompileTaskProvider().get().getOutputs().getFiles());
+
+                                ConfigurableFileCollection testRuntimeClasspath = objects.fileCollection();
+                                testRuntimeClasspath.from(suiteCompilation.getCompileTaskProvider().get().getOutputs().getFiles());
+                                testRuntimeClasspath.from(configurations.named(suiteCompilation.getRuntimeDependencyConfigurationName()).get());
+                                task.setClasspath(testRuntimeClasspath);
+                            });
+
+                            // New tests are included in jvm tests
+                            tasks.named("jvmTest").configure(task -> {
+                                task.dependsOn(suiteTestTask);
+                            });
+                        });
+                    });
+                });
+            }
+
+            /**
+             * Performs linking actions that do not need to occur within an afterEvaluate block.
+             */
+            @SuppressWarnings("deprecation")
+            private static void linkDslModelToPluginLazy(KmpApplication definition, KotlinMultiplatformBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
+                KotlinMultiplatformExtension kotlin = buildModel.getKotlinMultiplatformExtension();
+
+                // Link common dependencies
+                KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("commonMain"), definition.getDependencies());
+
+                // Link JVM targets
+                definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
+                    kotlin.jvm(target.getName(), kotlinTarget -> {
+                        KotlinPluginSupport.linkSourceSetToDependencies(
+                                configurations,
+                                kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                                target.getDependencies()
                         );
-                        buildModel.getGroup().convention(definition.getGroup());
-                        buildModel.getVersion().convention(definition.getVersion());
-
-                        // This stuff can be wired up immediately
-                        linkDslModelToPluginLazy(definition, buildModel, services.getProject().getConfigurations(), services.getProject().getTasks());
-                        // This stuff must be wired up in an afterEvaluate block
-                        services.getProject().afterEvaluate(p -> {
-                            ifPresent(buildModel.getGroup(), p::setGroup);
-                            ifPresent(buildModel.getVersion(), p::setVersion);
-                            linkDslModelToPlugin(definition, buildModel, services.getProject().getConfigurations(), services.getProject().getTasks(), services.getObjectFactory());
+                        kotlinTarget.getCompilations().configureEach(compilation -> {
+                            compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(value -> JvmTarget.Companion.fromTarget(String.valueOf(value))));
                         });
-                    }
-            )
-            .withUnsafeDefinition()
-            .withUnsafeApplyAction()
-            .withBuildModelImplementationType(DefaultKotlinMultiplatformBuildModel.class);
-        }
-
-        /**
-         * Performs linking actions that must occur within an afterEvaluate block.
-         */
-        private static void linkDslModelToPlugin(KmpApplication definition, KotlinMultiplatformBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks, ObjectFactory objects) {
-            KotlinMultiplatformExtension kotlin = buildModel.getKotlinMultiplatformExtension();
-
-            // Link common properties
-            kotlin.getSourceSets().configureEach(sourceSet -> {
-                sourceSet.languageSettings(languageSettings -> {
-                    ifPresent(definition.getLanguageVersion(), languageSettings::setLanguageVersion);
-                    ifPresent(definition.getLanguageVersion(), languageSettings::setApiVersion);
-                });
-            });
-
-            // Link Native targets
-            definition.getTargetsContainer().getStore().withType(KmpApplicationNativeTarget.class).all(target -> {
-                kotlin.macosArm64(target.getName(), kotlinTarget -> {
-                    kotlinTarget.binaries(nativeBinaries -> {
-                        nativeBinaries.executable(executable -> {
-                            executable.entryPoint(target.getEntryPoint().get());
-                            TaskProvider<AbstractExecTask<?>> runTask = executable.getRunTaskProvider();
-                            if (runTask != null) {
-                                buildModel.getRunTasks().add(runTask);
-                            }
+                        kotlinTarget.mainRun(kotlinJvmRunDsl -> {
+                            kotlinJvmRunDsl.getMainClass().set(target.getMainClass());
+                            // The task is not registered until this block of code runs, but the block is deferred until some arbitrary point in time
+                            // So, wire up the task when this block runs
+                            buildModel.getRunTasks().add(tasks.named(target.getName() + "Run"));
+                            return Unit.INSTANCE;
                         });
                     });
                 });
-            });
 
-            // Add common JVM testing dependencies if the JVM target is a part of this build
-            if (null != kotlin.getSourceSets().findByName("jvmTest")) {
-                KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("jvmTest"), definition.getTargetsContainer().getStore().getByName("jvm").getTesting().getDependencies());
-                tasks.withType(KotlinJvmTest.class).forEach(Test::useJUnitPlatform);
+                // Link JS targets
+                definition.getTargetsContainer().getStore().withType(KmpApplicationNodeJsTarget.class).all(target -> {
+                    kotlin.js(target.getName(), kotlinTarget -> {
+                        kotlinTarget.nodejs();
+                        KotlinPluginSupport.linkSourceSetToDependencies(
+                                configurations,
+                                kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                                target.getDependencies()
+                        );
+                    });
+                });
+
+                // Link Native targets
+                definition.getTargetsContainer().getStore().withType(KmpApplicationNativeTarget.class).all(target -> {
+                    kotlin.macosArm64(target.getName(), kotlinTarget -> {
+                        KotlinPluginSupport.linkSourceSetToDependencies(
+                                configurations,
+                                kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
+                                target.getDependencies()
+                        );
+                    });
+                });
             }
 
-            // Create all custom JVM test suites
-            definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
-                kotlin.jvm(target.getName(), kotlinTarget -> {
-                    target.getTesting().getTestSuites().forEach((name, testSuite) -> {
-                        // Create a new compilation for the test suite
-                        String suiteCompilationName = "suite" + WordUtils.capitalize(name) + "Compilation";
-                        // Note: "register" won't work here, lazy APIs not working right on this container, just create
-                        KotlinJvmCompilation suiteCompilation = kotlinTarget.getCompilations().create(suiteCompilationName, compilation -> {
-                            compilation.associateWith(kotlin.jvm().compilations.getByName("test"));
-                            compilation.getDefaultSourceSet().getKotlin().srcDir(testSuite.getSourceRoot());
-
-                            // Add testing dependencies specific to each JVM test suite
-                            KotlinPluginSupport.linkSourceSetToDependencies(
-                                    configurations,
-                                    compilation.getDefaultSourceSet(),
-                                    testSuite.getDependencies()
-                            );
-                        });
-
-                        // Create test task for the new compilation
-                        String suiteTestTaskName = "suite" +  WordUtils.capitalize(name) + "Test";
-                        Provider<KotlinJvmTest> suiteTestTask = tasks.register(suiteTestTaskName, KotlinJvmTest.class, task -> {
-                            task.setTargetName(suiteCompilation.getTarget().getName());
-                            task.useJUnitPlatform();
-                            task.dependsOn(suiteCompilation.getCompileTaskProvider());
-                            task.setTestClassesDirs(suiteCompilation.getCompileTaskProvider().get().getOutputs().getFiles());
-
-                            ConfigurableFileCollection testRuntimeClasspath = objects.fileCollection();
-                            testRuntimeClasspath.from(suiteCompilation.getCompileTaskProvider().get().getOutputs().getFiles());
-                            testRuntimeClasspath.from(configurations.named(suiteCompilation.getRuntimeDependencyConfigurationName()).get());
-                            task.setClasspath(testRuntimeClasspath);
-                        });
-
-                        // New tests are included in jvm tests
-                        tasks.named("jvmTest").configure(task -> {
-                            task.dependsOn(suiteTestTask);
-                        });
-                    });
-                });
-            });
-        }
-
-        /**
-         * Performs linking actions that do not need to occur within an afterEvaluate block.
-         */
-        @SuppressWarnings("deprecation")
-        private static void linkDslModelToPluginLazy(KmpApplication definition, KotlinMultiplatformBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
-            KotlinMultiplatformExtension kotlin = buildModel.getKotlinMultiplatformExtension();
-
-            // Link common dependencies
-            KotlinPluginSupport.linkSourceSetToDependencies(configurations, kotlin.getSourceSets().getByName("commonMain"), definition.getDependencies());
-
-            // Link JVM targets
-            definition.getTargetsContainer().getStore().withType(KmpApplicationJvmTarget.class).all(target -> {
-                kotlin.jvm(target.getName(), kotlinTarget -> {
-                    KotlinPluginSupport.linkSourceSetToDependencies(
-                            configurations,
-                            kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                            target.getDependencies()
-                    );
-                    kotlinTarget.getCompilations().configureEach(compilation -> {
-                        compilation.getCompilerOptions().getOptions().getJvmTarget().set(target.getJdkVersion().map(value -> JvmTarget.Companion.fromTarget(String.valueOf(value))));
-                    });
-                    kotlinTarget.mainRun(kotlinJvmRunDsl -> {
-                        kotlinJvmRunDsl.getMainClass().set(target.getMainClass());
-                        // The task is not registered until this block of code runs, but the block is deferred until some arbitrary point in time
-                        // So, wire up the task when this block runs
-                        buildModel.getRunTasks().add(tasks.named(target.getName() + "Run"));
-                        return Unit.INSTANCE;
-                    });
-                });
-            });
-
-            // Link JS targets
-            definition.getTargetsContainer().getStore().withType(KmpApplicationNodeJsTarget.class).all(target -> {
-                kotlin.js(target.getName(), kotlinTarget -> {
-                    kotlinTarget.nodejs();
-                    KotlinPluginSupport.linkSourceSetToDependencies(
-                            configurations,
-                            kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                            target.getDependencies()
-                    );
-                });
-            });
-
-            // Link Native targets
-            definition.getTargetsContainer().getStore().withType(KmpApplicationNativeTarget.class).all(target -> {
-                kotlin.macosArm64(target.getName(), kotlinTarget -> {
-                    KotlinPluginSupport.linkSourceSetToDependencies(
-                            configurations,
-                            kotlinTarget.getCompilations().getByName("main").getDefaultSourceSet(),
-                            target.getDependencies()
-                    );
-                });
-            });
-        }
-
-        private static <T> void ifPresent(Property<T> property, Action<T> action) {
-            if (property.isPresent()) {
-                action.execute(property.get());
+            private static <T> void ifPresent(Property<T> property, Action<T> action) {
+                if (property.isPresent()) {
+                    action.execute(property.get());
+                }
             }
-        }
-
-        interface Services {
-            @Inject
-            PluginManager getPluginManager();
-
-            @Inject
-            TaskRegistrar getTaskRegistrar();
-
-            @Inject
-            ProjectFeatureLayout getProjectFeatureLayout();
-
-            @Inject
-            ObjectFactory getObjectFactory();
-
-            @Inject
-            Project getProject();
         }
     }
 }

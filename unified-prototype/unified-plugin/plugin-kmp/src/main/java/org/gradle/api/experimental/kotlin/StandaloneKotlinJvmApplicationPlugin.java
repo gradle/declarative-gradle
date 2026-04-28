@@ -13,6 +13,8 @@ import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.features.registration.TaskRegistrar;
@@ -38,56 +40,61 @@ public abstract class StandaloneKotlinJvmApplicationPlugin implements Plugin<Pro
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(KOTLIN_JVM_APPLICATION, KotlinJvmApplication.class,
-                    (context, definition, buildModel) -> {
-                        Services services = context.getObjectFactory().newInstance(Services.class);
-                        services.getPluginManager().apply(ApplicationPlugin.class);
-                        services.getPluginManager().apply("org.jetbrains.kotlin.jvm");
-                        CliExecutablesSupport.configureRunTasks(services.getTaskRegistrar(), buildModel);
-                        ((DefaultKotlinJvmApplicationBuildModel) buildModel).setKotlinJvmExtension(
-                                services.getProject().getExtensions().getByType(KotlinJvmProjectExtension.class)
-                        );
-                        ((DefaultKotlinJvmLibraryBuildModel)buildModel).setJavaPluginExtension(
-                                services.getProject().getExtensions().getByType(JavaPluginExtension.class)
-                        );
-                        ((DefaultKotlinJvmApplicationBuildModel)buildModel).setJavaApplicationExtension(
-                                services.getProject().getExtensions().getByType(JavaApplication.class)
-                        );
-
-                        linkDslModelToPlugin(definition, buildModel, services.getProject().getConfigurations(), services.getProject().getTasks());
-                    })
+            builder.bindProjectType(KOTLIN_JVM_APPLICATION, KotlinJvmApplication.class, ApplyAction.class)
                 .withUnsafeDefinition()
                 .withUnsafeApplyAction()
                 .withBuildModelImplementationType(DefaultKotlinJvmApplicationBuildModel.class);
         }
 
-
-        private void linkDslModelToPlugin(KotlinJvmApplication dslModel, KotlinJvmApplicationBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
-            KotlinPluginSupport.linkJavaVersion(dslModel, buildModel.getKotlinJvmExtension());
-            JvmPluginSupport.linkApplicationMainClass(dslModel, buildModel.getJavaApplicationExtension());
-            JvmPluginSupport.linkMainSourceSourceSetDependencies(dslModel.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
-            configureTesting(dslModel, configurations, tasks);
-
-            buildModel.getRunTasks().add(tasks.named("run"));
-        }
-
-        private void configureTesting(KotlinJvmApplication dslModel, ConfigurationContainer configurations, TaskContainer tasks) {
-            configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getTesting().getDependencies().getImplementation());
-            configurations.getByName("testCompileOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getCompileOnly());
-            configurations.getByName("testRuntimeOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getRuntimeOnly());
-
-            tasks.withType(Test.class).configureEach(Test::useJUnitPlatform);
-        }
-
-        interface Services {
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<KotlinJvmApplication, KotlinJvmApplicationBuildModel> {
             @Inject
-            PluginManager getPluginManager();
+            public ApplyAction() {
+            }
 
             @Inject
-            TaskRegistrar getTaskRegistrar();
+            protected abstract PluginManager getPluginManager();
 
             @Inject
-            Project getProject();
+            protected abstract TaskRegistrar getTaskRegistrar();
+
+            @Inject
+            protected abstract Project getProject();
+
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, KotlinJvmApplication definition, KotlinJvmApplicationBuildModel buildModel) {
+                getPluginManager().apply(ApplicationPlugin.class);
+                getPluginManager().apply("org.jetbrains.kotlin.jvm");
+                CliExecutablesSupport.configureRunTasks(getTaskRegistrar(), buildModel);
+                ((DefaultKotlinJvmApplicationBuildModel) buildModel).setKotlinJvmExtension(
+                        getProject().getExtensions().getByType(KotlinJvmProjectExtension.class)
+                );
+                ((DefaultKotlinJvmLibraryBuildModel) buildModel).setJavaPluginExtension(
+                        getProject().getExtensions().getByType(JavaPluginExtension.class)
+                );
+                ((DefaultKotlinJvmApplicationBuildModel) buildModel).setJavaApplicationExtension(
+                        getProject().getExtensions().getByType(JavaApplication.class)
+                );
+
+                linkDslModelToPlugin(definition, buildModel, getProject().getConfigurations(), getProject().getTasks());
+            }
+
+            private void linkDslModelToPlugin(KotlinJvmApplication dslModel, KotlinJvmApplicationBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
+                KotlinPluginSupport.linkJavaVersion(dslModel, buildModel.getKotlinJvmExtension());
+                JvmPluginSupport.linkApplicationMainClass(dslModel, buildModel.getJavaApplicationExtension());
+                JvmPluginSupport.linkMainSourceSourceSetDependencies(dslModel.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
+                configureTesting(dslModel, configurations, tasks);
+
+                buildModel.getRunTasks().add(tasks.named("run"));
+            }
+
+            private void configureTesting(KotlinJvmApplication dslModel, ConfigurationContainer configurations, TaskContainer tasks) {
+                configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getTesting().getDependencies().getImplementation());
+                configurations.getByName("testCompileOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getCompileOnly());
+                configurations.getByName("testRuntimeOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getRuntimeOnly());
+
+                tasks.withType(Test.class).configureEach(Test::useJUnitPlatform);
+            }
         }
     }
 }

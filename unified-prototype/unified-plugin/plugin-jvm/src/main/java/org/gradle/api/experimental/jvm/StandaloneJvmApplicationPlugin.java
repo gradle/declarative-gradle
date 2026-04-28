@@ -17,6 +17,8 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.features.file.ProjectFeatureLayout;
@@ -43,93 +45,92 @@ public abstract class StandaloneJvmApplicationPlugin implements Plugin<Project> 
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(JVM_APPLICATION, JvmApplication.class,
-                    (context, definition, buildModel) -> {
-                        Services services = context.getObjectFactory().newInstance(Services.class);
-                        services.getPluginManager().apply(ApplicationPlugin.class);
-                        CliExecutablesSupport.configureRunTasks(services.getTaskRegistrar(), buildModel);
-                        ((DefaultJavaApplicationBuildModel) buildModel).setJavaPluginExtension(
-                                services.getProject().getExtensions().getByType(JavaPluginExtension.class)
-                        );
-                        ((DefaultJavaApplicationBuildModel) buildModel).setJavaApplicationExtension(
-                                services.getProject().getExtensions().getByType(JavaApplication.class)
-                        );
-
-                        context.getObjectFactory().newInstance(ModelToPluginLinker.class).link(
-                                definition,
-                                buildModel,
-                                services.getProject().getConfigurations(),
-                                services.getProject().getTasks(),
-                                services.getProjectFeatureLayout(),
-                                services.getProviderFactory(),
-                                services.getDependencyFactory(),
-                                JavaPluginHelper.getJavaComponent(services.getProject()).getMainFeature().getSourceSet()
-                        );
-                    }
-            )
-            .withUnsafeDefinition()
-            .withUnsafeApplyAction()
-            .withBuildModelImplementationType(DefaultJavaApplicationBuildModel.class);
+            builder.bindProjectType(JVM_APPLICATION, JvmApplication.class, ApplyAction.class)
+                    .withUnsafeDefinition()
+                    .withUnsafeApplyAction()
+                    .withBuildModelImplementationType(DefaultJavaApplicationBuildModel.class);
         }
 
-        interface Services {
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<JvmApplication, JavaApplicationBuildModel> {
             @Inject
-            PluginManager getPluginManager();
-
-            @Inject
-            TaskRegistrar getTaskRegistrar();
-
-            @Inject
-            ProjectFeatureLayout getProjectFeatureLayout();
+            public ApplyAction() {
+            }
 
             @Inject
-            ProviderFactory getProviderFactory();
+            protected abstract PluginManager getPluginManager();
 
             @Inject
-            DependencyFactory getDependencyFactory();
+            protected abstract TaskRegistrar getTaskRegistrar();
 
             @Inject
-            Project getProject();
-        }
-    }
+            protected abstract ProjectFeatureLayout getProjectFeatureLayout();
 
-    static abstract class ModelToPluginLinker {
-        @Inject
-        public ModelToPluginLinker() {
-        }
+            @Inject
+            protected abstract ProviderFactory getProviderFactory();
 
-        @Inject
-        protected abstract JavaToolchainService getJavaToolchainService();
+            @Inject
+            protected abstract DependencyFactory getDependencyFactory();
 
-        private void link(
-                JvmApplication dslModel,
-                JavaApplicationBuildModel buildModel,
-                ConfigurationContainer configurations,
-                TaskContainer tasks,
-                ProjectFeatureLayout projectLayout,
-                ProviderFactory providers,
-                DependencyFactory dependencyFactory,
-                SourceSet commonSources) {
+            @Inject
+            protected abstract Project getProject();
 
-            JvmPluginSupport.setupCommonSourceSet(commonSources, projectLayout);
-            JvmPluginSupport.linkSourceSetToDependencies(commonSources, dslModel.getDependencies(), configurations);
+            @Inject
+            protected abstract JavaToolchainService getJavaToolchainService();
 
-            JvmPluginSupport.linkJavaVersion(dslModel, buildModel.getJavaPluginExtension(), providers);
-            JvmPluginSupport.linkApplicationMainClass(dslModel, buildModel.getJavaApplicationExtension());
-            dslModel.getTargets().getStore().withType(JavaTarget.class).all(target -> {
-                SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(target, commonSources, getJavaToolchainService(), buildModel.getJavaPluginExtension(), tasks, configurations, dependencyFactory);
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, JvmApplication definition, JavaApplicationBuildModel buildModel) {
+                getPluginManager().apply(ApplicationPlugin.class);
+                CliExecutablesSupport.configureRunTasks(getTaskRegistrar(), buildModel);
+                ((DefaultJavaApplicationBuildModel) buildModel).setJavaPluginExtension(
+                        getProject().getExtensions().getByType(JavaPluginExtension.class)
+                );
+                ((DefaultJavaApplicationBuildModel) buildModel).setJavaApplicationExtension(
+                        getProject().getExtensions().getByType(JavaApplication.class)
+                );
 
-                // Link dependencies to DSL
-                JvmPluginSupport.linkSourceSetToDependencies(sourceSet, target.getDependencies(), configurations);
+                link(
+                        definition,
+                        buildModel,
+                        getProject().getConfigurations(),
+                        getProject().getTasks(),
+                        getProjectFeatureLayout(),
+                        getProviderFactory(),
+                        getDependencyFactory(),
+                        JavaPluginHelper.getJavaComponent(getProject()).getMainFeature().getSourceSet()
+                );
+            }
 
-                // Create a run task
-                TaskProvider<JavaExec> runTask = tasks.register(sourceSet.getTaskName("run", null), JavaExec.class, task -> {
-                    task.getMainClass().set(dslModel.getMainClass());
-                    task.getJvmArguments().set(dslModel.getJvmArguments());
-                    task.setClasspath(sourceSet.getRuntimeClasspath());
+            private void link(
+                    JvmApplication dslModel,
+                    JavaApplicationBuildModel buildModel,
+                    ConfigurationContainer configurations,
+                    TaskContainer tasks,
+                    ProjectFeatureLayout projectLayout,
+                    ProviderFactory providers,
+                    DependencyFactory dependencyFactory,
+                    SourceSet commonSources) {
+
+                JvmPluginSupport.setupCommonSourceSet(commonSources, projectLayout);
+                JvmPluginSupport.linkSourceSetToDependencies(commonSources, dslModel.getDependencies(), configurations);
+
+                JvmPluginSupport.linkJavaVersion(dslModel, buildModel.getJavaPluginExtension(), providers);
+                JvmPluginSupport.linkApplicationMainClass(dslModel, buildModel.getJavaApplicationExtension());
+                dslModel.getTargets().getStore().withType(JavaTarget.class).all(target -> {
+                    SourceSet sourceSet = JvmPluginSupport.createTargetSourceSet(target, commonSources, getJavaToolchainService(), buildModel.getJavaPluginExtension(), tasks, configurations, dependencyFactory);
+
+                    // Link dependencies to DSL
+                    JvmPluginSupport.linkSourceSetToDependencies(sourceSet, target.getDependencies(), configurations);
+
+                    // Create a run task
+                    TaskProvider<JavaExec> runTask = tasks.register(sourceSet.getTaskName("run", null), JavaExec.class, task -> {
+                        task.getMainClass().set(dslModel.getMainClass());
+                        task.getJvmArguments().set(dslModel.getJvmArguments());
+                        task.setClasspath(sourceSet.getRuntimeClasspath());
+                    });
+                    buildModel.getRunTasks().add(runTask);
                 });
-                buildModel.getRunTasks().add(runTask);
-            });
+            }
         }
     }
 }

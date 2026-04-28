@@ -10,6 +10,8 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Exec;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.features.registration.TaskRegistrar;
@@ -28,50 +30,57 @@ public abstract class StandaloneCppApplicationPlugin implements Plugin<Project> 
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(CPP_APPLICATION, CppApplication.class, (context, definition, buildModel) ->{
-                Services services = context.getObjectFactory().newInstance(Services.class);
-                services.getPluginManager().apply(CppApplicationPlugin.class);
-
-                CliExecutablesSupport.configureRunTasks(services.getTaskRegistrar(), buildModel);
-
-                ((DefaultCppApplicationBuildModel) buildModel).setCppComponent(services.getProject().getExtensions().getByType(CppComponent.class));
-
-                linkDefinitionToPlugin(services.getProject(), definition, buildModel);
-            })
-            .withUnsafeDefinition()
-            .withUnsafeApplyAction()
-            .withBuildModelImplementationType(DefaultCppApplicationBuildModel.class);
+            builder.bindProjectType(CPP_APPLICATION, CppApplication.class, ApplyAction.class)
+                .withUnsafeDefinition()
+                .withUnsafeApplyAction()
+                .withBuildModelImplementationType(DefaultCppApplicationBuildModel.class);
         }
 
-        private void linkDefinitionToPlugin(Project project, CppApplication definition, CppApplicationBuildModel buildModel) {
-            CppComponent model = buildModel.getCppComponent();
-
-            model.getImplementationDependencies().getDependencies().addAllLater(definition.getDependencies().getImplementation().getDependencies());
-
-            project.getComponents().withType(org.gradle.language.cpp.CppApplication.class).configureEach(applicationComponent ->
-                applicationComponent.getBinaries().configureEach(binary -> {
-                    binary.getCompileTask().get().getCompilerArgs().add(definition.getCppVersion().map(v -> "--std=" + v));
-                    if (binary instanceof CppExecutable) {
-                        Provider<RegularFile> executable = ((CppExecutable) binary).getDebuggerExecutableFile();
-                        TaskProvider<Exec> runTask = project.getTasks().register("run" + TextUtil.capitalize(binary.getName()), Exec.class, task -> {
-                            task.executable(executable.get().getAsFile().getAbsoluteFile());
-                            task.dependsOn(executable);
-                        });
-                        buildModel.getRunTasks().add(runTask);
-                    }
-                })
-            );
-        }
-
-        interface Services {
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<CppApplication, CppApplicationBuildModel> {
             @Inject
-            PluginManager getPluginManager();
+            public ApplyAction() {
+            }
 
             @Inject
-            TaskRegistrar getTaskRegistrar();
+            protected abstract PluginManager getPluginManager();
 
             @Inject
-            Project getProject();
+            protected abstract TaskRegistrar getTaskRegistrar();
+
+            @Inject
+            protected abstract Project getProject();
+
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, CppApplication definition, CppApplicationBuildModel buildModel) {
+                getPluginManager().apply(CppApplicationPlugin.class);
+
+                CliExecutablesSupport.configureRunTasks(getTaskRegistrar(), buildModel);
+
+                ((DefaultCppApplicationBuildModel) buildModel).setCppComponent(getProject().getExtensions().getByType(CppComponent.class));
+
+                linkDefinitionToPlugin(getProject(), definition, buildModel);
+            }
+
+            private void linkDefinitionToPlugin(Project project, CppApplication definition, CppApplicationBuildModel buildModel) {
+                CppComponent model = buildModel.getCppComponent();
+
+                model.getImplementationDependencies().getDependencies().addAllLater(definition.getDependencies().getImplementation().getDependencies());
+
+                project.getComponents().withType(org.gradle.language.cpp.CppApplication.class).configureEach(applicationComponent ->
+                    applicationComponent.getBinaries().configureEach(binary -> {
+                        binary.getCompileTask().get().getCompilerArgs().add(definition.getCppVersion().map(v -> "--std=" + v));
+                        if (binary instanceof CppExecutable) {
+                            Provider<RegularFile> executable = ((CppExecutable) binary).getDebuggerExecutableFile();
+                            TaskProvider<Exec> runTask = project.getTasks().register("run" + TextUtil.capitalize(binary.getName()), Exec.class, task -> {
+                                task.executable(executable.get().getAsFile().getAbsoluteFile());
+                                task.dependsOn(executable);
+                            });
+                            buildModel.getRunTasks().add(runTask);
+                        }
+                    })
+                );
+            }
         }
     }
 

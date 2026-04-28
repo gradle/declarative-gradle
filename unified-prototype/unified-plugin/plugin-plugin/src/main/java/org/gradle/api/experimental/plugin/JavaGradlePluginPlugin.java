@@ -5,6 +5,8 @@ import org.gradle.api.Project;
 import org.gradle.api.experimental.plugin.internal.DefaultJaveGradlePluginBuildModel;
 import org.gradle.api.plugins.PluginManager;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension;
@@ -23,15 +25,32 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(JAVA_GRADLE_PLUGIN, JavaGradlePlugin.class, (context, definition, buildModel) -> {
-                Services services = context.getObjectFactory().newInstance(Services.class);
+            builder.bindProjectType(JAVA_GRADLE_PLUGIN, JavaGradlePlugin.class, ApplyAction.class)
+                .withUnsafeDefinition()
+                .withUnsafeApplyAction()
+                .withBuildModelImplementationType(DefaultJaveGradlePluginBuildModel.class);
+        }
 
-                services.getPluginManager().apply("java-gradle-plugin");
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<JavaGradlePlugin, JavaGradlePluginBuildModel> {
+            @Inject
+            public ApplyAction() {
+            }
 
-                ((DefaultJaveGradlePluginBuildModel)buildModel).setDevelopmentExtension(
-                    services.getProject().getExtensions().getByType(GradlePluginDevelopmentExtension.class));
+            @Inject
+            protected abstract PluginManager getPluginManager();
 
-                services.getProject().afterEvaluate(project -> {
+            @Inject
+            protected abstract Project getProject();
+
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, JavaGradlePlugin definition, JavaGradlePluginBuildModel buildModel) {
+                getPluginManager().apply("java-gradle-plugin");
+
+                ((DefaultJaveGradlePluginBuildModel) buildModel).setDevelopmentExtension(
+                    getProject().getExtensions().getByType(GradlePluginDevelopmentExtension.class));
+
+                getProject().afterEvaluate(project -> {
                     project.setDescription(definition.getDescription().get());
                     project.getConfigurations().getByName("api").fromDependencyCollector(definition.getDependencies().getApi());
                     project.getConfigurations().getByName("implementation").fromDependencyCollector(definition.getDependencies().getImplementation());
@@ -45,18 +64,7 @@ public abstract class JavaGradlePluginPlugin implements Plugin<Project> {
                         });
                     });
                 });
-            })
-            .withUnsafeDefinition()
-            .withUnsafeApplyAction()
-            .withBuildModelImplementationType(DefaultJaveGradlePluginBuildModel.class);
-        }
-
-        interface Services {
-            @Inject
-            PluginManager getPluginManager();
-
-            @Inject
-            Project getProject();
+            }
         }
     }
 
