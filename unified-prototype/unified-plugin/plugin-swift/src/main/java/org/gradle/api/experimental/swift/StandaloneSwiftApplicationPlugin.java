@@ -11,6 +11,8 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Exec;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.features.registration.TaskRegistrar;
@@ -31,49 +33,56 @@ public abstract class StandaloneSwiftApplicationPlugin implements Plugin<Project
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(SWIFT_APPLICATION, SwiftApplication.class, (context, definition, buildModel) -> {
-                Services services = context.getObjectFactory().newInstance(Services.class);
-                services.getPluginManager().apply(SwiftApplicationPlugin.class);
-                CliExecutablesSupport.configureRunTasks(services.getTaskRegistrar(), buildModel);
-
-                ((DefaultSwiftApplicationBuildModel)buildModel).setSwiftComponent(services.getProject().getExtensions().getByType(SwiftComponent.class));
-
-                linkDefinitionToPlugin(services.getProject(), definition, buildModel);
-            })
-            .withUnsafeDefinition()
-            .withUnsafeApplyAction()
-            .withBuildModelImplementationType(DefaultSwiftApplicationBuildModel.class);
+            builder.bindProjectType(SWIFT_APPLICATION, SwiftApplication.class, ApplyAction.class)
+                .withUnsafeDefinition()
+                .withUnsafeApplyAction()
+                .withBuildModelImplementationType(DefaultSwiftApplicationBuildModel.class);
         }
 
-        private void linkDefinitionToPlugin(Project project, SwiftApplication definition, SwiftApplicationBuildModel buildModel) {
-            SwiftComponent model = buildModel.getSwiftComponent();
-            SwiftPluginSupport.linkSwiftVersion(definition, model);
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<SwiftApplication, SwiftApplicationBuildModel> {
+            @Inject
+            public ApplyAction() {
+            }
 
-            model.getImplementationDependencies().getDependencies().addAllLater(definition.getDependencies().getImplementation().getDependencies());
+            @Inject
+            protected abstract PluginManager getPluginManager();
 
-            project.afterEvaluate(p -> {
-                for (SwiftBinary binary : model.getBinaries().get()) {
-                    if (binary instanceof SwiftExecutable) {
-                        Provider<RegularFile> executable = ((SwiftExecutable) binary).getDebuggerExecutableFile();
-                        TaskProvider<Exec> runTask = project.getTasks().register("run" + TextUtil.capitalize(binary.getName()), Exec.class, task -> {
-                            task.executable(executable.get().getAsFile().getAbsoluteFile());
-                            task.dependsOn(executable);
-                        });
-                        buildModel.getRunTasks().add(runTask);
+            @Inject
+            protected abstract TaskRegistrar getTaskRegistrar();
+
+            @Inject
+            protected abstract Project getProject();
+
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, SwiftApplication definition, SwiftApplicationBuildModel buildModel) {
+                getPluginManager().apply(SwiftApplicationPlugin.class);
+                CliExecutablesSupport.configureRunTasks(getTaskRegistrar(), buildModel);
+
+                ((DefaultSwiftApplicationBuildModel) buildModel).setSwiftComponent(getProject().getExtensions().getByType(SwiftComponent.class));
+
+                linkDefinitionToPlugin(getProject(), definition, buildModel);
+            }
+
+            private void linkDefinitionToPlugin(Project project, SwiftApplication definition, SwiftApplicationBuildModel buildModel) {
+                SwiftComponent model = buildModel.getSwiftComponent();
+                SwiftPluginSupport.linkSwiftVersion(definition, model);
+
+                model.getImplementationDependencies().getDependencies().addAllLater(definition.getDependencies().getImplementation().getDependencies());
+
+                project.afterEvaluate(p -> {
+                    for (SwiftBinary binary : model.getBinaries().get()) {
+                        if (binary instanceof SwiftExecutable) {
+                            Provider<RegularFile> executable = ((SwiftExecutable) binary).getDebuggerExecutableFile();
+                            TaskProvider<Exec> runTask = project.getTasks().register("run" + TextUtil.capitalize(binary.getName()), Exec.class, task -> {
+                                task.executable(executable.get().getAsFile().getAbsoluteFile());
+                                task.dependsOn(executable);
+                            });
+                            buildModel.getRunTasks().add(runTask);
+                        }
                     }
-                }
-            });
-        }
-
-        interface Services {
-            @Inject
-            PluginManager getPluginManager();
-
-            @Inject
-            TaskRegistrar getTaskRegistrar();
-
-            @Inject
-            Project getProject();
+                });
+            }
         }
     }
 

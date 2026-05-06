@@ -10,6 +10,8 @@ import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension;
@@ -34,46 +36,51 @@ public abstract class StandaloneKotlinJvmLibraryPlugin implements Plugin<Project
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(KOTLIN_JVM_LIBRARY, KotlinJvmLibrary.class,
-                    (context, definition, buildModel) -> {
-                        Services services = context.getObjectFactory().newInstance(Services.class);
-                        services.getPluginManager().apply("org.jetbrains.kotlin.jvm");
-                        ((DefaultKotlinJvmLibraryBuildModel)buildModel).setKotlinJvmExtension(
-                                services.getProject().getExtensions().getByType(KotlinJvmProjectExtension.class)
-                        );
-                        ((DefaultKotlinJvmLibraryBuildModel)buildModel).setJavaPluginExtension(
-                                services.getProject().getExtensions().getByType(JavaPluginExtension.class)
-                        );
-
-                        linkDslModelToPlugin(definition, buildModel, services.getProject().getConfigurations(), services.getProject().getTasks());
-                    })
+            builder.bindProjectType(KOTLIN_JVM_LIBRARY, KotlinJvmLibrary.class, ApplyAction.class)
                 .withUnsafeDefinition()
                 .withUnsafeApplyAction()
                 .withBuildModelImplementationType(DefaultKotlinJvmLibraryBuildModel.class);
         }
 
-
-        private void linkDslModelToPlugin(KotlinJvmLibrary dslModel, KotlinJvmLibraryBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
-            KotlinPluginSupport.linkJavaVersion(dslModel, buildModel.getKotlinJvmExtension());
-            JvmPluginSupport.linkMainSourceSourceSetDependencies(dslModel.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
-
-            configureTesting(dslModel, configurations, tasks);
-        }
-
-        private void configureTesting(KotlinJvmLibrary dslModel, ConfigurationContainer configurations, TaskContainer tasks) {
-            configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getTesting().getDependencies().getImplementation());
-            configurations.getByName("testCompileOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getCompileOnly());
-            configurations.getByName("testRuntimeOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getRuntimeOnly());
-
-            tasks.withType(Test.class).configureEach(Test::useJUnitPlatform);
-        }
-
-        interface Services {
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<KotlinJvmLibrary, KotlinJvmLibraryBuildModel> {
             @Inject
-            PluginManager getPluginManager();
+            public ApplyAction() {
+            }
 
             @Inject
-            Project getProject();
+            protected abstract PluginManager getPluginManager();
+
+            @Inject
+            protected abstract Project getProject();
+
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, KotlinJvmLibrary definition, KotlinJvmLibraryBuildModel buildModel) {
+                getPluginManager().apply("org.jetbrains.kotlin.jvm");
+                ((DefaultKotlinJvmLibraryBuildModel) buildModel).setKotlinJvmExtension(
+                        getProject().getExtensions().getByType(KotlinJvmProjectExtension.class)
+                );
+                ((DefaultKotlinJvmLibraryBuildModel) buildModel).setJavaPluginExtension(
+                        getProject().getExtensions().getByType(JavaPluginExtension.class)
+                );
+
+                linkDslModelToPlugin(definition, buildModel, getProject().getConfigurations(), getProject().getTasks());
+            }
+
+            private void linkDslModelToPlugin(KotlinJvmLibrary dslModel, KotlinJvmLibraryBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
+                KotlinPluginSupport.linkJavaVersion(dslModel, buildModel.getKotlinJvmExtension());
+                JvmPluginSupport.linkMainSourceSourceSetDependencies(dslModel.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
+
+                configureTesting(dslModel, configurations, tasks);
+            }
+
+            private void configureTesting(KotlinJvmLibrary dslModel, ConfigurationContainer configurations, TaskContainer tasks) {
+                configurations.getByName("testImplementation").fromDependencyCollector(dslModel.getTesting().getDependencies().getImplementation());
+                configurations.getByName("testCompileOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getCompileOnly());
+                configurations.getByName("testRuntimeOnly").fromDependencyCollector(dslModel.getTesting().getDependencies().getRuntimeOnly());
+
+                tasks.withType(Test.class).configureEach(Test::useJUnitPlatform);
+            }
         }
     }
 }

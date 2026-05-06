@@ -14,6 +14,8 @@ import org.gradle.api.plugins.PluginManager;
 import org.gradle.api.plugins.jvm.JvmTestSuite;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.features.annotations.BindsProjectType;
+import org.gradle.features.binding.ProjectFeatureApplicationContext;
+import org.gradle.features.binding.ProjectTypeApplyAction;
 import org.gradle.features.binding.ProjectTypeBinding;
 import org.gradle.features.binding.ProjectTypeBindingBuilder;
 import org.gradle.features.registration.TaskRegistrar;
@@ -42,59 +44,53 @@ public abstract class StandaloneJavaApplicationPlugin implements Plugin<Project>
     static class Binding implements ProjectTypeBinding {
         @Override
         public void bind(ProjectTypeBindingBuilder builder) {
-            builder.bindProjectType(JAVA_APPLICATION, JavaApplication.class,
-                    (context, definition, buildModel) -> {
-                        Services services = context.getObjectFactory().newInstance(Services.class);
-                        services.getPluginManager().apply(ApplicationPlugin.class);
-                        CliExecutablesSupport.configureRunTasks(services.getTaskRegistrar(), buildModel);
-                        ((DefaultJavaBuildModel) buildModel).setJavaPluginExtension(
-                                services.getProject().getExtensions().getByType(JavaPluginExtension.class)
-                        );
-                        ((DefaultJavaApplicationBuildModel) buildModel).setJavaApplicationExtension(
-                                services.getProject().getExtensions().getByType(org.gradle.api.plugins.JavaApplication.class)
-                        );
-
-                        context.getObjectFactory().newInstance(ModelToPluginLinker.class).link(
-                                definition,
-                                buildModel,
-                                services.getProject().getConfigurations(),
-                                services.getProject().getTasks()
-                        );
-                    }
-            )
+            builder.bindProjectType(JAVA_APPLICATION, JavaApplication.class, ApplyAction.class)
             .withUnsafeDefinition()
             .withUnsafeApplyAction()
             .withBuildModelImplementationType(DefaultJavaApplicationBuildModel.class);
         }
 
-        interface Services {
+        @SuppressWarnings("UnstableApiUsage")
+        static abstract class ApplyAction implements ProjectTypeApplyAction<JavaApplication, JavaApplicationBuildModel> {
             @Inject
-            PluginManager getPluginManager();
+            public ApplyAction() {
+            }
 
             @Inject
-            TaskRegistrar getTaskRegistrar();
+            protected abstract PluginManager getPluginManager();
 
             @Inject
-            Project getProject();
-        }
-    }
+            protected abstract TaskRegistrar getTaskRegistrar();
 
-    static abstract class ModelToPluginLinker {
-        @Inject
-        public ModelToPluginLinker() {
-        }
+            @Inject
+            protected abstract Project getProject();
 
-        @Inject
-        protected abstract JavaToolchainService getJavaToolchainService();
+            @Inject
+            protected abstract JavaToolchainService getJavaToolchainService();
 
-        private void link(JavaApplication definition, JavaApplicationBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
-            JvmPluginSupport.linkJavaVersion(definition, buildModel.getJavaPluginExtension());
-            JvmPluginSupport.linkApplicationMainClass(definition, buildModel.getJavaApplicationExtension());
-            JvmPluginSupport.linkMainSourceSourceSetDependencies(definition.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
-            JvmPluginSupport.linkTestJavaVersion(definition.getTesting(), getJavaToolchainService(), tasks);
-            JvmPluginSupport.linkTestSourceSourceSetDependencies(definition.getTesting().getDependencies(), buildModel.getJavaPluginExtension(), configurations);
+            @Override
+            public void apply(ProjectFeatureApplicationContext context, JavaApplication definition, JavaApplicationBuildModel buildModel) {
+                getPluginManager().apply(ApplicationPlugin.class);
+                CliExecutablesSupport.configureRunTasks(getTaskRegistrar(), buildModel);
+                ((DefaultJavaBuildModel) buildModel).setJavaPluginExtension(
+                        getProject().getExtensions().getByType(JavaPluginExtension.class)
+                );
+                ((DefaultJavaApplicationBuildModel) buildModel).setJavaApplicationExtension(
+                        getProject().getExtensions().getByType(org.gradle.api.plugins.JavaApplication.class)
+                );
 
-            buildModel.getRunTasks().add(tasks.named("run"));
+                link(definition, buildModel, getProject().getConfigurations(), getProject().getTasks());
+            }
+
+            private void link(JavaApplication definition, JavaApplicationBuildModel buildModel, ConfigurationContainer configurations, TaskContainer tasks) {
+                JvmPluginSupport.linkJavaVersion(definition, buildModel.getJavaPluginExtension());
+                JvmPluginSupport.linkApplicationMainClass(definition, buildModel.getJavaApplicationExtension());
+                JvmPluginSupport.linkMainSourceSourceSetDependencies(definition.getDependencies(), buildModel.getJavaPluginExtension(), configurations);
+                JvmPluginSupport.linkTestJavaVersion(definition.getTesting(), getJavaToolchainService(), tasks);
+                JvmPluginSupport.linkTestSourceSourceSetDependencies(definition.getTesting().getDependencies(), buildModel.getJavaPluginExtension(), configurations);
+
+                buildModel.getRunTasks().add(tasks.named("run"));
+            }
         }
     }
 }

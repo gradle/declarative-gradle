@@ -62,7 +62,7 @@ class JavaLibraryWithCheckstyleIntegrationTest extends AbstractSpecification {
         def result = fails(":checkstyleMain")
 
         then:
-        result.output.contains("Execution failed for task ':checkstyleMain'.")
+        result.output.contains("Execution failed for task ':checkstyleMain'")
         result.output.contains("Checkstyle rule violations were found. See the report at:")
         result.output.contains("Name 'example' must match pattern")
     }
