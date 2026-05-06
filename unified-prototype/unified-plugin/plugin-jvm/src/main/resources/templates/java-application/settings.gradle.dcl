@@ -5,7 +5,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.gradle.experimental.jvm-ecosystem").version("0.1.59")
+    id("org.gradle.experimental.jvm-ecosystem").version("0.1.60")
 }
 
 rootProject.name = "example-java-app"
