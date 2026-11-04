@@ -32,6 +32,6 @@ jobs:
           title: "Update jdks.yaml"
           body: "This PR updates JDK to the latest versions available in `.teamcity/jdks.yaml`."
           delete-branch: true
-          branch-suffix: timestamp
+          branch: "devprod/update-jdks"
           labels: |
             @dev-productivity

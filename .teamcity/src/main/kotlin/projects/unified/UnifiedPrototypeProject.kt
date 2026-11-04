@@ -31,7 +31,7 @@ object UnifiedPrototypeProject : Project({
 
         features {
             publishBuildStatusToGithub()
-            // Pull in all PRs, this will not trigger on them but allows manual runs
+            // Pull in all PRs; the branch filter decides which ones auto-trigger
             pullRequests {
                 vcsRootExtId = DslContext.settingsRootId.toString()
                 provider = github {
@@ -39,6 +39,7 @@ object UnifiedPrototypeProject : Project({
                         token = "%github.bot-teamcity.token%"
                     }
                     filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+                    ignoreDrafts = false
                 }
             }
         }
@@ -55,10 +56,14 @@ object UnifiedPrototypeProject : Project({
                     +:.teamcity/**
                 """.trimIndent()
 
-                // Do not run on `pull/*` as these are untrusted branches
+                // Fork PRs are not auto-triggered: they would run build steps as
+                // defined in the PR branch. Members' PRs are, forks stay manual.
                 branchFilter = """
-                    +:*
-                    -:pull/*
+                    +:<default>
+                    +:devprod/*
+                    -:dependabot/*
+                    +pr: github_role=MEMBER
+                    -pr: source=dependabot/*
                 """.trimIndent()
             }
         }
