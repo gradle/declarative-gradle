@@ -5,8 +5,8 @@ jdks:
     os: "linux"
     arch: "amd64"
     vendor: "temurin"
-    version: "jdk-11.0.32.1+1"
-    sha256: "5c3f68887c325d36d852ba534303e1f5f1f5cae7d6cc1e951d73e0d8e98a058d"
+    version: "jdk-11.0.33+10"
+    sha256: "c4b8eaf56c93b95b689ffc08d155df1bcdbbffb666f8f71d21d97aedaea6f0ec"
   - params:
       - "env.JDK17"
       - "env.JAVA_HOME"
