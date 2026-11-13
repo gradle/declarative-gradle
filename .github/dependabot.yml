@@ -11,6 +11,7 @@ updates:
       interval: "daily"
     labels:
       - "@dev-productivity"
+      - "dependencies"
       - "skip-changelog"
   - package-ecosystem: "devcontainers"
     directory: "/"
@@ -18,6 +19,7 @@ updates:
       interval: "daily"
     labels:
       - "@dev-productivity"
+      - "dependencies"
       - "skip-changelog"
   - package-ecosystem: "pip"
     directory: "/"
@@ -25,6 +27,7 @@ updates:
       interval: "daily"
     labels:
       - "@dev-productivity"
+      - "dependencies"
       - "skip-changelog"
   - package-ecosystem: "maven"
     directory: "/.teamcity"
@@ -34,4 +37,5 @@ updates:
       interval: "daily"
     labels:
       - "@dev-productivity"
+      - "dependencies"
       - "skip-changelog"
