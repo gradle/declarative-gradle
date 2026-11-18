@@ -19,6 +19,7 @@ jobs:
       PR_PATH: ${{ github.event.repository.name }}/pull/${{ github.event.number }}
       DOMAIN: gradle.github.io
       PREVIEW_REPO: community-site-preview
+      HAS_PREVIEW_KEY: ${{ secrets.PREVIEW_DEPLOYMENT_KEY != '' }}
 
     steps:
       - name: Checkout
@@ -39,7 +40,7 @@ jobs:
 
       - name: Deploy to PR preview
         uses: peaceiris/actions-gh-pages@v4
-        if: github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/main' && env.HAS_PREVIEW_KEY == 'true'
         with:
           deploy_key: ${{ secrets.PREVIEW_DEPLOYMENT_KEY }}
           external_repository: gradle/${{ env.PREVIEW_REPO }}
@@ -48,7 +49,7 @@ jobs:
 
       - name: Update comment
         uses: hasura/comment-progress@v2.3.0
-        if: github.ref != 'refs/heads/main'
+        if: github.ref != 'refs/heads/main' && env.HAS_PREVIEW_KEY == 'true'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
