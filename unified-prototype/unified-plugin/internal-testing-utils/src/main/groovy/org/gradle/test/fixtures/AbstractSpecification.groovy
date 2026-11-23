@@ -39,7 +39,17 @@ class AbstractSpecification extends Specification {
     }
 
     protected static String[] withDefaultArguments(String[] tasks) {
-        return ["--stacktrace"] as String[] + tasks
+        return ["--stacktrace"] as String[] + withMirrorArguments(tasks)
+    }
+
+    /**
+     * Passes on org.gradle.mirror.maven.settings from the test JVM, so that TestKit builds, which have their own
+     * Gradle user home, resolve through the mirrors in ~/.m2/settings.xml like the outer build.
+     */
+    protected static String[] withMirrorArguments(String... tasks) {
+        def mirror = System.getProperty("org.gradle.mirror.maven.settings")
+        def mirrorArguments = mirror ? ["-Dorg.gradle.mirror.maven.settings=${mirror}".toString()] : []
+        return mirrorArguments as String[] + tasks
     }
 
     def succeeds(String... tasks) {
@@ -59,7 +69,7 @@ class AbstractSpecification extends Specification {
     def fails(String... tasks) {
         result = GradleRunner.create()
                 .withProjectDir(getTestDirectory())
-                .withArguments(tasks)
+                .withArguments(withMirrorArguments(tasks))
                 .withPluginClasspath()
                 .withDebug(true)
                 .forwardOutput()
