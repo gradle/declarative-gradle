@@ -20,7 +20,7 @@ class JavaApplicationBuildInitSpec extends AbstractBuildInitSpecification {
         result = GradleRunner.create()
                 .withProjectDir(projectDir)
                 .withPluginClasspath()
-                .withArguments(":app:run")
+                .withArguments(withMirrorArguments(":app:run"))
                 .forwardOutput()
                 .build()
 
